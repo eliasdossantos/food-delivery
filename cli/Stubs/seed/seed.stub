@@ -1,0 +1,23 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\{{ ModelName }};
+use Framework\Database\Seeder;
+
+/**
+ * {{ ClassName }} — inicializa dados associados ao Model {{ ModelName }}.
+ *
+ * Antes de executar, confirme que o Model existe, aponta para a tabela
+ * `{{ tableName }}` e permite os campos usados por meio de $fillable.
+ */
+class {{ ClassName }} extends Seeder
+{
+    public function run(): void
+    {
+        $records = new {{ ModelName }}();
+        $records->create([
+            'name' => 'Exemplo',
+        ]);
+    }
+}
