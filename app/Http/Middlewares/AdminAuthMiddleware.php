@@ -1,14 +1,29 @@
 <?php
+
 namespace App\Http\Middlewares;
+
 use Framework\Auth\Auth;
 use Framework\Http\Request;
 use Framework\Support\Session;
+
 class AdminAuthMiddleware
 {
     public function handle(Request $request): void
     {
-        if (!Auth::guard('usuario')->check()) { Session::flash('error', 'Faça login administrativo para continuar.'); redirect('/admin/login'); }
-        $perfil = Auth::guard('usuario')->perfil();
-        if (!in_array($perfil, ['super_administrador','administrador','gestor','atendente','cozinheiro','entregador','caixa'], true)) { http_response_code(403); exit('Acesso administrativo não autorizado.'); }
+        $guard = Auth::guard('usuario');
+
+        if (!$guard->check()) {
+            Session::flash('error', 'Faça login administrativo para continuar.');
+            redirect('/admin/login');
+        }
+
+        // Qualquer perfil cadastrado na tabela perfis entra na área administrativa.
+        // As permissões por perfil ficam nas views e controllers.
+        // Só fica de fora quem não tem perfil nenhum (perfil_id nulo).
+        if ($guard->perfil() === '') {
+            $guard->logout();
+            Session::flash('error', 'Credenciais inválidas ou acesso não autorizado.');
+            redirect('/admin/login');
+        }
     }
 }

@@ -38,7 +38,7 @@ $router->get('/cliente', [ClienteHomeController::class, 'index'], ['ClienteAuthM
 $router->post('/cliente/logout', [ClienteAuthController::class, 'logout'], ['ClienteAuthMiddleware', 'CsrfMiddleware'])->name('cliente.logout');
 
 // ── Área do Administrador ────────────────────────────────────────────────
-$router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminAuthMiddleware', 'PerfilAdministrativoMiddleware']], function (Router $r) {
+$router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminAuthMiddleware']], function (Router $r) {
 
     // ── Home do Admin ──────────────────────────────────────────────────
     $r->get('', [HomeController::class, 'index'])->name('home');

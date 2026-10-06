@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Clientes;
 
 use App\Http\Requests\FormRequest;
+use App\Services\ValidacaoCPF\CpfService;
 use Framework\Auth\Auth;
 use Framework\Http\Request;
 
@@ -46,7 +47,7 @@ class StoreClientesRequest extends FormRequest
             // Dados pessoais
             'nome'            => 'required|min:2|max:250',
             'celular'         => 'required|max:20|unique:clientes,celular',
-            'cpf'             => 'nullable|max:20|unique:clientes,cpf',
+            'cpf'             => 'nullable|cpf|max:20|unique:clientes,cpf',
             'data_nascimento' => 'nullable|regex:/^\d{4}-\d{2}-\d{2}$/',
 
             // Autenticação
@@ -87,6 +88,7 @@ class StoreClientesRequest extends FormRequest
 
             'cpf.max'    => 'O CPF deve ter no máximo 20 caracteres.',
             'cpf.unique' => 'Este CPF já está cadastrado.',
+            'cpf.cpf'    => 'Informe um CPF válido.',
 
             'data_nascimento.regex' => 'Informe uma data de nascimento válida.',
 
@@ -141,7 +143,7 @@ class StoreClientesRequest extends FormRequest
      */
     public function sanitize(): array
     {
-        $cpf = trim(Request::sanitizeValue($this->input['cpf'] ?? ''));
+        $cpf = CpfService::formatar(Request::sanitizeValue($this->input['cpf'] ?? ''));
         $email = strtolower(trim($this->input['email'] ?? ''));
         $dataNascimento = trim(Request::sanitizeValue($this->input['data_nascimento'] ?? ''));
 

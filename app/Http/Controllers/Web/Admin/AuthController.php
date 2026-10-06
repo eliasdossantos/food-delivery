@@ -27,7 +27,7 @@ class AuthController extends BaseController
         }
         $data = $request->validated();
         if (!Auth::guard('usuario')->attempt($data['email'], $data['senha'], !empty($_POST['lembrar']))) {
-            Session::flash('error', 'E-mail ou senha inválidos, ou usuário inativo.');
+            Session::flash('error', 'E-mail ou senha inválidos, ou acesso não autorizado.');
             Session::flashInput(['email' => $data['email']]);
             $this->redirect('/admin/login');
         }

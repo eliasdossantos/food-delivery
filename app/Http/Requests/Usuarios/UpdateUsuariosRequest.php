@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Usuarios;
 
 use App\Http\Requests\FormRequest;
+use App\Services\ValidacaoCPF\CpfService;
 use Framework\Auth\Auth;
 use Framework\Http\Request;
 
@@ -47,7 +48,7 @@ class UpdateUsuariosRequest extends FormRequest
         return [
             // Dados pessoais
             'nome'      => 'required|min:5|max:150',
-            'cpf'       => 'nullable|max:20',
+            'cpf'       => 'nullable|cpf|max:20|unique',
             'celular'   => 'nullable|max:20',
             'perfil_id' => 'nullable|integer|exists:perfis,id',
 
@@ -83,6 +84,7 @@ class UpdateUsuariosRequest extends FormRequest
             'nome.max'          => 'O nome do usuário deve ter no máximo 150 caracteres.',
 
             'cpf.max'           => 'O CPF deve ter no máximo 20 caracteres.',
+            'cpf.unique'        => 'Este CPF do usuário já está em uso.',
 
             'celular.max'       => 'O celular deve ter no máximo 20 caracteres.',
 
@@ -124,7 +126,7 @@ class UpdateUsuariosRequest extends FormRequest
      */
     public function sanitize(): array
     {
-        $cpf = trim(Request::sanitizeValue($this->input['cpf'] ?? ''));
+        $cpf = CpfService::formatar(Request::sanitizeValue($this->input['cpf'] ?? ''));
         $celular = trim(Request::sanitizeValue($this->input['celular'] ?? ''));
         $perfilId = trim(Request::sanitizeValue($this->input['perfil_id'] ?? ''));
 

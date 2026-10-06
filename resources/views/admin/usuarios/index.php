@@ -1,3 +1,9 @@
+<?php
+// Quem vê os botões de ação (visualizar, editar, excluir, cadastrar)
+$listaPodeGerir = \Framework\Auth\Auth::isAny('Super Administrador', 'Administrador');
+$listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
+?>
+
 <!-- Aqui enviamos para o template principal o título da página -->
 
 <?php View::start('title'); ?>
@@ -23,11 +29,14 @@
         <div class="card">
             <div class="card-body">
                 <p class="card-title"><?= e($tituloTabela ?? 'Lista de Usuários') ?></p>
-                <a href="<?= route('admin.usuario.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
-                    title="Cadastrar Usuário" aria-label="Cadastrar Usuário">
-                    <i class="mdi mdi-plus"></i>
-                    Cadastrar Usuário
-                </a>
+
+                <?php if ($listaPodeGerir): ?>
+                    <a href="<?= route('admin.usuario.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
+                        title="Cadastrar Usuário" aria-label="Cadastrar Usuário">
+                        <i class="mdi mdi-plus"></i>
+                        Cadastrar Usuário
+                    </a>
+                <?php endif; ?>
 
                 <div class="ui-widget mb-3">
                     <input id="query" name="query" class="form-control bg-light" placeholder="Digite o nome do usuário">
@@ -43,16 +52,25 @@
                                 <th>CPF</th>
                                 <th>Perfil</th>
                                 <th>Status</th>
-                                <th>Ações</th>
+                                <?php if ($listaPodeGerir): ?>
+                                    <th>Ações</th>
+                                <?php endif; ?>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (!empty($usuarios)): ?>
                                 <?php foreach ($usuarios as $usuario): ?>
+                                    <?php $listaLinhaSuper = \Framework\Auth\Auth::normalizarPerfil($usuario->perfil_nome ?? '') === 'super_administrador'; ?>
                                     <tr>
                                         <td class="d-none"><?= e($usuario->id ?? ''); ?></td>
-                                        <td><a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>">
-                                                <?= e($usuario->nome ?? '') ?> </a>
+                                        <td>
+                                            <?php if ($listaPodeGerir): ?>
+                                                <a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>">
+                                                    <?= e($usuario->nome ?? '') ?>
+                                                </a>
+                                            <?php else: ?>
+                                                <?= e($usuario->nome ?? '') ?>
+                                            <?php endif; ?>
                                         </td>
                                         <td><?= e($usuario->email ?? ''); ?></td>
                                         <td><?= e($usuario->cpf ?? ''); ?></td>
@@ -68,27 +86,35 @@
                                                 <?= e($usuario->ativo ? 'Ativo' : 'Inativo') ?>
                                             </span></td>
 
-                                        <td>
-                                            <a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>"
-                                                class="btn btn-primary btn-sm" title="Visualizar"
-                                                aria-label="Visualizar Usuário">
-                                                <i class="mdi mdi-eye"></i>
-                                            </a>
-                                            <a href="<?= route('admin.usuario.edit', ['id' => $usuario->id]) ?>"
-                                                class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
-                                                <i class="mdi mdi-pencil"></i>
-                                            </a>
-                                            <button type="button" class="btn btn-danger btn-sm" title="Excluir"
-                                                aria-label="Excluir usuário" data-toggle="modal"
-                                                data-target="#deleteModal<?= (int) $usuario->id ?>">
-                                                <i class="mdi mdi-delete"></i>
-                                            </button>
-                                        </td>
+                                        <?php if ($listaPodeGerir): ?>
+                                            <td>
+                                                <a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>"
+                                                    class="btn btn-primary btn-sm" title="Visualizar"
+                                                    aria-label="Visualizar Usuário">
+                                                    <i class="mdi mdi-eye"></i>
+                                                </a>
+
+                                                <?php if ($listaSouSuper || !$listaLinhaSuper): ?>
+                                                    <a href="<?= route('admin.usuario.edit', ['id' => $usuario->id]) ?>"
+                                                        class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
+                                                        <i class="mdi mdi-pencil"></i>
+                                                    </a>
+                                                <?php endif; ?>
+
+                                                <?php if (!$listaLinhaSuper): ?>
+                                                    <button type="button" class="btn btn-danger btn-sm" title="Excluir"
+                                                        aria-label="Excluir usuário" data-toggle="modal"
+                                                        data-target="#deleteModal<?= (int) $usuario->id ?>">
+                                                        <i class="mdi mdi-delete"></i>
+                                                    </button>
+                                                <?php endif; ?>
+                                            </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="9" class="text-center">
+                                    <td colspan="7" class="text-center">
                                         <?= emptyDataMessage() ?>
                                     </td>
                                 </tr>
@@ -103,8 +129,9 @@
 
 
 <!-- Modais de confirmação de exclusão (um por usuário, fora da tabela) -->
-<?php if (!empty($usuarios)): ?>
+<?php if ($listaPodeGerir && !empty($usuarios)): ?>
     <?php foreach ($usuarios as $usuario): ?>
+        <?php if (\Framework\Auth\Auth::normalizarPerfil($usuario->perfil_nome ?? '') === 'super_administrador') continue; ?>
         <div class="modal fade" id="deleteModal<?= (int) $usuario->id ?>" tabindex="-1" role="dialog"
             aria-labelledby="deleteModalLabel<?= (int) $usuario->id ?>" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">

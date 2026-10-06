@@ -329,6 +329,9 @@ class Validator
             'phone'        => (!empty($value) && !preg_match('/^\d{10,11}$/', preg_replace('/\D/', '', (string)$value)))
                 ? "O campo {$label} deve ser um telefone válido." : null,
 
+            'cpf'          => (!empty($value) && !\App\Services\ValidacaoCPF\CpfService::isValido((string)$value))
+                ? "O campo {$label} deve ser um CPF válido." : null,
+
             'confirmed'    => (!empty($value) && $value !== ($this->data[$field . '_confirmation'] ?? null))
                 ? "A confirmação do campo {$label} não confere." : null,
 

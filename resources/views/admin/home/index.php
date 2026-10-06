@@ -210,53 +210,6 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12 stretch-card">
-        <div class="card">
-            <div class="card-body">
-                <p class="card-title"><?= e($tituloTabela ?? 'Lista de Usuários') ?></p>
-                <div class="table-responsive">
-                    <table id="table-BR" class="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th class="d-none">ID</th>
-                                <th>Nome</th>
-                                <th>E-mail</th>
-                                <th>Permissão</th>
-                                <th>Status</th>
-                                <th>Criado em</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php if (!empty($usuarios)): ?>
-                                <?php foreach ($usuarios as $usuario): ?>
-                                    <tr>
-                                        <td class="d-none"><?= e($usuario->id ?? ''); ?></td>
-                                        <td><?= e($usuario->nome ?? ''); ?></td>
-                                        <td><?= e($usuario->email ?? ''); ?></td>
-                                        <td><?= e($usuario->perfil_nome ?? ''); ?></td>
-                                        <td><span
-                                                class="badge <?= e($usuario->ativo ? 'badge-success' : 'badge-secondary') ?> mt-2">
-                                                <?= e($usuario->ativo ? 'Ativo' : 'Inativo') ?>
-                                            </span></td>
-                                        <td><?= dateBR(e($usuario->created_at ?? '')); ?></td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="9" class="text-center">
-                                        <?= emptyDataMessage() ?>
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <?php View::end(); ?>
 
 

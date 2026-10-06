@@ -1,5 +1,6 @@
-<!-- Aqui enviamos para o template principal o título da página -->
+<?php
 
+use Framework\Auth\Auth; ?>
 <?php View::start('title'); ?>
 
 <?= e($title ?? 'Clientes') ?> | Admin
@@ -75,10 +76,12 @@
                                                 aria-label="Visualizar Usuário">
                                                 <i class="mdi mdi-eye"></i>
                                             </a>
-                                            <a href="<?= route('admin.cliente.edit', ['id' => $cliente->id]) ?>"
-                                                class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
-                                                <i class="mdi mdi-pencil"></i>
-                                            </a>
+                                            <?php if (Auth::isAny('Super Administrador')): ?>
+                                                <a href="<?= route('admin.cliente.edit', ['id' => $cliente->id]) ?>"
+                                                    class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
+                                                    <i class="mdi mdi-pencil"></i>
+                                                <?php endif; ?>
+                                                </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

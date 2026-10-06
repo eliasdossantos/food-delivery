@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Usuarios;
 
 use App\Http\Requests\FormRequest;
+use App\Services\ValidacaoCPF\CpfService;
 use Framework\Auth\Auth;
 use Framework\Http\Request;
 
@@ -56,7 +57,7 @@ class StoreUsuariosRequest extends FormRequest
         return [
             // Dados pessoais
             'nome'      => 'required|min:5|max:150',
-            'cpf'       => 'nullable|max:20|unique:usuarios,cpf',
+            'cpf'       => 'nullable|cpf|max:20|unique:usuarios,cpf',
             'celular'   => 'nullable|max:20|unique:usuarios,celular',
             'perfil_id' => 'nullable|integer|exists:perfis,id',
 
@@ -93,6 +94,7 @@ class StoreUsuariosRequest extends FormRequest
 
             'cpf.max'           => 'O CPF deve ter no máximo 20 caracteres.',
             'cpf.unique'        => 'Este CPF já está cadastrado.',
+            'cpf.cpf'           => 'Informe um CPF válido.',
 
             'celular.max'       => 'O celular deve ter no máximo 20 caracteres.',
             'celular.unique'    => 'Este celular já está cadastrado.',
@@ -138,9 +140,10 @@ class StoreUsuariosRequest extends FormRequest
      */
     public function sanitize(): array
     {
-        $cpf = trim(Request::sanitizeValue($this->input['cpf'] ?? ''));
+        $cpf = CpfService::formatar(Request::sanitizeValue($this->input['cpf'] ?? ''));
         $celular = trim(Request::sanitizeValue($this->input['celular'] ?? ''));
         $perfilId = trim(Request::sanitizeValue($this->input['perfil_id'] ?? ''));
+
 
         return [
             // Dados pessoais

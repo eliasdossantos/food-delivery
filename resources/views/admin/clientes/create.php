@@ -124,7 +124,7 @@
                                         Celular
                                     </label>
                                     <input type="text"
-                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> phone_with_ddd"
+                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> telefone"
                                         id="celular" name="celular" value="<?= old('celular', '') ?>"
                                         placeholder="(00) 00000-0000">
                                     <?= erroInput('celular') ?>

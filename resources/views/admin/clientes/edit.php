@@ -12,31 +12,31 @@
 <?php View::start('styles'); ?>
 
 <style>
-    .form-section {
-        margin-top: 25px;
-        margin-bottom: 20px;
-    }
+.form-section {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
 
-    .form-section-title {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.form-section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    .form-section-title::after {
-        content: '';
-        flex: 1;
-        height: 2px;
-        background: #878f96;
-        margin-left: 15px;
-    }
+.form-section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: #878f96;
+    margin-left: 15px;
+}
 
-    .form-section-title h5 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
+.form-section-title h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+}
 </style>
 
 <?php View::end(); ?>
@@ -119,7 +119,7 @@
                                         Celular
                                     </label>
                                     <input type="text"
-                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> phone_with_ddd"
+                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> telefone"
                                         id="celular" name="celular"
                                         value="<?= old('celular', $cliente->celular ?? '') ?>"
                                         placeholder="(00) 00000-0000">

@@ -25,52 +25,6 @@
             </li>
         </ul>
         <ul class="navbar-nav navbar-nav-right">
-            <li class="nav-item dropdown mr-1">
-                <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center"
-                    id="messageDropdown" href="#" data-toggle="dropdown">
-                    <i class="mdi mdi-message-text mx-0"></i>
-                    <span class="count"></span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="messageDropdown">
-                    <p class="mb-0 font-weight-normal float-left dropdown-header">Messages</p>
-                    <a class="dropdown-item">
-                        <div class="item-thumbnail">
-                            <img src="<?= asset('admin/images/faces/face4.jpg') ?>" alt="image" class="profile-pic">
-                        </div>
-                        <div class="item-content flex-grow">
-                            <h6 class="ellipsis font-weight-normal">David Grey
-                            </h6>
-                            <p class="font-weight-light small-text text-muted mb-0">
-                                The meeting is cancelled
-                            </p>
-                        </div>
-                    </a>
-                    <a class="dropdown-item">
-                        <div class="item-thumbnail">
-                            <img src="<?= asset('admin/images/faces/face2.jpg') ?>" alt="image" class="profile-pic">
-                        </div>
-                        <div class="item-content flex-grow">
-                            <h6 class="ellipsis font-weight-normal">Tim Cook
-                            </h6>
-                            <p class="font-weight-light small-text text-muted mb-0">
-                                New product launch
-                            </p>
-                        </div>
-                    </a>
-                    <a class="dropdown-item">
-                        <div class="item-thumbnail">
-                            <img src="<?= asset('admin/images/faces/face3.jpg') ?>" alt="image" class="profile-pic">
-                        </div>
-                        <div class="item-content flex-grow">
-                            <h6 class="ellipsis font-weight-normal"> Johnson
-                            </h6>
-                            <p class="font-weight-light small-text text-muted mb-0">
-                                Upcoming board meeting
-                            </p>
-                        </div>
-                    </a>
-                </div>
-            </li>
             <li class="nav-item dropdown mr-4">
                 <a class="nav-link count-indicator dropdown-toggle d-flex align-items-center justify-content-center notification-dropdown"
                     id="notificationDropdown" href="#" data-toggle="dropdown">
@@ -123,12 +77,14 @@
             <li class="nav-item nav-profile dropdown">
                 <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
                     <img src="<?= asset('admin/images/faces/face5.jpg') ?>" alt="profile" />
-                    <span class="nav-profile-name">Louis Barnett</span>
+                    <?php $topbarUsuario = \Framework\Auth\Auth::usuario(); ?>
+                    <span class="nav-profile-name"><?= e($topbarUsuario->nome ?? 'Usuário') ?></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                    <a class="dropdown-item">
-                        <i class="mdi mdi-settings text-primary"></i>
-                        Settings
+                    <a class="dropdown-item"
+                        href="<?= route('admin.usuario.edit', ['id' => \Framework\Auth\Auth::id()]) ?>">
+                        <i class="mdi mdi-account-circle text-primary"></i>
+                        Meu Perfil
                     </a>
                     <form method="POST" action="<?= url('/admin/logout') ?>" class="m-0">
                         <?= csrf_field() ?>

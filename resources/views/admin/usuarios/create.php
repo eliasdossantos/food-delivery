@@ -12,50 +12,50 @@
 <?php View::start('styles'); ?>
 
 <style>
-.form-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .form-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.form-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.form-section-title::after {
-    content: '';
-    flex: 1;
-    height: 2px;
-    background: #878f96;
-    margin-left: 15px;
-}
+    .form-section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #878f96;
+        margin-left: 15px;
+    }
 
-.form-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .form-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-/* Botão de mostrar/ocultar senha */
-.btn-toggle-senha {
-    border: 1px solid #ced4da;
-    background: #fff;
-    color: #6c757d;
-}
+    /* Botão de mostrar/ocultar senha */
+    .btn-toggle-senha {
+        border: 1px solid #ced4da;
+        background: #fff;
+        color: #6c757d;
+    }
 
-.btn-toggle-senha:hover,
-.btn-toggle-senha:focus {
-    background: #f8f9fa;
-    color: #212529;
-    box-shadow: none;
-}
+    .btn-toggle-senha:hover,
+    .btn-toggle-senha:focus {
+        background: #f8f9fa;
+        color: #212529;
+        box-shadow: none;
+    }
 
-/* Com input-group, a mensagem de erro fica fora do input: força a exibição */
-.input-group:has(.is-invalid)+.invalid-feedback {
-    display: block;
-}
+    /* Com input-group, a mensagem de erro fica fora do input: força a exibição */
+    .input-group:has(.is-invalid)+.invalid-feedback {
+        display: block;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -136,7 +136,7 @@
                                         Celular
                                     </label>
                                     <input type="text"
-                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> phone_with_ddd"
+                                        class="form-control <?= hasError('celular') ? 'is-invalid' : '' ?> telefone"
                                         id="celular" name="celular" value="<?= old('celular', '') ?>"
                                         placeholder="(00) 00000-0000">
                                     <?= erroInput('celular') ?>
@@ -155,12 +155,12 @@
                                             Sem perfil
                                         </option>
                                         <?php if (!empty($perfis)): ?>
-                                        <?php foreach ($perfis as $perfil): ?>
-                                        <option value="<?= e($perfil->id) ?>"
-                                            <?= (string) old('perfil_id', '') === (string) $perfil->id ? 'selected' : '' ?>>
-                                            <?= e($perfil->nome) ?>
-                                        </option>
-                                        <?php endforeach; ?>
+                                            <?php foreach ($perfis as $perfil): ?>
+                                                <option value="<?= e($perfil->id) ?>"
+                                                    <?= (string) old('perfil_id', '') === (string) $perfil->id ? 'selected' : '' ?>>
+                                                    <?= e($perfil->nome) ?>
+                                                </option>
+                                            <?php endforeach; ?>
                                         <?php endif; ?>
                                     </select>
                                     <?= erroInput('perfil_id') ?>
@@ -422,26 +422,26 @@
 <?php View::start('scripts'); ?>
 
 <script nonce="<?= e(CSP_NONCE) ?>">
-// Mostrar/ocultar senha: um único listener delegado para todos os botões
-document.addEventListener('click', function(event) {
-    var botao = event.target.closest('[data-toggle-senha]');
-    if (!botao) {
-        return;
-    }
+    // Mostrar/ocultar senha: um único listener delegado para todos os botões
+    document.addEventListener('click', function(event) {
+        var botao = event.target.closest('[data-toggle-senha]');
+        if (!botao) {
+            return;
+        }
 
-    var campo = document.getElementById(botao.getAttribute('data-toggle-senha'));
-    var icone = botao.querySelector('i');
-    if (!campo || !icone) {
-        return;
-    }
+        var campo = document.getElementById(botao.getAttribute('data-toggle-senha'));
+        var icone = botao.querySelector('i');
+        if (!campo || !icone) {
+            return;
+        }
 
-    var mostrar = campo.type === 'password';
+        var mostrar = campo.type === 'password';
 
-    campo.type = mostrar ? 'text' : 'password';
-    icone.className = mostrar ? 'mdi mdi-eye-off' : 'mdi mdi-eye';
-    botao.setAttribute('aria-pressed', mostrar ? 'true' : 'false');
-    botao.setAttribute('title', mostrar ? 'Ocultar senha' : 'Mostrar senha');
-});
+        campo.type = mostrar ? 'text' : 'password';
+        icone.className = mostrar ? 'mdi mdi-eye-off' : 'mdi mdi-eye';
+        botao.setAttribute('aria-pressed', mostrar ? 'true' : 'false');
+        botao.setAttribute('title', mostrar ? 'Ocultar senha' : 'Mostrar senha');
+    });
 </script>
 
 <?php View::end(); ?>
