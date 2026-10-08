@@ -7,6 +7,7 @@ $menuUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 // Dashboard: só quando a URL termina em /admin. Os demais: a rota e as telas filhas.
 $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
+$menuCategoria  = str_contains($menuUri, '/admin/categoria');
 $menuClientes  = str_contains($menuUri, '/admin/cliente');
 $menuConfig    = str_contains($menuUri, '/admin/configuracoes');
 $menuPerfis    = str_contains($menuUri, '/admin/perfil');
@@ -29,6 +30,13 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             <a class="nav-link" href="<?= url('/admin/usuario') ?>">
                 <i class="mdi mdi-account-multiple menu-icon"></i>
                 <span class="menu-title">Usuários</span>
+            </a>
+        </li>
+
+        <li class="nav-item<?= $menuCategoria ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/categoria') ?>">
+                <i class="mdi mdi mdi-shape menu-icon"></i>
+                <span class="menu-title">Categorias</span>
             </a>
         </li>
 

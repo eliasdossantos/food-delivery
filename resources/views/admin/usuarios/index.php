@@ -81,7 +81,7 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
                                                 <span class="badge badge-light mt-2">Sem perfil</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td><span
+                                        <td><span style="border-radius: 5px;"
                                                 class="badge <?= e($usuario->ativo ? 'badge-success' : 'badge-secondary') ?> mt-2">
                                                 <?= e($usuario->ativo ? 'Ativo' : 'Inativo') ?>
                                             </span></td>

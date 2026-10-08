@@ -65,7 +65,7 @@ use Framework\Auth\Auth; ?>
                                         <td><?= e($cliente->endereco_bairro ?? ''); ?></td>
                                         <td><?= e($cliente->endereco_nome ?? ''); ?></td>
                                         <td><?= e($cliente->endereco_referencia ?? ''); ?></td>
-                                        <td><span
+                                        <td><span style="border-radius: 5px;"
                                                 class="badge <?= e($cliente->ativo ? 'badge-success' : 'badge-secondary') ?> mt-2">
                                                 <?= e($cliente->ativo ? 'Ativo' : 'Inativo') ?>
                                             </span></td>

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\HomeController;
 use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
@@ -79,5 +80,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [ClientesController::class, 'edit'])->name('edit');
         $r->put('/{id}', [ClientesController::class, 'update'])->name('update');
         $r->delete('/{id}', [ClientesController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área CATEGORIAS
+    $r->group(['prefix' => '/categoria', 'as' => 'categoria.'], function (Router $r) {
+
+        $r->get('', [CategoriasController::class, 'index'])->name('index');
+        $r->get('/create', [CategoriasController::class, 'create'])->name('create');
+        $r->get('/procurar', [CategoriasController::class, 'procurar'])->name('procurar');
+        $r->post('', [CategoriasController::class, 'store'])->name('store');
+        $r->get('/{id}', [CategoriasController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [CategoriasController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [CategoriasController::class, 'update'])->name('update');
+        $r->delete('/{id}', [CategoriasController::class, 'destroy'])->name('destroy');
     });
 });

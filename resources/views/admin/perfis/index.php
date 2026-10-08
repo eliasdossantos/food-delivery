@@ -50,7 +50,8 @@
                                     <tr>
                                         <td class="d-none"><?= e($p->id ?? ''); ?></td>
                                         <td><?= e($p->nome ?? ''); ?></td>
-                                        <td><span class="badge <?= e($p->ativo ? 'badge-success' : 'badge-danger') ?> mt-2">
+                                        <td><span style="border-radius: 5px;"
+                                                class="badge <?= e($p->ativo ? 'badge-success' : 'badge-danger') ?> mt-2">
                                                 <?= e($p->ativo ? 'Ativo' : 'Inativo') ?>
                                             </span></td>
                                         <td><?= dateBR(e($p->created_at ?? '')); ?></td>
