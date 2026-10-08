@@ -392,4 +392,21 @@ abstract class FormRequest
 
         return false;
     }
+
+    protected function normalizarDecimal(mixed $valor): string
+    {
+        $valor = trim((string) $valor);
+
+        if ($valor === '') {
+            return '0';
+        }
+
+        // Formato BR (tem vírgula): "2.165,65" → "2165.65"
+        if (str_contains($valor, ',')) {
+            $valor = str_replace('.', '', $valor);
+            $valor = str_replace(',', '.', $valor);
+        }
+
+        return $valor;
+    }
 }

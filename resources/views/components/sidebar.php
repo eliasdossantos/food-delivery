@@ -9,6 +9,7 @@ $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
 $menuCategorias  = str_contains($menuUri, '/admin/categoria');
 $menuExtras  = str_contains($menuUri, '/admin/extra');
+$menuMedidas  = str_contains($menuUri, '/admin/medida');
 $menuClientes  = str_contains($menuUri, '/admin/cliente');
 $menuConfig    = str_contains($menuUri, '/admin/configuracoes');
 $menuPerfis    = str_contains($menuUri, '/admin/perfil');
@@ -48,6 +49,13 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             </a>
         </li>
 
+        <li class="nav-item<?= $menuMedidas ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/medida') ?>">
+                <i class="mdi mdi-ruler menu-icon"></i>
+                <span class="menu-title">Medidas</span>
+            </a>
+        </li>
+
         <li class="nav-item<?= $menuSistema ? ' active' : '' ?>">
             <a class="nav-link" data-toggle="collapse" href="#sistema"
                 aria-expanded="<?= $menuSistema ? 'true' : 'false' ?>" aria-controls="sistema">
@@ -82,10 +90,14 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="<?= url('/admin/logout') ?>">
-                <i class="mdi mdi-logout menu-icon"></i>
-                <span class="menu-title">Sair</span>
-            </a>
+            <form method="POST" action="<?= url('/admin/logout') ?>" class="m-0">
+                <?= csrf_field() ?>
+
+                <button type="submit" class="nav-link w-100 border-0 bg-transparent text-left">
+                    <i class="mdi mdi-logout menu-icon"></i>
+                    <span class="menu-title">Sair</span>
+                </button>
+            </form>
         </li>
 
     </ul>

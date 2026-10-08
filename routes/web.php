@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\HomeController;
+use App\Http\Controllers\Web\Admin\MedidasController;
 use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
 use App\Http\Controllers\Web\Cliente\AuthController as ClienteAuthController;
@@ -107,5 +108,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [ExtrasController::class, 'edit'])->name('edit');
         $r->put('/{id}', [ExtrasController::class, 'update'])->name('update');
         $r->delete('/{id}', [ExtrasController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área MEDIDAS
+    $r->group(['prefix' => '/medida', 'as' => 'medida.'], function (Router $r) {
+
+        $r->get('', [MedidasController::class, 'index'])->name('index');
+        $r->get('/create', [MedidasController::class, 'create'])->name('create');
+        $r->get('/procurar', [MedidasController::class, 'procurar'])->name('procurar');
+        $r->post('', [MedidasController::class, 'store'])->name('store');
+        $r->get('/{id}', [MedidasController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [MedidasController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [MedidasController::class, 'update'])->name('update');
+        $r->delete('/{id}', [MedidasController::class, 'destroy'])->name('destroy');
     });
 });
