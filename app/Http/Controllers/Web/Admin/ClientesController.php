@@ -31,8 +31,6 @@ class ClientesController extends BaseController
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->clienteModel = new ClienteRepository();
         $this->enderecoModel = new EnderecoRepository();
     }

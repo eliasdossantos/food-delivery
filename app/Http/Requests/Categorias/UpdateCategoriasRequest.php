@@ -54,7 +54,7 @@ class UpdateCategoriasRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome'           => 'required|min:2|max:100',
+            'nome'           => 'nullable|min:2|max:100|unique:categorias,nome,{id}',
             'slug'           => 'nullable|max:120',
             'descricao'      => 'nullable|max:500',
             'icone'          => 'nullable|max:50',

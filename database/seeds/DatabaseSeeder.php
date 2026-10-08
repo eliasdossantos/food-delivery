@@ -11,5 +11,6 @@ return [
     UsuarioSeeder::class,
     ClienteSeeder::class,
     EnderecoClienteSeeder::class,
-    CategoriaSeeder::class
+    CategoriaSeeder::class,
+    ExtraSeeder::class
 ];

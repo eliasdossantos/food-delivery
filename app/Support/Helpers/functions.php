@@ -350,6 +350,38 @@ function tempoRelativo(string|\DateTimeInterface|null $data): string
     return $futuro ? "em {$texto}" : "{$texto} atrás";
 }
 
+// ── Moeda ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Formata um valor monetário para o padrão brasileiro.
+ *
+ * Exemplos:
+ *   5           → R$ 5,00
+ *   5.5         → R$ 5,50
+ *   1234.56     → R$ 1.234,56
+ *   0           → R$ 0,00
+ *   null        → —
+ *
+ * Aceita valores numéricos ou strings numéricas.
+ */
+function moedaBR(int|float|string|null $valor): string
+{
+    if ($valor === null || $valor === '') {
+        return '—';
+    }
+
+    if (!is_numeric($valor)) {
+        return '—';
+    }
+
+    return 'R$ ' . number_format(
+        (float) $valor,
+        2,
+        ',',
+        '.'
+    );
+}
+
 // ── Números ───────────────────────────────────────────────────────────────────
 
 function formatBytes(int $bytes, int $precision = 1): string

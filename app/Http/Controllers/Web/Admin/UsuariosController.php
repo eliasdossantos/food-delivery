@@ -50,8 +50,6 @@ class UsuariosController extends BaseController
 
     public function __construct()
     {
-        parent::__construct();
-
         $this->usuarioModel = new UsuarioRepository();
         $this->perfilRepository = new PerfilRepository();
     }
@@ -63,7 +61,7 @@ class UsuariosController extends BaseController
     public function index(): void
     {
         $data = [
-            'titulo' => 'Food Delivery',
+            'titulo' => "Usuários",
             'subtitulo' => 'Home da área restrita',
             'tituloTabela' => 'Lista de Usuários',
             'usuarios' => $this->usuarioModel->tudoComPerfil()

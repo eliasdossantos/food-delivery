@@ -3,93 +3,95 @@
 namespace App\Http\Controllers\Web\Admin;
 
 use App\Http\Controllers\Web\BaseController;
-use App\Http\Requests\Categorias\StoreCategoriasRequest;
-use App\Http\Requests\Categorias\UpdateCategoriasRequest;
-use App\Repositories\CategoriaRepository;
+use App\Http\Requests\Extras\StoreExtrasRequest;
+use App\Http\Requests\Extras\UpdateExtrasRequest;
+use App\Repositories\ExtraRepository;
 use Framework\Support\Session;
 
 /**
- * CategoriasController
+ * ExtrasController
  * ─────────────────────────────────────────────────────────────────────────────
- * Responsável por receber as requisições HTTP, delegar para o Repository
- * e retornar a resposta adequada (View ou redirect).
+ * Responsável por receber as requisições HTTP, delegar para o Service/Repository
+ * e retornar a resposta adequada (View ou JSON).
  *
  * Regra: controllers devem ser finos.
- * Acesso a dados → Repository
+ * Lógica de negócio → Service | Acesso a dados → Repository
  *
- * Upload de imagem:
- *   Os arquivos ficam em public/uploads/categorias/ e no banco (imagem_url)
- *   salvamos SOMENTE o nome do arquivo. A URL é montada na view com
- *   uploadUrl('categorias', $categoria->imagem_url).
+ * Upload de arquivo (se o Model tiver algum campo de arquivo):
+ *   Os blocos de upload em store()/update() estão comentados por padrão.
+ *   Descomente e ajuste o nome do campo (ex: 'imagem', 'avatar', 'anexo').
+ *   Ver Framework\Support\Upload e BaseController::saveUploadedFile()/replaceUploadedFile()
+ *   para detalhes.
  */
-class CategoriasController extends BaseController
+class ExtrasController extends BaseController
 {
-    /** Entidade (subpasta) dos uploads de categoria */
-    private const UPLOAD_ENTITY = 'categorias';
+    /** Entidade (subpasta) dos uploads de extra */
+    private const UPLOAD_ENTITY = 'extras';
 
     /** Tamanho máximo da imagem, em MB */
     private const UPLOAD_MAX_MB = 5;
 
-    private CategoriaRepository $categoriaModel;
+    private ExtraRepository $extrasModel;
 
     public function __construct()
     {
-        $this->categoriaModel = new CategoriaRepository();
+        // Inicialize dependências aqui
+        $this->extrasModel = new ExtraRepository();
     }
 
     /**
      * Lista todos os registros.
-     * GET /categorias
+     * GET /extras
      */
     public function index(): void
     {
         $data = [
-            'titulo'       => 'Categorias',
-            'tituloTabela' => 'Lista das Categorias',
-            'categorias'   => $this->categoriaModel->getOrdenadas(),
+            'titulo' => 'Extras',
+            'tituloTabela' => 'Lista os Extras',
+            'extras' => $this->extrasModel->all(),
         ];
 
-        $this->view('admin.categorias.index', $data, 'main');
+        $this->view('admin.extras.index', $data, 'main');
     }
 
     /**
      * Exibe um registro específico.
-     * GET /categorias/{id}
+     * GET /extras/{id}
      */
     public function show(int $id): void
     {
-        $categoria = $this->categoriaModel->findById($id);
-        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
+        $extras = $this->extrasModel->findById($id);
+        $this->abortUnless((bool) $extras, 404, 'Extra não encontrado.');
 
         $data = [
-            'titulo'    => 'Categorias',
-            'subtitulo' => 'Detalhes da Categoria',
-            'categoria' => $categoria,
+            'titulo'    => 'Extras',
+            'subtitulo' => 'Detalhes do Extra',
+            'extras' => $extras,
         ];
 
-        $this->view('admin.categorias.show', $data, 'main');
+        $this->view('admin.extras.show', $data, 'main');
     }
 
     /**
      * Exibe o formulário de criação.
-     * GET /categorias/create
+     * GET /extras/create
      */
     public function create(): void
     {
         $data = [
-            'titulo'    => 'Nova Categoria',
-            'subtitulo' => 'Criar nova Categoria',
+            'titulo'    => 'Nova Extra',
+            'subtitulo' => 'Criar novo Extra',
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.categorias.create', $data, 'main');
+        $this->view('admin.extras.create', $data, 'main');
     }
 
     /**
      * Processa a criação de um novo registro.
-     * POST /categorias
+     * POST /extras
      */
-    public function store(StoreCategoriasRequest $request): void
+    public function store(StoreExtrasRequest $request): void
     {
         if ($request->fails()) {
             Session::flash('error', $request->firstError());
@@ -103,7 +105,7 @@ class CategoriasController extends BaseController
         $data = $this->prepararDados($request->validated());
 
         // Slug: o digitado ou, em branco, gerado a partir do nome (sempre único)
-        $data['slug'] = $this->categoriaModel->gerarSlugUnico(
+        $data['slug'] = $this->extrasModel->gerarSlugUnico(
             $data['slug'] !== '' ? $data['slug'] : $data['nome']
         );
 
@@ -129,7 +131,7 @@ class CategoriasController extends BaseController
             $data['imagem_url'] = $nomeArquivo;
         }
 
-        $id = $this->categoriaModel->create($data);
+        $id = $this->extrasModel->create($data);
 
         if (!$id) {
             // Não deixa arquivo órfão em public/uploads se o registro não foi criado
@@ -137,37 +139,37 @@ class CategoriasController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível criar a categoria.');
+            $this->redirectWith('admin/extra', 'error', 'Não foi possível criar o extra.');
             return;
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria criada com sucesso!');
+        $this->redirectWith('admin/extra', 'success', 'Extra criado com sucesso!');
     }
 
     /**
      * Exibe o formulário de edição.
-     * GET /categorias/{id}/edit
+     * GET /extras/{id}/edit
      */
     public function edit(int $id): void
     {
-        $categoria = $this->categoriaModel->findById($id);
-        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
+        $extras = $this->extrasModel->findById($id);
+        $this->abortUnless((bool) $extras, 404, 'Extra não encontrado.');
 
         $data = [
-            'titulo'    => 'Editar Categoria',
-            'subtitulo' => 'Editar Categoria',
-            'categoria' => $categoria,
+            'titulo'    => 'Editar Extra',
+            'subtitulo' => 'Editar Extra',
+            'extras' => $extras,
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.categorias.edit', $data, 'main');
+        $this->view('admin.extras.edit', $data, 'main');
     }
 
     /**
      * Processa a atualização de um registro.
-     * PUT /categorias/{id}
+     * PUT /extras/{id}
      */
-    public function update(UpdateCategoriasRequest $request, int $id): void
+    public function update(UpdateExtrasRequest $request, int $id): void
     {
         if ($request->fails()) {
             Session::flash('error', $request->firstError());
@@ -178,14 +180,14 @@ class CategoriasController extends BaseController
             return;
         }
 
-        $categoria = $this->categoriaModel->findById($id);
-        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
+        $extras = $this->extrasModel->findById($id);
+        $this->abortUnless((bool) $extras, 404, 'Extras não encontrado.');
 
         $data = $this->prepararDados($request->validated());
 
         // Slug: o digitado ou, em branco, gerado a partir do nome.
-        // Passa o $id para a categoria não conflitar consigo mesma.
-        $data['slug'] = $this->categoriaModel->gerarSlugUnico(
+        // Passa o $id para a extra não conflitar consigo mesma.
+        $data['slug'] = $this->extrasModel->gerarSlugUnico(
             $data['slug'] !== '' ? $data['slug'] : $data['nome'],
             $id
         );
@@ -194,7 +196,7 @@ class CategoriasController extends BaseController
         // O arquivo antigo só é apagado se o novo for salvo com sucesso.
         // Sem arquivo novo, imagem_url não entra em $data e a atual é mantida.
         if (!empty($_FILES['imagem']['name'])) {
-            $nomeAntigo = $this->nomeArquivoLocal($categoria->imagem_url ?? null);
+            $nomeAntigo = $this->nomeArquivoLocal($extras->imagem_url ?? null);
 
             $nomeNovo = $this->replaceUploadedFile(
                 $_FILES['imagem'],
@@ -215,44 +217,44 @@ class CategoriasController extends BaseController
             $data['imagem_url'] = $nomeNovo;
         }
 
-        $atualizada = $this->categoriaModel->update($id, $data);
+        $atualizada = $this->extrasModel->update($id, $data);
 
         if (!$atualizada) {
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível atualizar a categoria.');
+            $this->redirectWith('admin/extra', 'error', 'Não foi possível atualizar o extra.');
             return;
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria atualizada com sucesso!');
+        $this->redirectWith('admin/extra', 'success', 'Extra atualizado com sucesso!');
     }
 
     /**
      * Remove um registro.
-     * DELETE /categorias/{id}
+     * DELETE /extras/{id}
      */
     public function destroy(int $id): void
     {
-        $categoria = $this->categoriaModel->findById($id);
-        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
+        $extras = $this->extrasModel->findById($id);
+        $this->abortUnless((bool) $extras, 404, 'Extra não encontrado.');
 
-        if (!$this->categoriaModel->delete($id)) {
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível remover a categoria.');
+        if (!$this->extrasModel->delete($id)) {
+            $this->redirectWith('admin/extra', 'error', 'Não foi possível remover o extra.');
             return;
         }
 
         // Apaga a imagem junto (evita lixo em public/uploads)
-        $nomeArquivo = $this->nomeArquivoLocal($categoria->imagem_url ?? null);
+        $nomeArquivo = $this->nomeArquivoLocal($extras->imagem_url ?? null);
 
         if ($nomeArquivo !== null) {
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria removida com sucesso.');
+        $this->redirectWith('admin/extra', 'success', 'Extra removido com sucesso.');
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────
 
     /**
-     * Monta o array final com os campos da categoria, já com os tipos corretos.
+     * Monta o array final com os campos da extra, já com os tipos corretos.
      * Os checkboxes (ativo/destaque) chegam como "0" ou "1" por causa do
      * <input type="hidden"> que vem antes de cada checkbox nas views.
      */
@@ -262,7 +264,7 @@ class CategoriasController extends BaseController
             'nome'           => trim((string) ($input['nome'] ?? '')),
             'slug'           => trim((string) ($input['slug'] ?? '')),
             'descricao'      => trim((string) ($input['descricao'] ?? '')),
-            'icone'          => trim((string) ($input['icone'] ?? '')),
+            'preco'          => (float) ($input['preco'] ?? 0),
             'ordem_exibicao' => max(1, (int) ($input['ordem_exibicao'] ?? 1)),
             'ativo'          => !empty($input['ativo']) ? 1 : 0,
             'destaque'       => !empty($input['destaque']) ? 1 : 0,

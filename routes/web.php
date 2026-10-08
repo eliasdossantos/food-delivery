@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
+use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\HomeController;
 use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
@@ -93,5 +94,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [CategoriasController::class, 'edit'])->name('edit');
         $r->put('/{id}', [CategoriasController::class, 'update'])->name('update');
         $r->delete('/{id}', [CategoriasController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área EXTRAS
+    $r->group(['prefix' => '/extra', 'as' => 'extra.'], function (Router $r) {
+
+        $r->get('', [ExtrasController::class, 'index'])->name('index');
+        $r->get('/create', [ExtrasController::class, 'create'])->name('create');
+        $r->get('/procurar', [ExtrasController::class, 'procurar'])->name('procurar');
+        $r->post('', [ExtrasController::class, 'store'])->name('store');
+        $r->get('/{id}', [ExtrasController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [ExtrasController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [ExtrasController::class, 'update'])->name('update');
+        $r->delete('/{id}', [ExtrasController::class, 'destroy'])->name('destroy');
     });
 });

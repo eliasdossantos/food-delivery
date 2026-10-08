@@ -6,9 +6,9 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
-<?php View::start('title'); ?>
+<?php View::start('titulo'); ?>
 
-<?= e($title ?? 'Usuarios') ?> | Admin
+<?= e($titulo ?? 'Usuários') ?>
 
 <?php View::end(); ?>
 

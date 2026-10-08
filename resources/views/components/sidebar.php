@@ -7,7 +7,8 @@ $menuUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 // Dashboard: só quando a URL termina em /admin. Os demais: a rota e as telas filhas.
 $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
-$menuCategoria  = str_contains($menuUri, '/admin/categoria');
+$menuCategorias  = str_contains($menuUri, '/admin/categoria');
+$menuExtras  = str_contains($menuUri, '/admin/extra');
 $menuClientes  = str_contains($menuUri, '/admin/cliente');
 $menuConfig    = str_contains($menuUri, '/admin/configuracoes');
 $menuPerfis    = str_contains($menuUri, '/admin/perfil');
@@ -33,10 +34,17 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             </a>
         </li>
 
-        <li class="nav-item<?= $menuCategoria ? ' active' : '' ?>">
+        <li class="nav-item<?= $menuCategorias ? ' active' : '' ?>">
             <a class="nav-link" href="<?= url('/admin/categoria') ?>">
-                <i class="mdi mdi mdi-shape menu-icon"></i>
+                <i class="mdi mdi-shape menu-icon"></i>
                 <span class="menu-title">Categorias</span>
+            </a>
+        </li>
+
+        <li class="nav-item<?= $menuExtras ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/extra') ?>">
+                <i class="mdi mdi-plus-circle-outline menu-icon"></i>
+                <span class="menu-title">Extras</span>
             </a>
         </li>
 
