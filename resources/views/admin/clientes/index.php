@@ -29,10 +29,10 @@ use Framework\Auth\Auth; ?>
                     <i class="mdi mdi-plus"></i>
                     Cadastrar Cliente
                 </a>
-
                 <div class="ui-widget mb-3">
-                    <input id="query" name="query" class="form-control bg-light"
-                        placeholder="Digite o nome ou CPF do cliente">
+                    <input id="query" class="form-control bg-light" placeholder="Digite o nome do cliente ou cpf"
+                        data-busca-url="<?= e(route('admin.cliente.procurar')) ?>"
+                        data-busca-destino="<?= e(route('admin.cliente.index')) ?>">
                 </div>
 
                 <div class="table-responsive">
@@ -107,39 +107,6 @@ use Framework\Auth\Auth; ?>
 <?php View::start('scripts'); ?>
 
 <script src="<?= asset('admin/vendors/auto-complete/jquery-ui.js') ?>"></script>
-
-<script nonce="<?= e(CSP_NONCE) ?>">
-    $(function() {
-        $("#query").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "<?= route('admin.cliente.procurar') ?>",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function(data) {
-                        if (data.length < 1) {
-                            var data = [{
-                                label: 'Nenhum resultado encontrado',
-                                value: -1
-                            }];
-                        }
-                        response(data);
-                    },
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                if (ui.item.value == -1) {
-                    $(this).val("");
-                    return false;
-                } else {
-                    window.location.href = "<?= route('admin.cliente.index') ?>/" + ui.item.id
-                }
-            }
-        });
-    });
-</script>
+<script src="<?= asset('admin/js/busca-nome.js') ?>"></script>
 
 <?php View::end(); ?>

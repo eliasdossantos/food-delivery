@@ -13,5 +13,6 @@ return [
     EnderecoClienteSeeder::class,
     CategoriaSeeder::class,
     ExtraSeeder::class,
-    MedidaSeeder::class
+    MedidaSeeder::class,
+    ProdutoSeeder::class
 ];

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Framework\Database\Repository;
 use App\Models\ClienteModel;
 use App\Models\EnderecoClienteModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * ClienteRepository
@@ -24,6 +25,8 @@ use App\Models\EnderecoClienteModel;
  */
 class ClienteRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = ClienteModel::class;
 
@@ -241,42 +244,6 @@ class ClienteRepository extends Repository
                 )'
             )
             ->orderBy('clientes.nome')
-            ->get();
-    }
-
-    /**
-     * Busca clientes pelo nome para autocomplete/select.
-     */
-    public function procurar(?string $term): array
-    {
-        $term = trim((string) $term);
-
-        if ($term === '') {
-            return [];
-        }
-
-        $bindings = [
-            'termo_nome' => "%{$term}%",
-            'termo_cpf'  => "%{$term}%",
-        ];
-
-        $sql = '(nome LIKE :termo_nome OR cpf LIKE :termo_cpf';
-
-        // Quem digita só os números ("12345678900") também encontra um CPF
-        // gravado com máscara ("123.456.789-00").
-        $digitos = preg_replace('/\D/', '', $term);
-
-        if ($digitos !== '') {
-            $sql .= " OR REPLACE(REPLACE(cpf, '.', ''), '-', '') LIKE :termo_digitos";
-            $bindings['termo_digitos'] = "%{$digitos}%";
-        }
-
-        $sql .= ')';
-
-        return $this->model()
-            ->select('id', 'nome', 'cpf')
-            ->whereRaw($sql, $bindings)
-            ->orderBy('nome')
             ->get();
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Requests\Usuarios\StoreUsuariosRequest;
 use App\Http\Requests\Usuarios\UpdateUsuariosRequest;
 use App\Repositories\PerfilRepository;
 use App\Repositories\UsuarioRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Auth\Auth;
 use Framework\Support\Session;
 
@@ -362,22 +363,15 @@ class UsuariosController extends BaseController
         $this->redirectWith('admin/usuario', 'success', 'Usuário removido com sucesso.');
     }
 
+    /**
+     * Autocomplete por nome.
+     * GET /usuario/procurar?term=...
+     */
     public function procurar(): never
     {
-        $term = $this->request->get('term', '');
+        $service = new BuscaNomeService($this->usuarioModel);
 
-        $usuarios = $this->usuarioModel->procurar($term);
-
-        $resultados = [];
-
-        foreach ($usuarios as $usuario) {
-            $resultados[] = [
-                'id'    => $usuario->id,
-                'value' => $usuario->nome,
-            ];
-        }
-
-        $this->json($resultados);
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

@@ -99,8 +99,10 @@ class UpdateExtrasRequest extends FormRequest
                 Request::sanitizeValue($this->input['descricao'] ?? '')
             ),
 
-            'preco' => trim(
-                str_replace(',', '.', $this->input['preco'] ?? '0')
+            'preco' => str_replace(
+                ',',
+                '.',
+                str_replace('.', '', trim($this->input['preco'] ?? '0'))
             ),
 
             'icone' => strtolower(

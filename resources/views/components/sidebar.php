@@ -8,6 +8,7 @@ $menuUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
 $menuCategorias  = str_contains($menuUri, '/admin/categoria');
+$menuProdutos  = str_contains($menuUri, '/admin/produto');
 $menuExtras  = str_contains($menuUri, '/admin/extra');
 $menuMedidas  = str_contains($menuUri, '/admin/medida');
 $menuClientes  = str_contains($menuUri, '/admin/cliente');
@@ -39,6 +40,13 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             <a class="nav-link" href="<?= url('/admin/categoria') ?>">
                 <i class="mdi mdi-shape menu-icon"></i>
                 <span class="menu-title">Categorias</span>
+            </a>
+        </li>
+
+        <li class="nav-item<?= $menuProdutos ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/produto') ?>">
+                <i class="mdi mdi-package-variant-closed menu-icon"></i>
+                <span class="menu-title">Produtos</span>
             </a>
         </li>
 

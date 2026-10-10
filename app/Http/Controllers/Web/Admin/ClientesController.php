@@ -7,6 +7,7 @@ use App\Http\Requests\Clientes\StoreClientesRequest;
 use App\Http\Requests\Clientes\UpdateClientesRequest;
 use App\Repositories\ClienteRepository;
 use App\Repositories\EnderecoRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -239,25 +240,15 @@ class ClientesController extends BaseController
         $this->redirectWith('admin/cliente', 'success', 'Cliente removido com sucesso.');
     }
 
+    /**
+     * Autocomplete por nome.
+     * GET /usuario/procurar?term=...
+     */
     public function procurar(): never
     {
-        $term = $this->request->get('term', '');
+        $service = new BuscaNomeService($this->clienteModel);
 
-        $clientes = $this->clienteModel->procurar($term);
-
-        $resultados = [];
-
-        foreach ($clientes as $cliente) {
-            $resultados[] = [
-                'id'    => $cliente->id,
-                'label' => $cliente->cpf
-                    ? "{$cliente->nome} — {$cliente->cpf}"
-                    : $cliente->nome,
-                'value' => $cliente->nome,
-            ];
-        }
-
-        $this->json($resultados);
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

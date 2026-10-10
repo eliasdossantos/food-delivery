@@ -39,7 +39,9 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
                 <?php endif; ?>
 
                 <div class="ui-widget mb-3">
-                    <input id="query" name="query" class="form-control bg-light" placeholder="Digite o nome do usuário">
+                    <input id="query" class="form-control bg-light" placeholder="Digite o nome do usuário"
+                        data-busca-url="<?= e(route('admin.usuario.procurar')) ?>"
+                        data-busca-destino="<?= e(route('admin.usuario.index')) ?>">
                 </div>
 
                 <div class="table-responsive">
@@ -185,39 +187,6 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
 <?php View::start('scripts'); ?>
 
 <script src="<?= asset('admin/vendors/auto-complete/jquery-ui.js') ?>"></script>
-
-<script nonce="<?= e(CSP_NONCE) ?>">
-    $(function() {
-        $("#query").autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "<?= route('admin.usuario.procurar') ?>",
-                    dataType: "json",
-                    data: {
-                        term: request.term
-                    },
-                    success: function(data) {
-                        if (data.length < 1) {
-                            var data = [{
-                                label: 'Nenhum resultado encontrado',
-                                value: -1
-                            }];
-                        }
-                        response(data);
-                    },
-                });
-            },
-            minLength: 1,
-            select: function(event, ui) {
-                if (ui.item.value == -1) {
-                    $(this).val("");
-                    return false;
-                } else {
-                    window.location.href = "<?= route('admin.usuario.index') ?>/" + ui.item.id
-                }
-            }
-        });
-    });
-</script>
+<script src="<?= asset('admin/js/busca-nome.js') ?>"></script>
 
 <?php View::end(); ?>

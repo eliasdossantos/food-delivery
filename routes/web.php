@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\HomeController;
 use App\Http\Controllers\Web\Admin\MedidasController;
 use App\Http\Controllers\Web\Admin\PerfisController;
+use App\Http\Controllers\Web\Admin\ProdutosController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
 use App\Http\Controllers\Web\Cliente\AuthController as ClienteAuthController;
 use App\Http\Controllers\Web\Cliente\HomeController as ClienteHomeController;
@@ -121,5 +122,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [MedidasController::class, 'edit'])->name('edit');
         $r->put('/{id}', [MedidasController::class, 'update'])->name('update');
         $r->delete('/{id}', [MedidasController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área PRODUTOS
+    $r->group(['prefix' => '/produto', 'as' => 'produto.'], function (Router $r) {
+
+        $r->get('', [ProdutosController::class, 'index'])->name('index');
+        $r->get('/create', [ProdutosController::class, 'create'])->name('create');
+        $r->get('/procurar', [ProdutosController::class, 'procurar'])->name('procurar');
+        $r->post('', [ProdutosController::class, 'store'])->name('store');
+        $r->get('/{id}', [ProdutosController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [ProdutosController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [ProdutosController::class, 'update'])->name('update');
+        $r->delete('/{id}', [ProdutosController::class, 'destroy'])->name('destroy');
     });
 });

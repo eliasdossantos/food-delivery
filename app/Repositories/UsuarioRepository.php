@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\UsuarioModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * UsuarioRepository
@@ -12,6 +13,8 @@ use App\Models\UsuarioModel;
  */
 class UsuarioRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     protected string $modelClass = UsuarioModel::class;
 
     public function findByEmail(string $email): object|false
@@ -88,20 +91,6 @@ class UsuarioRepository extends Repository
             )
             ->leftJoin('perfis', 'usuarios.perfil_id', '=', 'perfis.id')
             ->orderBy('usuarios.nome')
-            ->get();
-    }
-
-    public function procurar(?string $term): array
-    {
-        $term = trim((string) $term);
-
-        if ($term === '') {
-            return [];
-        }
-
-        return $this->model()
-            ->select('id', 'nome')
-            ->where('nome', "%{$term}%", 'LIKE')
             ->get();
     }
 }
