@@ -61,6 +61,9 @@ class StoreCategoriasRequest extends FormRequest
             'ordem_exibicao' => 'nullable|integer',
             'ativo'          => 'required|in:0,1',
             'destaque'       => 'required|in:0,1',
+
+            // Arquivo (imagem_url é tratado no controller)
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif',
         ];
     }
 
@@ -84,6 +87,9 @@ class StoreCategoriasRequest extends FormRequest
 
             'destaque.required' => 'O destaque da categoria é obrigatório.',
             'destaque.in'       => 'O destaque da categoria deve ser "Sim" ou "Não".',
+
+            'imagem.image' => 'O arquivo enviado deve ser uma imagem válida.',
+            'imagem.mimes' => 'A imagem deve estar nos formatos JPG, JPEG, PNG, WEBP ou GIF.',
         ];
     }
 

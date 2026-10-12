@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\BaseController;
 use App\Http\Requests\Perfis\StorePerfisRequest;
 use App\Http\Requests\Perfis\UpdatePerfisRequest;
 use App\Repositories\PerfilRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -176,5 +177,16 @@ class PerfisController extends BaseController
         $this->perfilModel->delete($id);
 
         $this->redirectWith('admin/perfil', 'success', 'Perfil removido com sucesso.');
+    }
+
+    /**
+     * Autocomplete por nome.
+     * GET /perfis/procurar?term=...
+     */
+    public function procurar(): never
+    {
+        $service = new BuscaNomeService($this->perfilModel);
+
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 }

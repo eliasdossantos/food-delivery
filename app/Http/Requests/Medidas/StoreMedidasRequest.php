@@ -49,10 +49,11 @@ class StoreMedidasRequest extends FormRequest
 
             'unidade'        => 'nullable|max:20',
 
-            'imagem_url'     => 'nullable|max:250',
-
             'ativo'          => 'required|in:0,1',
             'ordem_exibicao' => 'nullable|integer',
+
+            // Arquivo (imagem_url é tratado no controller)
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif',
         ];
     }
 
@@ -78,6 +79,9 @@ class StoreMedidasRequest extends FormRequest
 
             'ordem_exibicao.integer' =>
             'A ordem de exibição deve ser um número inteiro.',
+
+            'imagem.image' => 'O arquivo enviado deve ser uma imagem válida.',
+            'imagem.mimes' => 'A imagem deve estar nos formatos JPG, JPEG, PNG, WEBP ou GIF.',
         ];
     }
 

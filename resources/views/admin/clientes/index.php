@@ -11,7 +11,6 @@ use Framework\Auth\Auth; ?>
 <!-- Aqui enviamos para o template principal os estilos -->
 
 <?php View::start('styles'); ?>
-<link rel="stylesheet" href="<?= asset('admin/vendors/auto-complete/jquery-ui.css') ?>">
 <?php View::end(); ?>
 
 
@@ -105,8 +104,4 @@ use Framework\Auth\Auth; ?>
 <!-- Aqui enviamos para o template principal os scripts -->
 
 <?php View::start('scripts'); ?>
-
-<script src="<?= asset('admin/vendors/auto-complete/jquery-ui.js') ?>"></script>
-<script src="<?= asset('admin/js/busca-nome.js') ?>"></script>
-
 <?php View::end(); ?>

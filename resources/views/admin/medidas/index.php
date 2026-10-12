@@ -33,6 +33,11 @@
                 </a>
             </div>
             <div class="card-body">
+                <div class="ui-widget mb-3">
+                    <input id="query" class="form-control bg-light" placeholder="Digite o nome da medida das categoria"
+                        data-busca-url="<?= e(route('admin.medida.procurar')) ?>"
+                        data-busca-destino="<?= e(route('admin.medida.index')) ?>">
+                </div>
                 <div class="table-responsive">
                     <table id="table-BR" class="table table-striped table-hover">
                         <thead>

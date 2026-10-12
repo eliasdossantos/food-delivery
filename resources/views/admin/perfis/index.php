@@ -33,6 +33,11 @@
                 </a>
             </div>
             <div class="card-body">
+                <div class="ui-widget mb-3">
+                    <input id="query" class="form-control bg-light" placeholder="Digite o nome do Perfil"
+                        data-busca-url="<?= e(route('admin.perfil.procurar')) ?>"
+                        data-busca-destino="<?= e(route('admin.perfil.index')) ?>">
+                </div>
                 <div class="table-responsive">
                     <table id="table-BR" class="table table-striped table-hover">
                         <thead>

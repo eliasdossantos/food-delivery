@@ -350,6 +350,51 @@ function tempoRelativo(string|\DateTimeInterface|null $data): string
     return $futuro ? "em {$texto}" : "{$texto} atrás";
 }
 
+/**
+ * Converte minutos em uma descrição legível.
+ *
+ * Exemplos:
+ *   1    → 1 minuto
+ *   23   → 23 minutos
+ *   60   → 1 hora
+ *   120  → 2 horas
+ *   354  → 5 horas e 54 minutos
+ *   1252 → 20 horas e 52 minutos
+ *
+ * Retorna string vazia para valores nulos ou inválidos.
+ */
+function descreverMinutos(int|string|null $minutos): string
+{
+    if ($minutos === null || $minutos === '' || !is_numeric($minutos)) {
+        return '';
+    }
+
+    $minutos = (int) $minutos;
+
+    if ($minutos < 0) {
+        return '';
+    }
+
+    if ($minutos === 0) {
+        return '0 minutos';
+    }
+
+    $horas = intdiv($minutos, 60);
+    $resto = $minutos % 60;
+
+    $partes = [];
+
+    if ($horas > 0) {
+        $partes[] = $horas . ' ' . ($horas === 1 ? 'hora' : 'horas');
+    }
+
+    if ($resto > 0) {
+        $partes[] = $resto . ' ' . ($resto === 1 ? 'minuto' : 'minutos');
+    }
+
+    return implode(' e ', $partes);
+}
+
 // ── Moeda ─────────────────────────────────────────────────────────────────────
 
 /**

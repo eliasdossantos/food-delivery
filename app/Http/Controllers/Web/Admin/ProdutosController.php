@@ -7,6 +7,7 @@ use App\Http\Requests\Produtos\StoreProdutosRequest;
 use App\Http\Requests\Produtos\UpdateProdutosRequest;
 use App\Repositories\CategoriaRepository;
 use App\Repositories\ProdutoRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -56,7 +57,7 @@ class ProdutosController extends BaseController
         $data = [
             'titulo' => 'Produtos',
             'subtitulo' => 'Lista de produtos',
-            'produtos' => $this->produtoModel->all(),
+            'produtos' => $this->produtoModel->tudoComCategoria(),
         ];
 
         $this->view('admin.produtos.index', $data, 'main');
@@ -68,13 +69,14 @@ class ProdutosController extends BaseController
      */
     public function show(int $id): void
     {
-        $produtos = $this->produtoModel->findById($id);
-        $this->abortUnless((bool)$produtos, 404, 'Produto não encontrada.');
+        // findComCategoria traz também categoria_nome
+        $produtos = $this->produtoModel->findComCategoria($id);
+        $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         $data = [
-            'titulo' => 'Produtos',
+            'titulo'    => 'Produtos',
             'subtitulo' => 'Detalhes do Produto',
-            'produtos' => $produtos,
+            'produtos'  => $produtos,
         ];
 
         $this->view('admin.produtos.show', $data, 'main');
@@ -89,6 +91,7 @@ class ProdutosController extends BaseController
         $data = [
             'titulo' => 'Novo Produtos',
             'subtitulo' => 'Criar novo Produtos',
+            'categorias'  => $this->categoriasDisponiveis(),
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
@@ -110,12 +113,26 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $data = $request->validated();
+        $data = $this->normalizarCategoria($request->validated());
+
+        if (!$this->categoriaPermitida($data['categoria_id'])) {
+            Session::flash('error', 'A categoria selecionada é inválida ou está inativa.');
+            Session::flashErrors(['categoria_id' => ['Categoria inválida.']]);
+            Session::flashInput($request->all());
+
+            $this->back();
+            return;
+        }
 
         // Slug: o digitado ou, em branco, gerado a partir do nome (sempre único)
-        $data['slug'] = $this->produtoModel->gerarSlugUnico(
-            $data['slug'] !== '' ? $data['slug'] : $data['nome']
-        );
+        $slug = trim((string) ($data['slug'] ?? ''));
+        $data['slug'] = $this->produtoModel->gerarSlugUnico($slug !== '' ? $slug : $data['nome']);
+
+        // Código (SKU): o digitado ou, em branco, gerado a partir do nome
+        $codigo = trim((string) ($data['codigo'] ?? ''));
+        $data['codigo'] = $codigo !== ''
+            ? $codigo
+            : $this->produtoModel->gerarCodigoUnico($data['nome']);
 
         // ── Upload de arquivo ───────────
         $nomeArquivo = null;
@@ -159,14 +176,15 @@ class ProdutosController extends BaseController
      */
     public function edit(int $id): void
     {
-        $produtos = $this->produtoModel->findById($id);
-        $this->abortUnless((bool)$produtos, 404, 'Produto não encontrado.');
+        $produtos = $this->produtoModel->findComCategoria($id);
+        $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         $data = [
-            'titulo'    => 'Produto',
-            'subtitulo' => 'Editar Produto',
-            'produtos' => $produtos,
+            'titulo'      => 'Produto',
+            'subtitulo'   => 'Editar Produto',
+            'produtos'    => $produtos,
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
+            'categorias'  => $this->categoriasDisponiveis($produtos->categoria_id ?? null),
         ];
 
         $this->view('admin.produtos.edit', $data, 'main');
@@ -190,14 +208,36 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $data = $request->validated();
+        $data = $this->normalizarCategoria($request->validated());
 
-        // Slug: o digitado ou, em branco, gerado a partir do nome.
-        // Passa o $id para a Produto não conflitar consigo mesma.
+        // Mantém a categoria atual mesmo se ela estiver inativa; só valida se mudou
+        $atual = isset($produtos->categoria_id) ? (int) $produtos->categoria_id : null;
+
+        if (!$this->categoriaPermitida($data['categoria_id'], $atual)) {
+            Session::flash('error', 'A categoria selecionada é inválida ou está inativa.');
+            Session::flashErrors(['categoria_id' => ['Categoria inválida.']]);
+            Session::flashInput($request->all());
+
+            $this->back();
+            return;
+        }
+
+        $slug = trim((string) ($data['slug'] ?? ''));
         $data['slug'] = $this->produtoModel->gerarSlugUnico(
-            $data['slug'] !== '' ? $data['slug'] : $data['nome'],
+            $slug !== '' ? $slug : $data['nome'],
             $id
         );
+
+        // Código (SKU): o digitado; em branco, mantém o atual (ou gera, se o produto não tinha)
+        $codigo = trim((string) ($data['codigo'] ?? ''));
+
+        if ($codigo === '') {
+            $codigo = ($produtos->codigo ?? '') !== ''
+                ? $produtos->codigo
+                : $this->produtoModel->gerarCodigoUnico($data['nome'], $id);
+        }
+
+        $data['codigo'] = $codigo;
 
         // ── Upload de arquivo ───────────
         if (!empty($_FILES['imagem']['name'])) {
@@ -256,6 +296,17 @@ class ProdutosController extends BaseController
     }
 
     /**
+     * Autocomplete por nome.
+     * GET /produtos/procurar?term=...
+     */
+    public function procurar(): never
+    {
+        $service = new BuscaNomeService($this->produtoModel, ['codigo']);
+
+        $this->json($service->buscar($this->request->get('term', '')));
+    }
+
+    /**
      * Devolve o nome do arquivo apenas se ele for um upload local.
      * Registros antigos com URL externa (ex.: Unsplash) retornam null,
      * para nunca tentar apagar algo que não está em public/uploads.
@@ -267,5 +318,62 @@ class ProdutosController extends BaseController
         }
 
         return $imagem;
+    }
+    // ── Auxiliares ────────────────────────────────────────────────────────────
+
+    /**
+     * "Sem categoria" vira NULL (nunca '' em coluna inteira com FK)
+     * e uma categoria escolhida vira inteiro.
+     */
+    private function normalizarCategoria(array $data): array
+    {
+        $valor = $data['categoria_id'] ?? null;
+
+        $data['categoria_id'] = ($valor === null || $valor === '')
+            ? null
+            : (int) $valor;
+
+        return $data;
+    }
+
+    /**
+     * A categoria existe e está ativa? (ou é a que o produto já tinha)
+     */
+    private function categoriaPermitida(?int $categoriaId, ?int $atualId = null): bool
+    {
+        if ($categoriaId === null || $categoriaId === $atualId) {
+            return true;
+        }
+
+        $categoria = $this->categoriaModel->findById($categoriaId);
+
+        return $categoria && !empty($categoria->ativo);
+    }
+
+    /**
+     * Categorias que aparecem no select. Se o produto já está numa categoria
+     * inativa, ela é incluída para não "sumir" na edição.
+     */
+    private function categoriasDisponiveis(?int $incluirId = null): array
+    {
+        $categorias = $this->categoriaModel->getAtivas();
+
+        if ($incluirId === null) {
+            return $categorias;
+        }
+
+        foreach ($categorias as $categoria) {
+            if ((int) $categoria->id === (int) $incluirId) {
+                return $categorias;
+            }
+        }
+
+        $atual = $this->categoriaModel->findById($incluirId);
+
+        if ($atual) {
+            $categorias[] = $atual;
+        }
+
+        return $categorias;
     }
 }

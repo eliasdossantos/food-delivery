@@ -21,6 +21,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Hambúrguer Clássico',
                     'slug' => 'hamburguer-classico',
+                    'codigo' => 'HAM-001',
                     'descricao' => 'Hambúrguer artesanal com carne bovina, queijo, alface, tomate e molho especial.',
                     'ingredientes' => 'Pão brioche, carne bovina, queijo cheddar, alface, tomate e molho especial.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd',
@@ -34,6 +35,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Hambúrguer Bacon',
                     'slug' => 'hamburguer-bacon',
+                    'codigo' => 'HAM-002',
                     'descricao' => 'Hambúrguer com queijo cheddar, bacon crocante e molho barbecue.',
                     'ingredientes' => 'Pão brioche, carne bovina, queijo cheddar, bacon e molho barbecue.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1553979459-d2229ba7433a',
@@ -47,6 +49,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Hambúrguer Duplo',
                     'slug' => 'hamburguer-duplo',
+                    'codigo' => 'HAM-003',
                     'descricao' => 'Dois hambúrgueres artesanais com queijo cheddar e molho especial.',
                     'ingredientes' => 'Pão brioche, duas carnes bovinas, queijo cheddar e molho especial.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd',
@@ -60,6 +63,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Smash Burger',
                     'slug' => 'smash-burger',
+                    'codigo' => 'HAM-004',
                     'descricao' => 'Smash burger com carne prensada na chapa e queijo derretido.',
                     'ingredientes' => 'Pão brioche, carne bovina smash, queijo cheddar e molho da casa.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1561758033-d89a9ad46330',
@@ -73,6 +77,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Hambúrguer BBQ',
                     'slug' => 'hamburguer-bbq',
+                    'codigo' => 'HAM-005',
                     'descricao' => 'Hambúrguer com cebola caramelizada e molho barbecue.',
                     'ingredientes' => 'Pão brioche, carne bovina, queijo, cebola caramelizada e barbecue.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1550547660-d9450f859349',
@@ -89,6 +94,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Pizza Margherita',
                     'slug' => 'pizza-margherita',
+                    'codigo' => 'PIZ-001',
                     'descricao' => 'Pizza tradicional com molho de tomate, mozzarella e manjericão.',
                     'ingredientes' => 'Massa artesanal, molho de tomate, mozzarella e manjericão.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
@@ -102,6 +108,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Pizza Calabresa',
                     'slug' => 'pizza-calabresa',
+                    'codigo' => 'PIZ-002',
                     'descricao' => 'Pizza de calabresa com cebola e mozzarella.',
                     'ingredientes' => 'Massa, molho de tomate, mozzarella, calabresa e cebola.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47',
@@ -115,6 +122,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Pizza Quatro Queijos',
                     'slug' => 'pizza-quatro-queijos',
+                    'codigo' => 'PIZ-003',
                     'descricao' => 'Pizza cremosa com uma combinação de quatro queijos.',
                     'ingredientes' => 'Massa, mozzarella, provolone, parmesão e gorgonzola.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1571407970349-bc81e7e96d47',
@@ -128,6 +136,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Pizza Portuguesa',
                     'slug' => 'pizza-portuguesa',
+                    'codigo' => 'PIZ-004',
                     'descricao' => 'Pizza com presunto, ovos, cebola e azeitonas.',
                     'ingredientes' => 'Massa, molho, mozzarella, presunto, ovos, cebola e azeitonas.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591',
@@ -141,6 +150,7 @@ class ProdutoSeeder extends Seeder
                 [
                     'nome' => 'Pizza de Frango com Catupiry',
                     'slug' => 'pizza-frango-catupiry',
+                    'codigo' => 'PIZ-005',
                     'descricao' => 'Pizza de frango desfiado com requeijão cremoso.',
                     'ingredientes' => 'Massa, molho, frango desfiado, mozzarella e requeijão cremoso.',
                     'imagem_url' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591',

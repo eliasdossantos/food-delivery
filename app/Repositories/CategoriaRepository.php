@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\CategoriaModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * CategoriaRepository
@@ -23,6 +24,8 @@ use App\Models\CategoriaModel;
  */
 class CategoriaRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = CategoriaModel::class;
 

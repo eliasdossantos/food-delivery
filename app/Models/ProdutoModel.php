@@ -29,6 +29,7 @@ class ProdutoModel extends Model
         'categoria_id',
         'nome',
         'slug',
+        'codigo',
         'descricao',
         'ingredientes',
         'imagem_url',

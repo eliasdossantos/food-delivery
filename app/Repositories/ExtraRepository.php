@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\ExtraModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * ExtraRepository
@@ -23,6 +24,8 @@ use App\Models\ExtraModel;
  */
 class ExtraRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = ExtraModel::class;
 

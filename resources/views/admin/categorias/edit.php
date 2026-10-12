@@ -1,5 +1,3 @@
-<!-- resources/views/admin/categorias/edit.php -->
-
 <?php $maxMb = (int) ($uploadMaxMb ?? 5); ?>
 
 <!-- Aqui enviamos para o template principal o título da página -->

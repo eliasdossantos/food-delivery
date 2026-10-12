@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\PerfilModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * PerfilRepository
@@ -23,6 +24,8 @@ use App\Models\PerfilModel;
  */
 class PerfilRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = PerfilModel::class;
 

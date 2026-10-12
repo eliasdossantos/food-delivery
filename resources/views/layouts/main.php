@@ -20,6 +20,8 @@
     <!-- endinject -->
     <link rel="shortcut icon" href="<?= asset('admin/images/favicon.png') ?>" />
 
+    <link rel="stylesheet" href="<?= asset('admin/vendors/auto-complete/jquery-ui.css') ?>">
+
     <!-- CSS específico da página (opcional): View::start('styles') ... View::end() -->
     <?= \Framework\Support\View::section('styles') ?>
 </head>
@@ -76,6 +78,9 @@
     <script src="<?= asset('admin/js/app.js') ?>"></script>
     <script src="<?= asset('admin/js/jquery.mask.min.js') ?>"></script>
     <script src="<?= asset('admin/js/alert-autohide.js') ?>"></script>
+
+    <script src="<?= asset('admin/vendors/auto-complete/jquery-ui.js') ?>"></script>
+    <script src="<?= asset('admin/js/busca-nome.js') ?>"></script>
 
     <!-- JS específico da página (opcional): View::start('scripts') ... View::end() -->
     <?= \Framework\Support\View::section('scripts') ?>

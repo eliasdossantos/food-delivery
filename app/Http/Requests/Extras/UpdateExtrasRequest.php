@@ -50,6 +50,8 @@ class UpdateExtrasRequest extends FormRequest
             'ordem_exibicao' => 'nullable|integer',
             'ativo'          => 'required|in:0,1',
             'destaque'       => 'required|in:0,1',
+            // Arquivo: tamanho controlado pela classe Upload
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif',
         ];
     }
 
@@ -78,6 +80,9 @@ class UpdateExtrasRequest extends FormRequest
 
             'destaque.required' => 'O destaque do extra é obrigatório.',
             'destaque.in'       => 'O destaque do extra deve ser "Sim" ou "Não".',
+
+            'imagem.image' => 'O arquivo enviado deve ser uma imagem válida.',
+            'imagem.mimes' => 'A imagem deve estar nos formatos JPG, JPEG, PNG, WEBP ou GIF.',
         ];
     }
 

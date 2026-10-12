@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\BaseController;
 use App\Http\Requests\Categorias\StoreCategoriasRequest;
 use App\Http\Requests\Categorias\UpdateCategoriasRequest;
 use App\Repositories\CategoriaRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -247,6 +248,17 @@ class CategoriasController extends BaseController
         }
 
         $this->redirectWith('admin/categoria', 'success', 'Categoria removida com sucesso.');
+    }
+
+    /**
+     * Autocomplete por nome.
+     * GET /categoria/procurar?term=...
+     */
+    public function procurar(): never
+    {
+        $service = new BuscaNomeService($this->categoriaModel);
+
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

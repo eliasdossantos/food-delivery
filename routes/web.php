@@ -52,6 +52,7 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
 
         $r->get('', [PerfisController::class, 'index'])->name('index');
         $r->get('/create', [PerfisController::class, 'create'])->name('create');
+        $r->get('/procurar', [PerfisController::class, 'procurar'])->name('procurar');
         $r->post('', [PerfisController::class, 'store'])->name('store');
         $r->get('/{id}', [PerfisController::class, 'show'])->name('show');
         $r->get('/{id}/edit', [PerfisController::class, 'edit'])->name('edit');

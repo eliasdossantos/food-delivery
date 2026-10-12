@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\EnderecoClienteModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * EnderecoRepository
@@ -23,6 +24,8 @@ use App\Models\EnderecoClienteModel;
  */
 class EnderecoRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = EnderecoClienteModel::class;
 

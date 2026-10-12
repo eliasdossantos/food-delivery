@@ -12,6 +12,26 @@
 <!-- Aqui enviamos para o template principal os estilos -->
 
 <?php View::start('styles'); ?>
+
+<style>
+    .tabela-categorias {
+        width: 100%;
+    }
+
+    .tabela-categorias td {
+        vertical-align: middle;
+        word-break: break-word;
+    }
+
+    .tabela-categorias .col-ordem {
+        width: 30px;
+    }
+
+    .tabela-categorias .col-img {
+        width: 25px;
+    }
+</style>
+
 <?php View::end(); ?>
 
 
@@ -32,16 +52,21 @@
                 </a>
             </div>
             <div class="card-body">
+                <div class="ui-widget mb-3">
+                    <input id="query" class="form-control bg-light" placeholder="Digite o nome da categoria"
+                        data-busca-url="<?= e(route('admin.categoria.procurar')) ?>"
+                        data-busca-destino="<?= e(route('admin.categoria.index')) ?>">
+                </div>
                 <div class="table-responsive">
-                    <table id="table-BR" class="table table-striped table-hover">
+                    <table id="table-BR" class="table table-striped table-hover tabela-categorias">
                         <thead>
                             <tr>
                                 <th class="d-none">ID</th>
                                 <th>Nome</th>
                                 <th class="text-center">Descrição</th>
-                                <th class="text-center">Imagem</th>
+                                <th class="text-center col-img">Imagem</th>
                                 <th class="text-center">Destaque</th>
-                                <th class="text-center">Ordem</th>
+                                <th class="text-center col-ordem">Ordem</th>
                                 <th class="text-center">Status</th>
                                 <th>Criado em</th>
                                 <th>Ações</th>
@@ -86,7 +111,13 @@
                                                 <span class="text-muted">—</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="text-center"><?= e($categoria->destaque ?? ''); ?></td>
+                                        <td class="text-center">
+                                            <?php if (!empty($categoria->destaque)): ?>
+                                                Sim
+                                            <?php else: ?>
+                                                Não
+                                            <?php endif; ?>
+                                        </td>
                                         <td class="text-center"><?= e($categoria->ordem_exibicao ?? ''); ?></td>
                                         <td class="text-center"><span style="border-radius: 5px;"
                                                 class="badge <?= e($categoria->ativo ? 'badge-success' : 'badge-danger') ?> mt-2">

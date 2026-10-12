@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\BaseController;
 use App\Http\Requests\Medidas\StoreMedidasRequest;
 use App\Http\Requests\Medidas\UpdateMedidasRequest;
 use App\Repositories\MedidaRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -241,6 +242,17 @@ class MedidasController extends BaseController
         }
 
         $this->redirectWith('admin/medida', 'success', 'Medida removida com sucesso.');
+    }
+
+    /**
+     * Autocomplete por nome.
+     * GET /medidas/procurar?term=...
+     */
+    public function procurar(): never
+    {
+        $service = new BuscaNomeService($this->medidasModel);
+
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 
     /**

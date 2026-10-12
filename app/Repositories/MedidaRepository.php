@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Framework\Database\Repository;
 use App\Models\MedidaModel;
+use App\Repositories\Concerns\BuscaPorNomeRepository;
 
 /**
  * MedidaRepository
@@ -23,6 +24,8 @@ use App\Models\MedidaModel;
  */
 class MedidaRepository extends Repository
 {
+    use BuscaPorNomeRepository;
+
     /** Model associado a este repository */
     protected string $modelClass = MedidaModel::class;
 

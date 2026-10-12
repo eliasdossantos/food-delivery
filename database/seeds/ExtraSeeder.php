@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\EstraModel;
+use App\Models\ExtraModel;
 use Framework\Database\Seeder;
 
 /**
@@ -178,7 +178,7 @@ class ExtraSeeder extends Seeder
             ],
         ];
 
-        $model = new EstraModel();
+        $model = new ExtraModel();
 
         foreach ($extras as $extra) {
             $model->create($extra);

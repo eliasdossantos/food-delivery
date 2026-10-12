@@ -3,159 +3,129 @@
 namespace App\Http\Requests\Produtos;
 
 use App\Http\Requests\FormRequest;
-use Framework\Auth\Auth;
 use Framework\Http\Request;
 
 /**
  * StoreProdutosRequest
- * ─────────────────────────────────────────────────────────────────────────────
- * Centraliza validação, sanitização e autorização do formulário.
- *
- * Fluxo automático ao instanciar:
- *   new StoreProdutosRequest()
- *     → authorize()   — verifica permissão
- *     → sanitize()    — limpa os dados
- *     → validate()    — aplica rules() com messages()
- *
- * Uso no Controller:
- *   $request = new StoreProdutosRequest();
- *   if ($request->fails()) {
- *       Session::flash('error', $request->firstError());
- *       Session::flashInput($request->all());
- *       $this->back();
- *   }
- *   $data = $request->validated();
+ * Validação e sanitização do cadastro de produto (tabela `produtos`).
  */
 class StoreProdutosRequest extends FormRequest
 {
-    /**
-     * Define quem pode realizar esta ação.
-     *
-     * Exemplos:
-     *   return true;               // sempre permitido
-     *   return Auth::check();      // apenas logados
-     *   return Auth::is('admin');  // apenas admins
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Regras de validação.
-     * Sintaxe: 'campo' => 'regra1|regra2|regra3:param'
-     *
-     * Regras disponíveis:
-     *   required, email, min:N, max:N, numeric, integer,
-     *   confirmed, same:outro, different:outro,
-     *   in:a,b,c, not_in:a,b,c, regex:/pattern/,
-     *   unique:tabela,coluna, exists:tabela,coluna, nullable
-     */
     public function rules(): array
     {
         return [
             // Identificação
-            'nome'              => 'required|min:2|max:190|unique:produtos,nome',
-            'slug'              => 'required|max:190|unique:produtos,slug',
-            'codigo'            => 'nullable|string|max:100',
+            'nome'              => 'required|min:2|max:200|unique:produtos,nome',
+            'slug'              => 'nullable|max:200|unique:produtos,slug',
+            'codigo'            => 'nullable|string|max:100|unique:produtos,codigo',
+            'categoria_id'      => 'nullable|integer|exists:categorias,id',
 
-            // Descrição
+            // Conteúdo
             'descricao'         => 'nullable|max:500',
             'ingredientes'      => 'nullable|max:500',
 
-            // Preços
+            // Preços (decimal 10,2)
             'preco'             => 'required|numeric|min:0|max:99999999.99',
             'preco_promocional' => 'nullable|numeric|min:0|max:99999999.99',
 
-            // Operação e estoque
+            // Operação e estoque (unsigned smallint: 0..65535)
             'tempo_preparo'     => 'nullable|integer|min:0|max:65535',
-            'controla_estoque'  => 'nullable|boolean',
+            'controla_estoque'  => 'nullable|in:0,1',
             'estoque'           => 'nullable|integer|min:0|max:65535',
 
             // Exibição
-            'ordem_exibicao'    => 'nullable|integer',
+            'ordem_exibicao'    => 'nullable|integer|min:0|max:65535',
             'ativo'             => 'required|in:0,1',
             'destaque'          => 'required|in:0,1',
 
-            // Arquivos
-            'imagem'             => 'nullable|image|mimes:jpg,jpeg,png,webp,gif',
+            // Arquivo (imagem_url é tratado no controller)
+            'imagem'            => 'nullable|image|mimes:jpg,jpeg,png,webp,gif',
         ];
     }
 
-    /**
-     * Mensagens de erro customizadas.
-     * Formato: 'campo.regra' => 'mensagem'
-     * Retorne [] para usar as mensagens padrão do Validator.
-     */
     public function messages(): array
     {
         return [
             'nome.required' => 'O nome do produto é obrigatório.',
             'nome.min'      => 'O nome do produto deve ter pelo menos 2 caracteres.',
-            'nome.max'      => 'O nome do produto deve ter no máximo 190 caracteres.',
-            'slug.required' => 'O slug do produto é obrigatório.',
-            'imagem.image'  => 'O arquivo enviado deve ser uma imagem válida.',
-            'imagem.mimes'  => 'A imagem deve estar nos formatos JPG, JPEG, PNG, WEBP ou GIF.',
-            'preco.required' => 'O preço do produto é obrigatório.',
-            'preco.numeric'  => 'O preço deve ser numérico.',
-            'preco_promocional.numeric'  => 'O preço promocional deve ser numérico.',
+            'nome.max'      => 'O nome do produto deve ter no máximo 200 caracteres.',
+            'nome.unique'   => 'Já existe um produto com este nome.',
+
+            'slug.max'      => 'O slug deve ter no máximo 200 caracteres.',
+            'slug.unique'   => 'Este slug já está em uso.',
+
+            'codigo.max'    => 'O código deve ter no máximo 100 caracteres.',
+            'codigo.unique' => 'Já existe um produto com este código.',
+
+            'categoria_id.integer' => 'A categoria selecionada é inválida.',
+            'categoria_id.exists'  => 'A categoria selecionada não existe.',
+
+            'preco.required'            => 'O preço do produto é obrigatório.',
+            'preco.numeric'             => 'O preço deve ser numérico.',
+            'preco_promocional.numeric' => 'O preço promocional deve ser numérico.',
+
             'tempo_preparo.integer' => 'O tempo de preparo deve ser um número inteiro.',
             'estoque.integer'       => 'O estoque deve ser um número inteiro.',
-            'controla_estoque.boolean'  => 'O controle de estoque deve ser verdadeiro ou falso.',
+            'controla_estoque.in'   => 'O controle de estoque deve ser 0 ou 1.',
+
+            'ordem_exibicao.integer' => 'A ordem de exibição deve ser um número inteiro.',
+
+            'imagem.image' => 'O arquivo enviado deve ser uma imagem válida.',
+            'imagem.mimes' => 'A imagem deve estar nos formatos JPG, JPEG, PNG, WEBP ou GIF.',
+        ];
+    }
+
+    public function sanitize(): array
+    {
+        $categoriaId = trim(Request::sanitizeValue($this->input['categoria_id'] ?? ''));
+        $codigo      = trim(Request::sanitizeValue($this->input['codigo'] ?? ''));
+        $tempo       = trim((string) ($this->input['tempo_preparo'] ?? ''));
+        $estoque     = trim((string) ($this->input['estoque'] ?? ''));
+        $ordem       = trim((string) ($this->input['ordem_exibicao'] ?? ''));
+
+        return [
+            'nome' => trim(Request::sanitizeValue($this->input['nome'] ?? '')),
+
+            'slug' => strtolower(trim(Request::sanitizeValue($this->input['slug'] ?? ''))),
+
+            'codigo' => $codigo === '' ? null : strtoupper($codigo),
+
+            'categoria_id' => $categoriaId === '' ? null : $categoriaId,
+
+            'descricao'    => trim(Request::sanitizeValue($this->input['descricao'] ?? '')),
+            'ingredientes' => trim(Request::sanitizeValue($this->input['ingredientes'] ?? '')),
+
+            'preco'             => self::moeda($this->input['preco'] ?? '') ?? '0',
+            'preco_promocional' => self::moeda($this->input['preco_promocional'] ?? ''),
+
+            'tempo_preparo'    => $tempo === '' ? null : $tempo,
+            'controla_estoque' => $this->input['controla_estoque'] ?? '0',
+            'estoque'          => $estoque === '' ? '0' : $estoque,
+
+            // Coluna NOT NULL default 0: nunca enviar NULL
+            'ordem_exibicao' => $ordem === '' ? '0' : $ordem,
+
+            'ativo'    => $this->input['ativo'] ?? '1',
+            'destaque' => $this->input['destaque'] ?? '0',
         ];
     }
 
     /**
-     * Sanitiza os dados antes da validação.
-     * Executado automaticamente pelo FormRequest base.
-     *
-     * Dicas:
-     *   - Senhas: use trim() APENAS (strip_tags corrompe caracteres especiais)
-     *   - Emails: strtolower() + trim()
-     *   - Nomes:  ucwords() + trim()
+     * "1.234,56" → "1234.56". Vazio → null.
      */
-    public function sanitize(): array
+    private static function moeda(mixed $valor): ?string
     {
-        return [
-            'nome' => trim(
-                Request::sanitizeValue($this->input['nome'] ?? '')
-            ),
+        $valor = trim((string) $valor);
 
-            'codigo' => trim(
-                Request::sanitizeValue($this->input['codigo'] ?? '')
-            ),
+        if ($valor === '') {
+            return null;
+        }
 
-            'descricao' => trim(
-                Request::sanitizeValue($this->input['descricao'] ?? '')
-            ),
-
-            'ingredientes' => trim(
-                Request::sanitizeValue($this->input['ingredientes'] ?? '')
-            ),
-
-            'preco' => str_replace(
-                ',',
-                '.',
-                str_replace('.', '', trim($this->input['preco'] ?? '0'))
-            ),
-
-            'preco_promocional' => str_replace(
-                ',',
-                '.',
-                str_replace('.', '', trim($this->input['preco_promocional'] ?? '0'))
-            ),
-
-            'tempo_preparo' => $this->input['tempo_preparo'] ?? null,
-
-            'controla_estoque' => $this->input['controla_estoque'] ?? '0',
-
-            'estoque' => $this->input['estoque'] ?? '0',
-
-            'ordem_exibicao' => $this->input['ordem_exibicao'] ?? null,
-
-            'ativo' => $this->input['ativo'] ?? '1',
-
-            'destaque' => $this->input['destaque'] ?? '0',
-        ];
+        return str_replace(',', '.', str_replace('.', '', $valor));
     }
 }

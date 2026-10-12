@@ -6,6 +6,7 @@ use App\Http\Controllers\Web\BaseController;
 use App\Http\Requests\Extras\StoreExtrasRequest;
 use App\Http\Requests\Extras\UpdateExtrasRequest;
 use App\Repositories\ExtraRepository;
+use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
 
 /**
@@ -249,6 +250,17 @@ class ExtrasController extends BaseController
         }
 
         $this->redirectWith('admin/extra', 'success', 'Extra removido com sucesso.');
+    }
+
+    /**
+     * Autocomplete por nome.
+     * GET /extras/procurar?term=...
+     */
+    public function procurar(): never
+    {
+        $service = new BuscaNomeService($this->extrasModel);
+
+        $this->json($service->buscar($this->request->get('term', '')));
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────
