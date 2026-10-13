@@ -276,7 +276,6 @@ class ExtrasController extends BaseController
             'nome'           => trim((string) ($input['nome'] ?? '')),
             'slug'           => trim((string) ($input['slug'] ?? '')),
             'descricao'      => trim((string) ($input['descricao'] ?? '')),
-            'preco'          => (float) ($input['preco'] ?? 0),
             'ordem_exibicao' => max(1, (int) ($input['ordem_exibicao'] ?? 1)),
             'ativo'          => !empty($input['ativo']) ? 1 : 0,
             'destaque'       => !empty($input['destaque']) ? 1 : 0,

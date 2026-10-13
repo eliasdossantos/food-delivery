@@ -139,16 +139,6 @@
                             <?= erroInput('nome') ?>
                         </div>
 
-                        <!-- Preço -->
-                        <div class="form-group col-md-4">
-                            <label for="preco">Preço</label>
-                            <input type="text"
-                                class="form-control <?= hasError('preco') ? 'is-invalid' : '' ?> dinheiro" id="preco"
-                                name="preco" value="<?= old('preco', $extras->preco ?? '') ?>" placeholder="Preço"
-                                autofocus>
-                            <?= erroInput('preco') ?>
-                        </div>
-
                         <!-- Slug -->
                         <div class="form-group col-md-4">
                             <label for="slug">Slug</label>

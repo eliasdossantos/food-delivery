@@ -93,9 +93,24 @@
     background: #fff;
 }
 
-.preco-antigo {
-    text-decoration: line-through;
-    color: #6c757d;
+.show-extras {
+    max-height: 160px;
+    overflow-y: auto;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.show-extra-chip {
+    display: inline-block;
+    margin: 0 6px 6px 0;
+    padding: 4px 12px;
+    background: #e8f0fe;
+    color: #1a4fa0;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
 }
 </style>
 
@@ -107,9 +122,6 @@
 <?php View::start('content'); ?>
 
 <?php
-$temPromo = isset($produtos->preco_promocional) && $produtos->preco_promocional !== null
-    && $produtos->preco_promocional !== '';
-
 $imagemAtual = $produtos->imagem_url ?? '';
 $imagemSrc = '';
 
@@ -190,6 +202,23 @@ if ($imagemAtual !== '') {
                     </div>
                 </div>
 
+                <!-- Extras -->
+                <div class="show-section">
+                    <div class="show-section-title">
+                        <h5>Extras disponíveis</h5>
+                    </div>
+
+                    <?php if (empty($extras)): ?>
+                    <div class="show-item-value">Nenhuma extra vinculada</div>
+                    <?php else: ?>
+                    <div class="show-extras">
+                        <?php foreach ($extras as $extra): ?>
+                        <span class="show-extra-chip"><?= e($extra->nome) ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+
                 <!-- Conteúdo -->
                 <div class="show-section">
                     <div class="show-section-title">
@@ -235,34 +264,13 @@ if ($imagemAtual !== '') {
                 <!-- Preços -->
                 <div class="show-section">
                     <div class="show-section-title">
-                        <h5>Preços</h5>
+                        <h5>Tempo de preparo</h5>
                     </div>
 
                     <div class="row">
-                        <!-- Preço -->
-                        <div class="col-md-4">
-                            <div class="show-item">
-                                <span class="show-item-label">Preço</span>
-                                <div class="show-item-value <?= $temPromo ? 'preco-antigo' : '' ?>">
-                                    R$ <?= number_format((float) ($produtos->preco ?? 0), 2, ',', '.') ?>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Preço promocional -->
-                        <div class="col-md-4">
-                            <div class="show-item">
-                                <span class="show-item-label">Preço promocional</span>
-                                <div class="show-item-value">
-                                    <?= $temPromo
-                                        ? 'R$ ' . number_format((float) $produtos->preco_promocional, 2, ',', '.')
-                                        : '-' ?>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Tempo de preparo -->
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <div class="show-item">
                                 <span class="show-item-label">Tempo de preparo</span>
                                 <div class="show-item-value">

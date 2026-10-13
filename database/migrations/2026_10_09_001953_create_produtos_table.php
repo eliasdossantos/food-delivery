@@ -29,10 +29,6 @@ return new class extends Migration {
             $table->text('ingredientes')->nullable();
             $table->string('imagem_url', 255)->nullable();
 
-            // Preço base (quando o produto tem medidas, o preço vem de produto_medidas)
-            $table->decimal('preco', 10, 2);
-            $table->decimal('preco_promocional', 10, 2)->nullable();
-
             // Operação
             $table->unsignedSmallInteger('tempo_preparo')->nullable();   // minutos
             $table->boolean('controla_estoque')->default(0);

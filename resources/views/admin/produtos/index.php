@@ -7,57 +7,120 @@
 <?php View::start('styles'); ?>
 
 <style>
-.tabela-produtos {
-    width: 100%;
-    table-layout: fixed;
-}
+    .tabela-produtos {
+        width: 100%;
+        table-layout: fixed;
+    }
 
-.tabela-produtos td {
-    vertical-align: middle;
-    word-break: break-word;
-}
+    .tabela-produtos td {
+        vertical-align: middle;
+        word-break: break-word;
+    }
 
-.tabela-produtos .col-codigo {
-    width: 45px;
-}
+    .tabela-produtos .col-codigo {
+        width: 45px;
+    }
 
-.tabela-produtos .col-produto {
-    width: 200px;
-}
+    .tabela-produtos .col-produto {
+        width: 200px;
+    }
 
-.tabela-produtos .col-imagem {
-    width: 80px;
-}
+    .tabela-produtos .col-imagem {
+        width: 80px;
+    }
 
-.tabela-produtos .col-detalhes {
-    width: 110px;
-}
+    .tabela-produtos .col-detalhes {
+        width: 110px;
+    }
 
-.tabela-produtos .col-preco {
-    width: 120px;
-}
+    .tabela-produtos .col-estoque {
+        width: 90px;
+    }
 
-.tabela-produtos .col-estoque {
-    width: 90px;
-}
+    .tabela-produtos .col-status {
+        width: 150px;
+    }
 
-.tabela-produtos .col-status {
-    width: 150px;
-}
+    .tabela-produtos .col-acoes {
+        width: 150px;
+    }
 
-.tabela-produtos .col-acoes {
-    width: 150px;
-}
+    /* Reticências no nome e na linha de categoria/código */
+    .tabela-produtos .produto-nome,
+    .produto-codigo,
+    .tabela-produtos .produto-info {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
-/* Reticências no nome e na linha de categoria/código */
-.tabela-produtos .produto-nome,
-.produto-codigo,
-.tabela-produtos .produto-info {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+    .tabela-produtos .col-detalhes {
+        width: 140px;
+    }
+
+    /* ── Botões da coluna Detalhes ───────────────────────────────────── */
+    .detalhes-botoes {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .btn-detalhe {
+        position: relative;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+    }
+
+    .btn-detalhe .contagem {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        border-radius: 8px;
+        background: #4e73df;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 16px;
+    }
+
+    /* ── Modal de extras ─────────────────────────────────────────────── */
+    .extras-modal-lista {
+        max-height: 300px;
+        overflow-y: auto;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+    }
+
+    .extras-modal-lista li {
+        display: flex;
+        align-items: center;
+        padding: 9px 12px;
+        border-bottom: 1px solid #e9ecef;
+        font-size: 14px;
+    }
+
+    .extras-modal-lista li:last-child {
+        border-bottom: 0;
+    }
+
+    .extras-modal-lista .extra-num {
+        flex: 0 0 28px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6c757d;
+    }
+
+    .extras-modal-box {
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -94,7 +157,6 @@
                                 <th class="col-produto">Produto</th>
                                 <th class="text-center col-imagem">Imagem</th>
                                 <th class="text-center col-detalhes">Detalhes</th>
-                                <th class="text-center col-preco">Preço</th>
                                 <th class="text-center col-estoque">Estoque</th>
                                 <th class="text-center col-status">Status</th>
                                 <th class="text-center col-acoes">Ações</th>
@@ -104,134 +166,142 @@
                         <tbody>
                             <?php if (!empty($produtos)): ?>
 
-                            <?php foreach ($produtos as $p): ?>
-                            <?php $temPromo = isset($p->preco_promocional) && $p->preco_promocional !== null && $p->preco_promocional !== ''; ?>
-                            <tr>
-                                <td class="d-none">
-                                    <?= e($p->id ?? '') ?>
-                                </td>
-                                <td class="col-codigo">
-                                    <span class="produto-codigo font-weight-bold" title="<?= e($p->codigo ?? '') ?>">
-                                        <?= e($p->codigo) ?>
-                                    </span>
-                                </td>
+                                <?php foreach ($produtos as $p): ?>
+                                    <tr>
+                                        <td class="d-none">
+                                            <?= e($p->id ?? '') ?>
+                                        </td>
+                                        <td class="col-codigo">
+                                            <span class="produto-codigo font-weight-bold" title="<?= e($p->codigo ?? '') ?>">
+                                                <?= e($p->codigo) ?>
+                                            </span>
+                                        </td>
 
-                                <!-- Produto: nome + categoria + código -->
-                                <td class="col-produto">
-                                    <span class="produto-nome font-weight-bold" title="<?= e($p->nome ?? '') ?>">
-                                        <?= e($p->nome ?? '') ?>
-                                    </span>
-                                    <small class="produto-info text-muted">
-                                        Categoria <?= e($p->categoria_nome ?? 'Sem categoria') ?>
+                                        <!-- Produto: nome + categoria + código -->
+                                        <td class="col-produto">
+                                            <span class="produto-nome font-weight-bold" title="<?= e($p->nome ?? '') ?>">
+                                                <?= e($p->nome ?? '') ?>
+                                            </span>
+                                            <small class="produto-info text-muted">
+                                                Categoria <?= e($p->categoria_nome ?? 'Sem categoria') ?>
 
-                                    </small>
-                                </td>
+                                            </small>
+                                        </td>
 
-                                <!-- Imagem -->
-                                <td class="text-center col-imagem">
-                                    <?php
+                                        <!-- Imagem -->
+                                        <td class="text-center col-imagem">
+                                            <?php
                                             $imagemPadrao = asset('admin/images/sem-foto/sem-foto.jpg');
                                             $imagemProduto = !empty($p->imagem_url) ? (preg_match('#^https?://#i', $p->imagem_url) ? $p->imagem_url : uploadUrl('produtos', $p->imagem_url)) : $imagemPadrao;
                                             ?>
 
-                                    <button type="button" class="btn btn-info btn-sm rounded-circle"
-                                        style="width:32px;height:32px;padding:0;" title="Ver imagem"
-                                        aria-label="Ver imagem de <?= e($p->nome ?? '') ?>" data-toggle="modal"
-                                        data-target="#imagemModal" data-src="<?= e($imagemProduto) ?>"
-                                        data-fallback="<?= e($imagemPadrao) ?>" data-nome="<?= e($p->nome ?? '') ?>">
-                                        <i class="mdi mdi-image"></i>
-                                    </button>
-                                </td>
+                                            <button type="button" class="btn btn-info btn-sm rounded-circle"
+                                                style="width:32px;height:32px;padding:0;" title="Ver imagem"
+                                                aria-label="Ver imagem de <?= e($p->nome ?? '') ?>" data-toggle="modal"
+                                                data-target="#imagemModal" data-src="<?= e($imagemProduto) ?>"
+                                                data-fallback="<?= e($imagemPadrao) ?>" data-nome="<?= e($p->nome ?? '') ?>">
+                                                <i class="mdi mdi-image"></i>
+                                            </button>
+                                        </td>
 
-                                <!-- Detalhes: descrição + ingredientes -->
-                                <td class="text-center text-nowrap">
-                                    <?php if (!empty($p->descricao)): ?>
-                                    <button type="button" class="btn btn-secondary btn-sm rounded-circle"
-                                        style="width:32px;height:32px;padding:0;" title="Ver descrição"
-                                        aria-label="Ver descrição de <?= e($p->nome ?? '') ?>" data-toggle="modal"
-                                        data-target="#descricaoModal" data-descricao="<?= e($p->descricao) ?>"
-                                        data-nome="<?= e($p->nome ?? '') ?>">
-                                        <i class="mdi mdi-text"></i>
-                                    </button>
-                                    <?php endif; ?>
+                                        <!-- Detalhes: descrição + ingredientes + extras -->
+                                        <td class="text-center col-detalhes">
+                                            <?php
+                                            $extrasDoProduto = $extrasPorProduto[(int) $p->id] ?? [];
+                                            $nomesExtras = array_map(fn($x) => $x->nome, $extrasDoProduto);
+                                            $temDetalhes = !empty($p->descricao) || !empty($p->ingredientes) || !empty($nomesExtras);
+                                            ?>
 
-                                    <?php if (!empty($p->ingredientes)): ?>
-                                    <button type="button" class="btn btn-secondary btn-sm rounded-circle"
-                                        style="width:32px;height:32px;padding:0;" title="Ver ingredientes"
-                                        aria-label="Ver ingredientes de <?= e($p->nome ?? '') ?>" data-toggle="modal"
-                                        data-target="#ingredientesModal" data-descricao="<?= e($p->ingredientes) ?>"
-                                        data-nome="<?= e($p->nome ?? '') ?>">
-                                        <i class="mdi mdi-food"></i>
-                                    </button>
-                                    <?php endif; ?>
+                                            <?php if (!$temDetalhes): ?>
+                                                <span class="text-muted">—</span>
+                                            <?php else: ?>
+                                                <div class="detalhes-botoes">
+                                                    <?php if (!empty($p->descricao)): ?>
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm rounded-circle btn-detalhe"
+                                                            title="Ver descrição" aria-label="Ver descrição de <?= e($p->nome ?? '') ?>"
+                                                            data-toggle="modal" data-target="#descricaoModal"
+                                                            data-descricao="<?= e($p->descricao) ?>"
+                                                            data-nome="<?= e($p->nome ?? '') ?>">
+                                                            <i class="mdi mdi-text"></i>
+                                                        </button>
+                                                    <?php endif; ?>
 
-                                    <?php if (empty($p->descricao) && empty($p->ingredientes)): ?>
-                                    <span class="text-muted">—</span>
-                                    <?php endif; ?>
-                                </td>
+                                                    <?php if (!empty($p->ingredientes)): ?>
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm rounded-circle btn-detalhe"
+                                                            title="Ver ingredientes"
+                                                            aria-label="Ver ingredientes de <?= e($p->nome ?? '') ?>"
+                                                            data-toggle="modal" data-target="#ingredientesModal"
+                                                            data-descricao="<?= e($p->ingredientes) ?>"
+                                                            data-nome="<?= e($p->nome ?? '') ?>">
+                                                            <i class="mdi mdi-food"></i>
+                                                        </button>
+                                                    <?php endif; ?>
 
-                                <!-- Preço (promocional embaixo, se existir) -->
-                                <td class="text-center text-nowrap">
-                                    <?php if ($temPromo): ?>
-                                    <div class="text-muted" style="text-decoration:line-through;font-size:12px;">
-                                        <?= e(moedaBR($p->preco ?? 0)) ?>
-                                    </div>
-                                    <div class="font-weight-bold text-success">
-                                        <?= e(moedaBR($p->preco_promocional)) ?>
-                                    </div>
-                                    <?php else: ?>
-                                    <?= e(moedaBR($p->preco ?? 0)) ?>
-                                    <?php endif; ?>
-                                </td>
+                                                    <?php if (!empty($nomesExtras)): ?>
+                                                        <button type="button"
+                                                            class="btn btn-secondary btn-sm rounded-circle btn-detalhe"
+                                                            title="Ver extras" aria-label="Ver extras de <?= e($p->nome ?? '') ?>"
+                                                            data-toggle="modal" data-target="#extrasModal"
+                                                            data-nome="<?= e($p->nome ?? '') ?>"
+                                                            data-extras="<?= e(json_encode($nomesExtras, JSON_UNESCAPED_UNICODE)) ?>">
+                                                            <i class="mdi mdi-playlist-plus"></i>
+                                                            <span class="contagem"><?= count($nomesExtras) ?></span>
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </td>
 
-                                <!-- Estoque -->
-                                <td class="text-center">
-                                    <?= !empty($p->controla_estoque) ? e($p->estoque ?? 0) : '<span class="text-muted">—</span>' ?>
-                                </td>
+                                        <!-- Estoque -->
+                                        <td class="text-center">
+                                            <?= !empty($p->controla_estoque) ? e($p->estoque ?? 0) : '<span class="text-muted">—</span>' ?>
+                                        </td>
 
-                                <!-- Status + destaque -->
-                                <td class="text-center">
-                                    <span class="badge <?= !empty($p->ativo) ? 'badge-success' : 'badge-danger' ?>"
-                                        style="border-radius: 5px;">
-                                        <?= !empty($p->ativo) ? 'Ativo' : 'Inativo' ?>
-                                    </span>
+                                        <!-- Status + destaque -->
+                                        <td class="text-center">
+                                            <span class="badge <?= !empty($p->ativo) ? 'badge-success' : 'badge-danger' ?>"
+                                                style="border-radius: 5px;">
+                                                <?= !empty($p->ativo) ? 'Ativo' : 'Inativo' ?>
+                                            </span>
 
-                                    <?php if (!empty($p->destaque)): ?>
-                                    <span class="badge badge-warning" style="border-radius: 5px;">
-                                        Destaque
-                                    </span>
-                                    <?php endif; ?>
-                                </td>
+                                            <?php if (!empty($p->destaque)): ?>
+                                                <span class="badge badge-warning" style="border-radius: 5px;">
+                                                    Destaque
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
 
-                                <!-- Ações -->
-                                <td class="text-center text-nowrap">
-                                    <a href="<?= route('admin.produto.show', ['id' => $p->id]) ?>"
-                                        class="btn btn-primary btn-sm" title="Visualizar"
-                                        aria-label="Visualizar produto">
-                                        <i class="mdi mdi-eye"></i>
-                                    </a>
+                                        <!-- Ações -->
+                                        <td class="text-center text-nowrap">
+                                            <a href="<?= route('admin.produto.show', ['id' => $p->id]) ?>"
+                                                class="btn btn-primary btn-sm" title="Visualizar"
+                                                aria-label="Visualizar produto">
+                                                <i class="mdi mdi-eye"></i>
+                                            </a>
 
-                                    <a href="<?= route('admin.produto.edit', ['id' => $p->id]) ?>"
-                                        class="btn btn-warning btn-sm" title="Editar" aria-label="Editar produto">
-                                        <i class="mdi mdi-pencil"></i>
-                                    </a>
+                                            <a href="<?= route('admin.produto.edit', ['id' => $p->id]) ?>"
+                                                class="btn btn-warning btn-sm" title="Editar" aria-label="Editar produto">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </a>
 
-                                    <button type="button" class="btn btn-danger btn-sm" title="Excluir"
-                                        aria-label="Excluir produto" data-toggle="modal"
-                                        data-target="#deleteModal<?= (int) $p->id ?>">
-                                        <i class="mdi mdi-delete"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                                            <button type="button" class="btn btn-danger btn-sm" title="Excluir"
+                                                aria-label="Excluir produto" data-toggle="modal"
+                                                data-target="#deleteModal<?= (int) $p->id ?>">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
 
                             <?php else: ?>
 
-                            <tr>
-                                <td colspan="8" class="text-center">
-                                    <?= emptyDataMessage() ?>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        <?= emptyDataMessage() ?>
+                                    </td>
+                                </tr>
 
                             <?php endif; ?>
                         </tbody>
@@ -348,16 +418,12 @@
     </div>
 </div>
 
-<!-- Modais de confirmação de exclusão -->
-<?php if (!empty($produtos)): ?>
-
-<?php foreach ($produtos as $p): ?>
-
-<div class="modal fade" id="deleteModal<?= (int) $p->id ?>" tabindex="-1" role="dialog"
-    aria-labelledby="deleteModalLabel<?= (int) $p->id ?>" aria-hidden="true">
+<!-- Modal de extras -->
+<div class="modal fade" id="extrasModal" tabindex="-1" role="dialog" aria-labelledby="extrasModalLabel"
+    aria-hidden="true">
 
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content border-0 shadow">
+        <div class="modal-content border-0 shadow" style="border-radius:16px;overflow:hidden;">
 
             <div class="modal-body text-center pt-4 pb-3 px-4">
 
@@ -367,47 +433,87 @@
                 </button>
 
                 <div class="d-flex align-items-center justify-content-center mx-auto mb-3"
-                    style="width:64px;height:64px;border-radius:50%;background:#fdecea;">
-                    <i class="mdi mdi-alert" style="font-size:26px;color:#e74a3b;"></i>
+                    style="width:64px;height:64px;border-radius:50%;background:#eef0f4;">
+                    <i class="mdi mdi-playlist-plus" style="font-size:26px;color:#6c757d;"></i>
                 </div>
 
-                <h5 class="font-weight-bold mb-2" id="deleteModalLabel<?= (int) $p->id ?>">
-                    Confirmar exclusão
-                </h5>
+                <h4 class="font-weight-bold mb-1" id="extrasModalLabel">Extras</h4>
+                <p class="text-muted mb-3" id="extrasModalContagem"></p>
 
-                <p class="text-muted mb-0">
-                    Tem certeza que deseja excluir
-                    <strong class="text-gray-800">
-                        <?= e($p->nome ?? 'este produto') ?>
-                    </strong>?
-                    <br>
-                    Esta ação não pode ser desfeita.
-                </p>
+                <div class="extras-modal-box">
+                    <ul class="list-unstyled extras-modal-lista" id="extrasModalLista"></ul>
+                </div>
             </div>
 
-            <div class="modal-footer border-0 justify-content-center pb-4">
-
-                <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
-                    Cancelar
+            <div class="modal-footer border-0 justify-content-center pt-0 pb-4">
+                <button type="button" class="btn btn-secondary px-4" data-dismiss="modal">
+                    Fechar
                 </button>
-
-                <form method="POST" action="<?= route('admin.produto.destroy', ['id' => $p->id]) ?>">
-
-                    <?= csrf_field() ?>
-                    <?= method_field('DELETE') ?>
-
-                    <button type="submit" class="btn btn-danger px-4">
-                        <i class="mdi mdi-delete mr-1"></i>
-                        Excluir
-                    </button>
-                </form>
-
             </div>
         </div>
     </div>
 </div>
 
-<?php endforeach; ?>
+<!-- Modais de confirmação de exclusão -->
+<?php if (!empty($produtos)): ?>
+
+    <?php foreach ($produtos as $p): ?>
+
+        <div class="modal fade" id="deleteModal<?= (int) $p->id ?>" tabindex="-1" role="dialog"
+            aria-labelledby="deleteModalLabel<?= (int) $p->id ?>" aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0 shadow">
+
+                    <div class="modal-body text-center pt-4 pb-3 px-4">
+
+                        <button type="button" class="close position-absolute" style="top:12px;right:16px;" data-dismiss="modal"
+                            aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+
+                        <div class="d-flex align-items-center justify-content-center mx-auto mb-3"
+                            style="width:64px;height:64px;border-radius:50%;background:#fdecea;">
+                            <i class="mdi mdi-alert" style="font-size:26px;color:#e74a3b;"></i>
+                        </div>
+
+                        <h5 class="font-weight-bold mb-2" id="deleteModalLabel<?= (int) $p->id ?>">
+                            Confirmar exclusão
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Tem certeza que deseja excluir
+                            <strong class="text-gray-800">
+                                <?= e($p->nome ?? 'este produto') ?>
+                            </strong>?
+                            <br>
+                            Esta ação não pode ser desfeita.
+                        </p>
+                    </div>
+
+                    <div class="modal-footer border-0 justify-content-center pb-4">
+
+                        <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <form method="POST" action="<?= route('admin.produto.destroy', ['id' => $p->id]) ?>">
+
+                            <?= csrf_field() ?>
+                            <?= method_field('DELETE') ?>
+
+                            <button type="submit" class="btn btn-danger px-4">
+                                <i class="mdi mdi-delete mr-1"></i>
+                                Excluir
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <?php endforeach; ?>
 
 <?php endif; ?>
 
@@ -416,69 +522,88 @@
 <?php View::start('scripts'); ?>
 
 <script nonce="<?= e(cspNonce()) ?>">
-$(function() {
+    $(function() {
 
-    // Modal de descrição
-    $('#descricaoModal').on('show.bs.modal', function(event) {
-        var botao = $(event.relatedTarget);
+        // Modal de descrição
+        $('#descricaoModal').on('show.bs.modal', function(event) {
+            var botao = $(event.relatedTarget);
 
-        $('#descricaoModalLabel').text(
-            botao.data('nome') || 'Descrição'
-        );
+            $('#descricaoModalLabel').text(
+                botao.data('nome') || 'Descrição'
+            );
 
-        $('#descricaoModalTexto').text(
-            botao.data('descricao') || ''
-        );
-    });
-
-    // Modal de ingredientes
-    $('#ingredientesModal').on('show.bs.modal', function(event) {
-        var botao = $(event.relatedTarget);
-
-        $('#ingredientesModalLabel').text(
-            'Ingredientes de ' + (botao.data('nome') || 'produto')
-        );
-
-        $('#ingredientesModalTexto').text(
-            botao.data('descricao') || ''
-        );
-    });
-
-    // Modal de imagem
-    $('#imagemModal').on('show.bs.modal', function(event) {
-        var botao = $(event.relatedTarget);
-        var nome = botao.data('nome') || 'Produto';
-        var src = botao.data('src') || '';
-        var fallback = botao.data('fallback') || '';
-
-        var imagem = $('#imagemModalImg');
-
-        imagem.off('error');
-
-        imagem.on('error', function() {
-            $(this).off('error');
-
-            if (fallback && this.src !== fallback) {
-                this.src = fallback;
-            }
+            $('#descricaoModalTexto').text(
+                botao.data('descricao') || ''
+            );
         });
 
-        $('#imagemModalLabel').text(nome);
+        // Modal de ingredientes
+        $('#ingredientesModal').on('show.bs.modal', function(event) {
+            var botao = $(event.relatedTarget);
 
-        imagem
-            .attr('src', src || fallback)
-            .attr('alt', nome);
+            $('#ingredientesModalLabel').text(
+                'Ingredientes de ' + (botao.data('nome') || 'produto')
+            );
+
+            $('#ingredientesModalTexto').text(
+                botao.data('descricao') || ''
+            );
+        });
+
+        // Modal de imagem
+        $('#imagemModal').on('show.bs.modal', function(event) {
+            var botao = $(event.relatedTarget);
+            var nome = botao.data('nome') || 'Produto';
+            var src = botao.data('src') || '';
+            var fallback = botao.data('fallback') || '';
+
+            var imagem = $('#imagemModalImg');
+
+            imagem.off('error');
+
+            imagem.on('error', function() {
+                $(this).off('error');
+
+                if (fallback && this.src !== fallback) {
+                    this.src = fallback;
+                }
+            });
+
+            $('#imagemModalLabel').text(nome);
+
+            imagem
+                .attr('src', src || fallback)
+                .attr('alt', nome);
+        });
+
+        // Limpa a imagem ao fechar o modal
+        $('#imagemModal').on('hidden.bs.modal', function() {
+            $('#imagemModalImg')
+                .off('error')
+                .attr('src', '')
+                .attr('alt', '');
+        });
+
+        // Modal de extras
+        $('#extrasModal').on('show.bs.modal', function(event) {
+            var botao = $(event.relatedTarget);
+            var extras = botao.data('extras') || [];
+            var lista = $('#extrasModalLista').empty();
+
+            $('#extrasModalLabel').text('Extras de ' + (botao.data('nome') || 'produto'));
+            $('#extrasModalContagem').text(
+                extras.length + (extras.length === 1 ? ' extra vinculada' : ' extras vinculadas')
+            );
+
+            $.each(extras, function(i, nome) {
+                $('<li>')
+                    .append($('<span class="extra-num">').text(i + 1))
+                    .append($('<span>').text(nome))
+                    .appendTo(lista);
+            });
+        });
+
     });
-
-    // Limpa a imagem ao fechar o modal
-    $('#imagemModal').on('hidden.bs.modal', function() {
-        $('#imagemModalImg')
-            .off('error')
-            .attr('src', '')
-            .attr('alt', '');
-    });
-
-});
 </script>
 
 <?php View::end(); ?>

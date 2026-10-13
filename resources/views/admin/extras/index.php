@@ -46,7 +46,6 @@
                                 <th>Nome</th>
                                 <th class="text-center">Descrição</th>
                                 <th class="text-center">Imagem</th>
-                                <th class="text-center">Preço</th>
                                 <th class="text-center">Destaque</th>
                                 <th class="text-center">Ordem</th>
                                 <th class="text-center">Status</th>
@@ -92,7 +91,6 @@
                                                 <span class="text-muted">—</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td class="text-center"><?= e(moedaBR($extra->preco ?? '')); ?></td>
                                         <td class="text-center">
                                             <?php if (!empty($extra->destaque)): ?>
                                                 Sim

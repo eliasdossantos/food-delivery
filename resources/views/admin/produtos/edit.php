@@ -118,6 +118,38 @@
     white-space: nowrap;
     margin-right: 10px;
 }
+
+/* ── Lista de extras com rolagem ──────────────────────────────────── */
+.extras-box {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.extras-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.extras-toolbar .form-control {
+    max-width: 260px;
+}
+
+.extras-contador {
+    margin-left: auto;
+    font-size: 13px;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.extras-lista {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 12px 12px 4px;
+}
 </style>
 
 <?php View::end(); ?>
@@ -128,15 +160,6 @@
 <?php View::start('content'); ?>
 
 <?php
-// Preços do banco chegam como 19.90: formata para o padrão BR (19,90) antes de exibir
-$precoAtual = isset($produtos->preco) && $produtos->preco !== ''
-    ? number_format((float) $produtos->preco, 2, ',', '.')
-    : '';
-
-$promoAtual = isset($produtos->preco_promocional) && $produtos->preco_promocional !== ''
-    ? number_format((float) $produtos->preco_promocional, 2, ',', '.')
-    : '';
-
 // Imagem: URL externa (registros antigos) é usada direto; arquivo local passa pelo uploadUrl()
 $imagemAtual = $produtos->imagem_url ?? '';
 $imagemSrc = '';
@@ -249,6 +272,63 @@ if ($imagemAtual !== '') {
                         </div>
                     </div>
 
+
+                    <?php
+                    // Extras já vinculadas ao produto aparecem primeiro (sort estável: o resto mantém a ordem)
+                    $extraIds = $extraIds ?? [];
+                    $extras = $extras ?? [];
+
+                    usort($extras, function ($a, $b) use ($extraIds) {
+                        $aSel = in_array((int) $a->id, $extraIds, true) ? 0 : 1;
+                        $bSel = in_array((int) $b->id, $extraIds, true) ? 0 : 1;
+
+                        return $aSel <=> $bSel;
+                    });
+                    ?>
+                    <!-- Extras -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <h5>Extras disponíveis (opcional)</h5>
+                        </div>
+
+                        <?php if (empty($extras)): ?>
+                        <p class="text-muted mb-0">Nenhuma extra ativa cadastrada.</p>
+                        <?php else: ?>
+                        <div class="extras-box">
+                            <div class="extras-toolbar">
+                                <input type="search" class="form-control form-control-sm" id="extrasBusca"
+                                    placeholder="Buscar extra..." autocomplete="off">
+                                <span class="extras-contador" id="extrasContador"></span>
+                            </div>
+
+                            <div class="extras-lista" id="extrasLista">
+                                <div class="row">
+                                    <?php foreach ($extras as $extra): ?>
+                                    <?php
+                                            $extraId = (int) $extra->id;
+                                            $selecionada = in_array($extraId, $extraIds ?? [], true);
+                                            ?>
+                                    <div class="col-md-4 col-sm-6 extra-item" data-nome="<?= e($extra->nome) ?>">
+                                        <div class="custom-control custom-checkbox mb-2">
+                                            <input type="checkbox" class="custom-control-input extra-check"
+                                                id="extra_<?= $extraId ?>" name="extra_ids[]" value="<?= $extraId ?>"
+                                                <?= $selecionada ? 'checked' : '' ?>>
+                                            <label class="custom-control-label" for="extra_<?= $extraId ?>">
+                                                <?= e($extra->nome) ?>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <p class="text-muted d-none" id="extrasVazio">Nenhuma extra encontrada.</p>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?= erroInput('extra_ids') ?>
+                    </div>
+
                     <!-- Conteúdo -->
                     <div class="form-section">
                         <div class="form-section-title">
@@ -314,40 +394,15 @@ if ($imagemAtual !== '') {
                         </div>
                     </div>
 
-                    <!-- Preços -->
+                    <!-- Tempo de preparo -->
                     <div class="form-section">
                         <div class="form-section-title">
-                            <h5>Preços</h5>
+                            <h5>Tempo de preparo</h5>
                         </div>
 
                         <div class="row">
-                            <!-- Preço -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="preco">Preço</label>
-                                    <input type="text"
-                                        class="form-control moeda <?= hasError('preco') ? 'is-invalid' : '' ?>"
-                                        id="preco" name="preco" value="<?= old('preco', $precoAtual) ?>"
-                                        placeholder="0,00">
-                                    <?= erroInput('preco') ?>
-                                </div>
-                            </div>
-
-                            <!-- Preço promocional -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="preco_promocional">Preço promocional</label>
-                                    <input type="text"
-                                        class="form-control moeda <?= hasError('preco_promocional') ? 'is-invalid' : '' ?>"
-                                        id="preco_promocional" name="preco_promocional"
-                                        value="<?= old('preco_promocional', $promoAtual) ?>"
-                                        placeholder="0,00 (opcional)">
-                                    <?= erroInput('preco_promocional') ?>
-                                </div>
-                            </div>
-
                             <!-- Tempo de preparo -->
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="tempo_preparo">Tempo de preparo (min)</label>
                                     <input type="number" min="0" max="65535"
@@ -587,6 +642,62 @@ if ($imagemAtual !== '') {
 
     controla.addEventListener('change', atualizar);
     atualizar();
+})();
+</script>
+
+<script nonce="<?= e(CSP_NONCE) ?>">
+// Busca e contador da lista de extras
+(function() {
+    var busca = document.getElementById('extrasBusca');
+    var contador = document.getElementById('extrasContador');
+    var vazio = document.getElementById('extrasVazio');
+    var itens = document.querySelectorAll('.extra-item');
+
+    if (!busca || !itens.length) {
+        return;
+    }
+
+    function normalizar(texto) {
+        return (texto || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function atualizarContador() {
+        var marcadas = document.querySelectorAll('.extra-check:checked').length;
+        contador.textContent = marcadas + ' de ' + itens.length + ' selecionadas';
+    }
+
+    function filtrar() {
+        var termo = normalizar(busca.value.trim());
+        var visiveis = 0;
+
+        itens.forEach(function(item) {
+            var mostra = normalizar(item.dataset.nome).indexOf(termo) !== -1;
+            item.classList.toggle('d-none', !mostra);
+            if (mostra) {
+                visiveis++;
+            }
+        });
+
+        vazio.classList.toggle('d-none', visiveis > 0);
+    }
+
+    busca.addEventListener('input', filtrar);
+
+    // Enter na busca não deve enviar o formulário
+    busca.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    document.querySelectorAll('.extra-check').forEach(function(check) {
+        check.addEventListener('change', atualizarContador);
+    });
+
+    atualizarContador();
 })();
 </script>
 

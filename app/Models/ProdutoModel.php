@@ -33,8 +33,6 @@ class ProdutoModel extends Model
         'descricao',
         'ingredientes',
         'imagem_url',
-        'preco',
-        'preco_promocional',
         'tempo_preparo',
         'controla_estoque',
         'estoque',

@@ -18,9 +18,6 @@ return new class extends Migration {
             $table->text('descricao')->nullable();
             $table->string('imagem_url', 250)->nullable();
 
-            // Valor adicional
-            $table->decimal('preco', 10, 2)->default(0);
-
             // Controle de acesso
             $table->boolean('ativo')->default(1);
             $table->boolean('destaque')->default(0);

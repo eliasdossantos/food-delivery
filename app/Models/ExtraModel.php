@@ -30,7 +30,6 @@ class ExtraModel extends Model
         'slug',
         'descricao',
         'imagem_url',
-        'preco',
         'ativo',
         'destaque',
         'ordem_exibicao',

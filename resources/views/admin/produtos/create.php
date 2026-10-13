@@ -8,117 +8,147 @@
 
 
 <!-- Aqui enviamos para o template principal os estilos -->
-<!-- Aqui enviamos para o template principal os estilos -->
-
 <?php View::start('styles'); ?>
 
 <style>
-    /* ── Seções do formulário ─────────────────────────────────────────── */
-    .form-section {
-        margin-top: 25px;
-        margin-bottom: 20px;
-    }
+/* ── Seções do formulário ─────────────────────────────────────────── */
+.form-section {
+    margin-top: 25px;
+    margin-bottom: 20px;
+}
 
-    .form-section-title {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+.form-section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
 
-    .form-section-title::after {
-        content: '';
-        flex: 1;
-        height: 2px;
-        background: #878f96;
-        margin-left: 15px;
-    }
+.form-section-title::after {
+    content: '';
+    flex: 1;
+    height: 2px;
+    background: #878f96;
+    margin-left: 15px;
+}
 
-    .form-section-title h5 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        white-space: nowrap;
-    }
+.form-section-title h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+}
 
-    /* ── Campo de upload da imagem ────────────────────────────────────── */
-    .upload-box {
-        border: 2px dashed #ced4da;
-        border-radius: 12px;
-        background: #f8f9fa;
-        transition: border-color .2s, background .2s;
-    }
+/* ── Campo de upload da imagem ────────────────────────────────────── */
+.upload-box {
+    border: 2px dashed #ced4da;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: border-color .2s, background .2s;
+}
 
-    .upload-box.is-dragover,
-    .upload-box:hover {
-        border-color: #4e73df;
-        background: #eef3ff;
-    }
+.upload-box.is-dragover,
+.upload-box:hover {
+    border-color: #4e73df;
+    background: #eef3ff;
+}
 
-    .upload-box.is-invalid {
-        border-color: #dc3545;
-    }
+.upload-box.is-invalid {
+    border-color: #dc3545;
+}
 
-    .upload-drop {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 150px;
-        padding: 12px;
-        cursor: pointer;
-    }
+.upload-drop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    padding: 12px;
+    cursor: pointer;
+}
 
-    /* O input cobre toda a área: clicar e arrastar funcionam nativamente */
-    .upload-input {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
+/* O input cobre toda a área: clicar e arrastar funcionam nativamente */
+.upload-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
 
-    .upload-placeholder {
-        text-align: center;
-        color: #6c757d;
-        pointer-events: none;
-    }
+.upload-placeholder {
+    text-align: center;
+    color: #6c757d;
+    pointer-events: none;
+}
 
-    .upload-placeholder .mdi {
-        display: block;
-        font-size: 40px;
-        line-height: 1.2;
-        color: #4e73df;
-    }
+.upload-placeholder .mdi {
+    display: block;
+    font-size: 40px;
+    line-height: 1.2;
+    color: #4e73df;
+}
 
-    .upload-placeholder small {
-        display: block;
-    }
+.upload-placeholder small {
+    display: block;
+}
 
-    .upload-img {
-        max-width: 100%;
-        max-height: 180px;
-        object-fit: cover;
-        border-radius: 10px;
-        pointer-events: none;
-    }
+.upload-img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    pointer-events: none;
+}
 
-    .upload-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 12px 10px;
-        font-size: 13px;
-        color: #6c757d;
-        min-height: 36px;
-    }
+.upload-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 10px;
+    font-size: 13px;
+    color: #6c757d;
+    min-height: 36px;
+}
 
-    .upload-nome {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-right: 10px;
-    }
+.upload-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+/* ── Lista de extras com rolagem ──────────────────────────────────── */
+.extras-box {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.extras-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.extras-toolbar .form-control {
+    max-width: 260px;
+}
+
+.extras-contador {
+    margin-left: auto;
+    font-size: 13px;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.extras-lista {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 12px 12px 4px;
+}
 </style>
 
 <?php View::end(); ?>
@@ -193,12 +223,12 @@
                                         id="categoria_id" name="categoria_id">
                                         <option value="">Sem categoria</option>
                                         <?php if (!empty($categorias)): ?>
-                                            <?php foreach ($categorias as $categoria): ?>
-                                                <option value="<?= e($categoria->id) ?>"
-                                                    <?= (string) old('categoria_id', '') === (string) $categoria->id ? 'selected' : '' ?>>
-                                                    <?= e($categoria->nome) ?>
-                                                </option>
-                                            <?php endforeach; ?>
+                                        <?php foreach ($categorias as $categoria): ?>
+                                        <option value="<?= e($categoria->id) ?>"
+                                            <?= (string) old('categoria_id', '') === (string) $categoria->id ? 'selected' : '' ?>>
+                                            <?= e($categoria->nome) ?>
+                                        </option>
+                                        <?php endforeach; ?>
                                         <?php endif; ?>
                                     </select>
                                     <?= erroInput('categoria_id') ?>
@@ -215,6 +245,51 @@
                                         placeholder="Em branco, é gerado automaticamente (ex.: PIZ-001)">
                                     <?= erroInput('codigo') ?>
                                 </div>
+                            </div>
+
+                            <!-- Extras -->
+                            <div class="form-section">
+                                <div class="form-section-title">
+                                    <h5>Extras disponíveis (opcional)</h5>
+                                </div>
+
+                                <?php if (empty($extras)): ?>
+                                <p class="text-muted mb-0">Nenhuma extra ativa cadastrada.</p>
+                                <?php else: ?>
+                                <div class="extras-box">
+                                    <div class="extras-toolbar">
+                                        <input type="search" class="form-control form-control-sm" id="extrasBusca"
+                                            placeholder="Buscar extra..." autocomplete="off">
+                                        <span class="extras-contador" id="extrasContador"></span>
+                                    </div>
+
+                                    <div class="extras-lista" id="extrasLista">
+                                        <div class="row">
+                                            <?php foreach ($extras as $extra): ?>
+                                            <?php
+                                                    $extraId = (int) $extra->id;
+                                                    $selecionada = in_array($extraId, $extraIds ?? [], true);
+                                                    ?>
+                                            <div class="col-md-4 col-sm-6 extra-item"
+                                                data-nome="<?= e($extra->nome) ?>">
+                                                <div class="custom-control custom-checkbox mb-2">
+                                                    <input type="checkbox" class="custom-control-input extra-check"
+                                                        id="extra_<?= $extraId ?>" name="extra_ids[]"
+                                                        value="<?= $extraId ?>" <?= $selecionada ? 'checked' : '' ?>>
+                                                    <label class="custom-control-label" for="extra_<?= $extraId ?>">
+                                                        <?= e($extra->nome) ?>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <?php endforeach; ?>
+                                        </div>
+
+                                        <p class="text-muted d-none" id="extrasVazio">Nenhuma extra encontrada.</p>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+
+                                <?= erroInput('extra_ids') ?>
                             </div>
                         </div>
                     </div>
@@ -280,38 +355,15 @@
                         </div>
                     </div>
 
-                    <!-- Preços -->
+                    <!-- Tempo de preparo -->
                     <div class="form-section">
                         <div class="form-section-title">
-                            <h5>Preços</h5>
+                            <h5>Tempo de preparo</h5>
                         </div>
 
                         <div class="row">
-                            <!-- Preço -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="preco">Preço</label>
-                                    <input type="text"
-                                        class="form-control moeda <?= hasError('preco') ? 'is-invalid' : '' ?>"
-                                        id="preco" name="preco" value="<?= old('preco', '') ?>" placeholder="0,00">
-                                    <?= erroInput('preco') ?>
-                                </div>
-                            </div>
-
-                            <!-- Preço promocional -->
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="preco_promocional">Preço promocional</label>
-                                    <input type="text"
-                                        class="form-control moeda <?= hasError('preco_promocional') ? 'is-invalid' : '' ?>"
-                                        id="preco_promocional" name="preco_promocional"
-                                        value="<?= old('preco_promocional', '') ?>" placeholder="0,00 (opcional)">
-                                    <?= erroInput('preco_promocional') ?>
-                                </div>
-                            </div>
-
                             <!-- Tempo de preparo -->
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="tempo_preparo">Tempo de preparo (min)</label>
                                     <input type="number" min="0" max="65535"
@@ -453,97 +505,153 @@
 <?php View::start('scripts'); ?>
 
 <script nonce="<?= e(CSP_NONCE) ?>">
-    // Campo de upload da imagem
-    (function() {
-        var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
+// Campo de upload da imagem
+(function() {
+    var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
 
-        var $box = $('#uploadBox');
-        var $input = $('#imagem');
-        var $img = $('#uploadImg');
-        var $placeholder = $('#uploadPlaceholder');
-        var $nome = $('#uploadNome');
-        var $limpar = $('#uploadLimpar');
-        var $erro = $('#uploadErro');
+    var $box = $('#uploadBox');
+    var $input = $('#imagem');
+    var $img = $('#uploadImg');
+    var $placeholder = $('#uploadPlaceholder');
+    var $nome = $('#uploadNome');
+    var $limpar = $('#uploadLimpar');
+    var $erro = $('#uploadErro');
 
-        var atual = $img.data('atual') || '';
-        var textoInicial = $nome.text().trim();
+    var atual = $img.data('atual') || '';
+    var textoInicial = $nome.text().trim();
 
-        function mostrarImagem(src) {
-            if (src) {
-                $img.attr('src', src).removeClass('d-none');
-                $placeholder.addClass('d-none');
-            } else {
-                $img.attr('src', '').addClass('d-none');
-                $placeholder.removeClass('d-none');
-            }
+    function mostrarImagem(src) {
+        if (src) {
+            $img.attr('src', src).removeClass('d-none');
+            $placeholder.addClass('d-none');
+        } else {
+            $img.attr('src', '').addClass('d-none');
+            $placeholder.removeClass('d-none');
         }
+    }
 
-        function restaurar() {
-            $input.val('');
-            mostrarImagem(atual);
-            $nome.text(textoInicial);
-            $limpar.addClass('d-none');
-        }
+    function restaurar() {
+        $input.val('');
+        mostrarImagem(atual);
+        $nome.text(textoInicial);
+        $limpar.addClass('d-none');
+    }
 
-        $input.on('change', function() {
-            var arquivo = this.files && this.files[0];
-            $erro.addClass('d-none').text('');
+    $input.on('change', function() {
+        var arquivo = this.files && this.files[0];
+        $erro.addClass('d-none').text('');
 
-            if (!arquivo) {
-                restaurar();
-                return;
-            }
-
-            if (arquivo.type.indexOf('image/') !== 0) {
-                $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
-                restaurar();
-                return;
-            }
-
-            if (arquivo.size > MAX_BYTES) {
-                $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
-                restaurar();
-                return;
-            }
-
-            var leitor = new FileReader();
-            leitor.onload = function(e) {
-                mostrarImagem(e.target.result);
-            };
-            leitor.readAsDataURL(arquivo);
-
-            $nome.text(arquivo.name);
-            $limpar.removeClass('d-none');
-        });
-
-        $limpar.on('click', restaurar);
-
-        // Destaque visual ao arrastar um arquivo sobre a área
-        $box.on('dragenter dragover', function() {
-            $box.addClass('is-dragover');
-        });
-        $box.on('dragleave drop', function() {
-            $box.removeClass('is-dragover');
-        });
-    })();
-</script>
-<script nonce="<?= e(CSP_NONCE) ?>">
-    // Só habilita a quantidade em estoque quando o produto controla estoque
-    (function() {
-        var controla = document.getElementById('controla_estoque');
-        var estoque = document.getElementById('estoque');
-
-        if (!controla || !estoque) {
+        if (!arquivo) {
+            restaurar();
             return;
         }
 
-        function atualizar() {
-            estoque.disabled = controla.value !== '1';
+        if (arquivo.type.indexOf('image/') !== 0) {
+            $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
+            restaurar();
+            return;
         }
 
-        controla.addEventListener('change', atualizar);
-        atualizar();
-    })();
+        if (arquivo.size > MAX_BYTES) {
+            $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
+            restaurar();
+            return;
+        }
+
+        var leitor = new FileReader();
+        leitor.onload = function(e) {
+            mostrarImagem(e.target.result);
+        };
+        leitor.readAsDataURL(arquivo);
+
+        $nome.text(arquivo.name);
+        $limpar.removeClass('d-none');
+    });
+
+    $limpar.on('click', restaurar);
+
+    // Destaque visual ao arrastar um arquivo sobre a área
+    $box.on('dragenter dragover', function() {
+        $box.addClass('is-dragover');
+    });
+    $box.on('dragleave drop', function() {
+        $box.removeClass('is-dragover');
+    });
+})();
+</script>
+<script nonce="<?= e(CSP_NONCE) ?>">
+// Só habilita a quantidade em estoque quando o produto controla estoque
+(function() {
+    var controla = document.getElementById('controla_estoque');
+    var estoque = document.getElementById('estoque');
+
+    if (!controla || !estoque) {
+        return;
+    }
+
+    function atualizar() {
+        estoque.disabled = controla.value !== '1';
+    }
+
+    controla.addEventListener('change', atualizar);
+    atualizar();
+})();
+</script>
+
+<script nonce="<?= e(CSP_NONCE) ?>">
+// Busca e contador da lista de extras
+(function() {
+    var busca = document.getElementById('extrasBusca');
+    var contador = document.getElementById('extrasContador');
+    var vazio = document.getElementById('extrasVazio');
+    var itens = document.querySelectorAll('.extra-item');
+
+    if (!busca || !itens.length) {
+        return;
+    }
+
+    function normalizar(texto) {
+        return (texto || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function atualizarContador() {
+        var marcadas = document.querySelectorAll('.extra-check:checked').length;
+        contador.textContent = marcadas + ' de ' + itens.length + ' selecionadas';
+    }
+
+    function filtrar() {
+        var termo = normalizar(busca.value.trim());
+        var visiveis = 0;
+
+        itens.forEach(function(item) {
+            var mostra = normalizar(item.dataset.nome).indexOf(termo) !== -1;
+            item.classList.toggle('d-none', !mostra);
+            if (mostra) {
+                visiveis++;
+            }
+        });
+
+        vazio.classList.toggle('d-none', visiveis > 0);
+    }
+
+    busca.addEventListener('input', filtrar);
+
+    // Enter na busca não deve enviar o formulário
+    busca.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+        }
+    });
+
+    document.querySelectorAll('.extra-check').forEach(function(check) {
+        check.addEventListener('change', atualizarContador);
+    });
+
+    atualizarContador();
+})();
 </script>
 
 <?php View::end(); ?>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Web\BaseController;
 use App\Http\Requests\Produtos\StoreProdutosRequest;
 use App\Http\Requests\Produtos\UpdateProdutosRequest;
 use App\Repositories\CategoriaRepository;
+use App\Repositories\ExtraRepository;
+use App\Repositories\ProdutoExtraRepository;
 use App\Repositories\ProdutoRepository;
 use App\Services\BuscaNome\BuscaNomeService;
 use Framework\Support\Session;
@@ -41,11 +43,15 @@ class ProdutosController extends BaseController
 
     private ProdutoRepository $produtoModel;
     private CategoriaRepository $categoriaModel;
+    private ExtraRepository $extraModel;
+    private ProdutoExtraRepository $produtoExtraModel;
 
     public function __construct()
     {
         $this->produtoModel = new ProdutoRepository();
         $this->categoriaModel = new CategoriaRepository();
+        $this->extraModel = new ExtraRepository();
+        $this->produtoExtraModel = new ProdutoExtraRepository();
     }
 
     /**
@@ -58,6 +64,7 @@ class ProdutosController extends BaseController
             'titulo' => 'Produtos',
             'subtitulo' => 'Lista de produtos',
             'produtos' => $this->produtoModel->tudoComCategoria(),
+            'extrasPorProduto' => $this->produtoExtraModel->getExtrasAgrupadosPorProduto(),
         ];
 
         $this->view('admin.produtos.index', $data, 'main');
@@ -77,6 +84,7 @@ class ProdutosController extends BaseController
             'titulo'    => 'Produtos',
             'subtitulo' => 'Detalhes do Produto',
             'produtos'  => $produtos,
+            'extras'    => $this->produtoExtraModel->getExtrasDoProduto($id),
         ];
 
         $this->view('admin.produtos.show', $data, 'main');
@@ -92,6 +100,8 @@ class ProdutosController extends BaseController
             'titulo' => 'Novo Produtos',
             'subtitulo' => 'Criar novo Produtos',
             'categorias'  => $this->categoriasDisponiveis(),
+            'extras'      => $this->extraModel->getAtivas(),
+            'extraIds'    => [],
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
@@ -113,7 +123,31 @@ class ProdutosController extends BaseController
             return;
         }
 
+        $input = $request->all();
+        $extraIds = $this->validarExtraIds($input);
+
+        if ($extraIds === false) {
+            Session::flash('error', 'Uma ou mais extras selecionadas são inválidas ou estão inativas.');
+            Session::flashInput($input);
+            $this->back();
+            return;
+        }
+
         $data = $this->normalizarCategoria($request->validated());
+
+        $extraIds = $this->validarExtraIds($request->all());
+
+        if ($extraIds === false) {
+            Session::flash(
+                'error',
+                'Uma ou mais extras selecionadas são inválidas ou estão inativas.'
+            );
+            Session::flashInput($request->all());
+            $this->back();
+            return;
+        }
+
+        unset($data['extra_ids']);
 
         if (!$this->categoriaPermitida($data['categoria_id'])) {
             Session::flash('error', 'A categoria selecionada é inválida ou está inativa.');
@@ -158,12 +192,23 @@ class ProdutosController extends BaseController
         $id = $this->produtoModel->create($data);
 
         if (!$id) {
-            // Não deixa arquivo órfão em public/uploads se o registro não foi criado
-            if ($nomeArquivo !== null) {
-                $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
-            }
+            $this->redirectWith(
+                'admin/produto',
+                'error',
+                'Não foi possível criar o produto.'
+            );
+            return;
+        }
 
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível criar a categoria.');
+        if (!$this->produtoExtraModel->sincronizar(
+            (int) $id,
+            $extraIds
+        )) {
+            $this->redirectWith(
+                'admin/produto',
+                'error',
+                'O produto foi criado, mas não foi possível salvar as extras.'
+            );
             return;
         }
 
@@ -185,6 +230,11 @@ class ProdutosController extends BaseController
             'produtos'    => $produtos,
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
             'categorias'  => $this->categoriasDisponiveis($produtos->categoria_id ?? null),
+            'extras'      => $this->extraModel->getAtivas(),
+            'extraIds'    => array_map(
+                'intval',
+                $this->produtoExtraModel->getIdsDasExtrasDoProduto($id)
+            ),
         ];
 
         $this->view('admin.produtos.edit', $data, 'main');
@@ -208,7 +258,18 @@ class ProdutosController extends BaseController
             return;
         }
 
+        $input = $request->all();
+        $extraIds = $this->validarExtraIds($input);
+
+        if ($extraIds === false) {
+            Session::flash('error', 'Uma ou mais extras selecionadas são inválidas ou estão inativas.');
+            Session::flashInput($input);
+            $this->back();
+            return;
+        }
+
         $data = $this->normalizarCategoria($request->validated());
+        unset($data['extra_ids']);
 
         // Mantém a categoria atual mesmo se ela estiver inativa; só valida se mudou
         $atual = isset($produtos->categoria_id) ? (int) $produtos->categoria_id : null;
@@ -268,7 +329,16 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $this->redirectWith('admin/produto', 'success', 'Produto atualizada com sucesso!');
+        if (!$this->produtoExtraModel->sincronizar($id, $extraIds)) {
+            $this->redirectWith(
+                'admin/produto',
+                'error',
+                'O produto foi atualizado, mas não foi possível salvar as extras.'
+            );
+            return;
+        }
+
+        $this->redirectWith('admin/produto', 'success', 'Produto atualizado com sucesso!');
     }
 
     /**
@@ -295,6 +365,8 @@ class ProdutosController extends BaseController
         $this->redirectWith('admin/produto', 'success', 'Produto removido com sucesso.');
     }
 
+    // ── Auxiliares ────────────────────────────────────────────────────────────
+
     /**
      * Autocomplete por nome.
      * GET /produtos/procurar?term=...
@@ -319,7 +391,6 @@ class ProdutosController extends BaseController
 
         return $imagem;
     }
-    // ── Auxiliares ────────────────────────────────────────────────────────────
 
     /**
      * "Sem categoria" vira NULL (nunca '' em coluna inteira com FK)
@@ -375,5 +446,41 @@ class ProdutosController extends BaseController
         }
 
         return $categorias;
+    }
+
+    /**
+     * Lê extra_ids[] do formulário, remove duplicados e valida os IDs.
+     *
+     * @return int[]|false Retorna false se algum ID for inválido ou inativo.
+     */
+    private function validarExtraIds(array $input): array|false
+    {
+        $valores = $input['extra_ids'] ?? [];
+
+        if (!is_array($valores)) {
+            return false;
+        }
+
+        $ids = [];
+
+        foreach ($valores as $valor) {
+            if (!filter_var($valor, FILTER_VALIDATE_INT) || (int) $valor < 1) {
+                return false;
+            }
+
+            $ids[] = (int) $valor;
+        }
+
+        $ids = array_values(array_unique($ids));
+
+        foreach ($ids as $extraId) {
+            $extra = $this->extraModel->findById($extraId);
+
+            if (!$extra || empty($extra->ativo)) {
+                return false;
+            }
+        }
+
+        return $ids;
     }
 }

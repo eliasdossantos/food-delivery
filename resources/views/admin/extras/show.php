@@ -159,16 +159,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Preço -->
-                                <div class="col-md-3">
-                                    <div class="show-item">
-                                        <span class="show-item-label">Preço</span>
-                                        <div class="show-item-value">
-                                            <?= e(moedaBR($extras->preco ?? '-')) ?>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="row">
