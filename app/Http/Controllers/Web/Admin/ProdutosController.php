@@ -7,6 +7,8 @@ use App\Http\Requests\Produtos\StoreProdutosRequest;
 use App\Http\Requests\Produtos\UpdateProdutosRequest;
 use App\Repositories\CategoriaRepository;
 use App\Repositories\ExtraRepository;
+use App\Repositories\MedidaRepository;
+use App\Repositories\ProdutoEspecificacaoRepository;
 use App\Repositories\ProdutoExtraRepository;
 use App\Repositories\ProdutoRepository;
 use App\Services\BuscaNome\BuscaNomeService;
@@ -45,6 +47,8 @@ class ProdutosController extends BaseController
     private CategoriaRepository $categoriaModel;
     private ExtraRepository $extraModel;
     private ProdutoExtraRepository $produtoExtraModel;
+    private MedidaRepository $medidaModel;
+    private ProdutoEspecificacaoRepository $especificacaoModel;
 
     public function __construct()
     {
@@ -52,6 +56,8 @@ class ProdutosController extends BaseController
         $this->categoriaModel = new CategoriaRepository();
         $this->extraModel = new ExtraRepository();
         $this->produtoExtraModel = new ProdutoExtraRepository();
+        $this->medidaModel = new MedidaRepository();
+        $this->especificacaoModel = new ProdutoEspecificacaoRepository();
     }
 
     /**
@@ -65,6 +71,7 @@ class ProdutosController extends BaseController
             'subtitulo' => 'Lista de produtos',
             'produtos' => $this->produtoModel->tudoComCategoria(),
             'extrasPorProduto' => $this->produtoExtraModel->getExtrasAgrupadosPorProduto(),
+            'especificacoesPorProduto' => $this->especificacaoModel->getAgrupadasPorProduto(),
         ];
 
         $this->view('admin.produtos.index', $data, 'main');
@@ -81,10 +88,11 @@ class ProdutosController extends BaseController
         $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         $data = [
-            'titulo'    => 'Produtos',
-            'subtitulo' => 'Detalhes do Produto',
-            'produtos'  => $produtos,
-            'extras'    => $this->produtoExtraModel->getExtrasDoProduto($id),
+            'titulo'         => 'Produtos',
+            'subtitulo'      => 'Detalhes do Produto',
+            'produtos'       => $produtos,
+            'extras'         => $this->produtoExtraModel->getExtrasDoProduto($id),
+            'especificacoes' => $this->especificacaoModel->getDoProduto($id),
         ];
 
         $this->view('admin.produtos.show', $data, 'main');
@@ -97,12 +105,14 @@ class ProdutosController extends BaseController
     public function create(): void
     {
         $data = [
-            'titulo' => 'Novo Produtos',
-            'subtitulo' => 'Criar novo Produtos',
-            'categorias'  => $this->categoriasDisponiveis(),
-            'extras'      => $this->extraModel->getAtivas(),
-            'extraIds'    => [],
-            'uploadMaxMb' => self::UPLOAD_MAX_MB,
+            'titulo'         => 'Novo Produtos',
+            'subtitulo'      => 'Criar novo Produtos',
+            'categorias'     => $this->categoriasDisponiveis(),
+            'extras'         => $this->extraModel->getAtivas(),
+            'extraIds'       => [],
+            'medidas'        => $this->medidasDisponiveis(),
+            'especificacoes' => [],
+            'uploadMaxMb'    => self::UPLOAD_MAX_MB,
         ];
 
         $this->view('admin.produtos.create', $data, 'main');
@@ -124,6 +134,8 @@ class ProdutosController extends BaseController
         }
 
         $input = $request->all();
+
+        // Extras selecionadas (IDs válidos e ativos)
         $extraIds = $this->validarExtraIds($input);
 
         if ($extraIds === false) {
@@ -133,21 +145,23 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $data = $this->normalizarCategoria($request->validated());
+        // Medidas, preços e customizável.
+        // No cadastro, é obrigatório informar ao menos uma medida com preço.
+        $erroEspec = null;
+        $especificacoes = $this->validarEspecificacoes($input, [], $erroEspec, true);
 
-        $extraIds = $this->validarExtraIds($request->all());
-
-        if ($extraIds === false) {
-            Session::flash(
-                'error',
-                'Uma ou mais extras selecionadas são inválidas ou estão inativas.'
-            );
-            Session::flashInput($request->all());
+        if ($especificacoes === false) {
+            Session::flash('error', $erroEspec);
+            Session::flashErrors(['especificacoes' => [$erroEspec]]);
+            Session::flashInput($input);
             $this->back();
             return;
         }
 
-        unset($data['extra_ids']);
+        $data = $this->normalizarCategoria($request->validated());
+
+        // Esses campos pertencem às tabelas de vínculo, não a `produtos`
+        unset($data['extra_ids'], $data['especificacoes']);
 
         if (!$this->categoriaPermitida($data['categoria_id'])) {
             Session::flash('error', 'A categoria selecionada é inválida ou está inativa.');
@@ -192,18 +206,16 @@ class ProdutosController extends BaseController
         $id = $this->produtoModel->create($data);
 
         if (!$id) {
-            $this->redirectWith(
-                'admin/produto',
-                'error',
-                'Não foi possível criar o produto.'
-            );
+            // Não deixa arquivo órfão em public/uploads se o registro não foi criado
+            if ($nomeArquivo !== null) {
+                $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
+            }
+
+            $this->redirectWith('admin/produto', 'error', 'Não foi possível criar o produto.');
             return;
         }
 
-        if (!$this->produtoExtraModel->sincronizar(
-            (int) $id,
-            $extraIds
-        )) {
+        if (!$this->produtoExtraModel->sincronizar((int) $id, $extraIds)) {
             $this->redirectWith(
                 'admin/produto',
                 'error',
@@ -212,7 +224,16 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $this->redirectWith('admin/produto', 'success', 'Produto criada com sucesso!');
+        if (!$this->especificacaoModel->sincronizar((int) $id, $especificacoes)) {
+            $this->redirectWith(
+                'admin/produto',
+                'error',
+                'O produto foi criado, mas não foi possível salvar as medidas e preços.'
+            );
+            return;
+        }
+
+        $this->redirectWith('admin/produto', 'success', 'Produto criado com sucesso!');
     }
 
     /**
@@ -224,17 +245,23 @@ class ProdutosController extends BaseController
         $produtos = $this->produtoModel->findComCategoria($id);
         $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
+        $especificacoes = $this->especificacaoModel->getDoProduto($id);
+
         $data = [
-            'titulo'      => 'Produto',
-            'subtitulo'   => 'Editar Produto',
-            'produtos'    => $produtos,
-            'uploadMaxMb' => self::UPLOAD_MAX_MB,
-            'categorias'  => $this->categoriasDisponiveis($produtos->categoria_id ?? null),
-            'extras'      => $this->extraModel->getAtivas(),
-            'extraIds'    => array_map(
+            'titulo'         => 'Produto',
+            'subtitulo'      => 'Editar Produto',
+            'produtos'       => $produtos,
+            'uploadMaxMb'    => self::UPLOAD_MAX_MB,
+            'categorias'     => $this->categoriasDisponiveis($produtos->categoria_id ?? null),
+            'extras'         => $this->extraModel->getAtivas(),
+            'extraIds'       => array_map(
                 'intval',
                 $this->produtoExtraModel->getIdsDasExtrasDoProduto($id)
             ),
+            'medidas'        => $this->medidasDisponiveis(
+                array_map(fn($e) => (int) $e->medida_id, $especificacoes)
+            ),
+            'especificacoes' => $especificacoes,
         ];
 
         $this->view('admin.produtos.edit', $data, 'main');
@@ -247,7 +274,7 @@ class ProdutosController extends BaseController
     public function update(UpdateProdutosRequest $request, int $id): void
     {
         $produtos = $this->produtoModel->findById($id);
-        $this->abortUnless((bool)$produtos, 404, 'Produto não encontrada.');
+        $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         if ($request->fails()) {
             Session::flash('error', $request->firstError());
@@ -259,6 +286,8 @@ class ProdutosController extends BaseController
         }
 
         $input = $request->all();
+
+        // Extras selecionadas (IDs válidos e ativos)
         $extraIds = $this->validarExtraIds($input);
 
         if ($extraIds === false) {
@@ -268,8 +297,26 @@ class ProdutosController extends BaseController
             return;
         }
 
+        // Medidas, preços e customizável (medidas já vinculadas podem continuar mesmo inativas)
+        $atuais = array_map(
+            fn($e) => (int) $e->medida_id,
+            $this->especificacaoModel->getDoProduto($id)
+        );
+
+        $erroEspec = null;
+        $especificacoes = $this->validarEspecificacoes($input, $atuais, $erroEspec);
+
+        if ($especificacoes === false) {
+            Session::flash('error', $erroEspec);
+            Session::flashInput($input);
+            $this->back();
+            return;
+        }
+
         $data = $this->normalizarCategoria($request->validated());
-        unset($data['extra_ids']);
+
+        // Esses campos pertencem às tabelas de vínculo, não a `produtos`
+        unset($data['extra_ids'], $data['especificacoes']);
 
         // Mantém a categoria atual mesmo se ela estiver inativa; só valida se mudou
         $atual = isset($produtos->categoria_id) ? (int) $produtos->categoria_id : null;
@@ -338,6 +385,15 @@ class ProdutosController extends BaseController
             return;
         }
 
+        if (!$this->especificacaoModel->sincronizar($id, $especificacoes)) {
+            $this->redirectWith(
+                'admin/produto',
+                'error',
+                'O produto foi atualizado, mas não foi possível salvar as medidas e preços.'
+            );
+            return;
+        }
+
         $this->redirectWith('admin/produto', 'success', 'Produto atualizado com sucesso!');
     }
 
@@ -348,10 +404,10 @@ class ProdutosController extends BaseController
     public function destroy(int $id): void
     {
         $produtos = $this->produtoModel->findById($id);
-        $this->abortUnless((bool) $produtos, 404, 'produtos não encontrada.');
+        $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         if (!$this->produtoModel->delete($id)) {
-            $this->redirectWith('admin/produto', 'error', 'Não foi possível remover o produtos.');
+            $this->redirectWith('admin/produto', 'error', 'Não foi possível remover o produto.');
             return;
         }
 
@@ -482,5 +538,116 @@ class ProdutosController extends BaseController
         }
 
         return $ids;
+    }
+
+    /**
+     * Medidas ativas para o select. Medidas já vinculadas ao produto entram
+     * mesmo inativas, para não sumirem na edição.
+     */
+    private function medidasDisponiveis(array $incluirIds = []): array
+    {
+        $medidas = $this->medidaModel->getAtivas();
+        $existentes = array_map(fn($m) => (int) $m->id, $medidas);
+
+        foreach ($incluirIds as $id) {
+            if (!in_array((int) $id, $existentes, true)) {
+                $medida = $this->medidaModel->findById((int) $id);
+
+                if ($medida) {
+                    $medidas[] = $medida;
+                }
+            }
+        }
+
+        return $medidas;
+    }
+
+    /**
+     * Lê especificacoes[i][medida_id|preco|customizavel] do formulário.
+     * Linhas totalmente vazias são ignoradas. Em toda linha preenchida,
+     * a medida e o preço (maior que zero) são obrigatórios.
+     *
+     * @param int[]       $medidasJaVinculadas medidas que podem continuar mesmo inativas
+     * @param string|null $erro                recebe a mensagem de erro, se houver
+     * @param bool        $exigirUma           exige ao menos uma medida com preço
+     * @return array<int, array{medida_id:int, preco:float, customizavel:int}>|false
+     */
+    private function validarEspecificacoes(
+        array $input,
+        array $medidasJaVinculadas,
+        ?string &$erro = null,
+        bool $exigirUma = false
+    ): array|false {
+        $linhas = $input['especificacoes'] ?? [];
+
+        if (!is_array($linhas)) {
+            $erro = 'Medidas e preços inválidos.';
+            return false;
+        }
+
+        $itens = [];
+        $vistas = [];
+
+        foreach ($linhas as $linha) {
+            if (!is_array($linha)) {
+                $erro = 'Medidas e preços inválidos.';
+                return false;
+            }
+
+            $medidaId = trim((string) ($linha['medida_id'] ?? ''));
+            $precoTxt = trim((string) ($linha['preco'] ?? ''));
+
+            if ($medidaId === '' && $precoTxt === '') {
+                continue;
+            }
+
+            if (!filter_var($medidaId, FILTER_VALIDATE_INT) || (int) $medidaId < 1) {
+                $erro = 'Selecione a medida em todas as linhas de preço.';
+                return false;
+            }
+
+            $medidaId = (int) $medidaId;
+
+            if (isset($vistas[$medidaId])) {
+                $erro = 'A mesma medida foi informada mais de uma vez.';
+                return false;
+            }
+
+            // Preço obrigatório em toda medida
+            if ($precoTxt === '') {
+                $erro = 'Informe o preço de todas as medidas.';
+                return false;
+            }
+
+            // "1.234,56" → "1234.56"
+            $normalizado = str_replace(',', '.', str_replace('.', '', $precoTxt));
+
+            if (!is_numeric($normalizado) || (float) $normalizado <= 0) {
+                $erro = 'O preço de cada medida deve ser maior que zero.';
+                return false;
+            }
+
+            $medida = $this->medidaModel->findById($medidaId);
+
+            if (!$medida || (empty($medida->ativo) && !in_array($medidaId, $medidasJaVinculadas, true))) {
+                $erro = 'Uma ou mais medidas selecionadas são inválidas ou estão inativas.';
+                return false;
+            }
+
+            $vistas[$medidaId] = true;
+
+            $itens[] = [
+                'medida_id'    => $medidaId,
+                'preco'        => round((float) $normalizado, 2),
+                'customizavel' => !empty($linha['customizavel']) ? 1 : 0,
+            ];
+        }
+
+        if ($exigirUma && empty($itens)) {
+            $erro = 'Cadastre ao menos uma medida com preço.';
+            return false;
+        }
+
+        return $itens;
     }
 }

@@ -8,6 +8,9 @@ use Framework\Http\Request;
 /**
  * StoreProdutosRequest
  * Validação e sanitização do cadastro de produto (tabela `produtos`).
+ *
+ * O preço NÃO é validado aqui: ele pertence a cada medida
+ * (tabela `produtos_especificacoes`) e é validado no controller.
  */
 class StoreProdutosRequest extends FormRequest
 {
@@ -25,6 +28,7 @@ class StoreProdutosRequest extends FormRequest
             'codigo'            => 'nullable|string|max:100|unique:produtos,codigo',
             'categoria_id'      => 'nullable|integer|exists:categorias,id',
             'extra_ids'         => 'nullable|array',
+            'especificacoes'    => 'nullable|array',
 
             // Conteúdo
             'descricao'         => 'nullable|max:500',
@@ -102,24 +106,39 @@ class StoreProdutosRequest extends FormRequest
 
             'ativo'    => $this->input['ativo'] ?? '1',
             'destaque' => $this->input['destaque'] ?? '0',
+
             'extra_ids' => is_array($this->input['extra_ids'] ?? null)
                 ? array_values($this->input['extra_ids'])
                 : [],
 
+            'especificacoes' => $this->sanitizarEspecificacoes($this->input['especificacoes'] ?? []),
         ];
     }
 
     /**
-     * "1.234,56" → "1234.56". Vazio → null.
+     * especificacoes[i][medida_id|preco|customizavel] → lista limpa, sem índices soltos.
+     * A conversão do preço e as demais validações ficam no controller.
      */
-    private static function moeda(mixed $valor): ?string
+    private function sanitizarEspecificacoes(mixed $linhas): array
     {
-        $valor = trim((string) $valor);
-
-        if ($valor === '') {
-            return null;
+        if (!is_array($linhas)) {
+            return [];
         }
 
-        return str_replace(',', '.', str_replace('.', '', $valor));
+        $saida = [];
+
+        foreach ($linhas as $linha) {
+            if (!is_array($linha)) {
+                continue;
+            }
+
+            $saida[] = [
+                'medida_id'    => trim(Request::sanitizeValue($linha['medida_id'] ?? '')),
+                'preco'        => trim(Request::sanitizeValue($linha['preco'] ?? '')),
+                'customizavel' => !empty($linha['customizavel']) ? '1' : '0',
+            ];
+        }
+
+        return $saida;
     }
 }

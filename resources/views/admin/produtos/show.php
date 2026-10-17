@@ -112,6 +112,43 @@
     font-size: 13px;
     font-weight: 600;
 }
+
+.show-tabela {
+    margin: 0;
+    background: #f8f9fa;
+}
+
+.show-tabela th {
+    font-size: 13px;
+    color: #6c757d;
+}
+
+/* ── Medidas e preços com rolagem ─────────────────────────────────── */
+.show-tabela-box {
+    max-height: 280px;
+    overflow-y: auto;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+}
+
+.show-tabela-box .show-tabela {
+    border: 0;
+}
+
+.show-tabela-box .show-tabela thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #f1f3f5;
+    box-shadow: 0 1px 0 #dee2e6;
+}
+
+.show-contador {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #6c757d;
+    text-align: right;
+}
 </style>
 
 <?php View::end(); ?>
@@ -213,9 +250,47 @@ if ($imagemAtual !== '') {
                     <?php else: ?>
                     <div class="show-extras">
                         <?php foreach ($extras as $extra): ?>
-                        <span class="show-extra-chip"><?= e($extra->nome) ?></span>
+                        <span class="show-extra-chip"><?= e($extra->nome) ?> - $R:
+                            <?= e(moedaBR($extra->preco)) ?></span>
                         <?php endforeach; ?>
                     </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Medidas e preços -->
+                <div class="show-section">
+                    <div class="show-section-title">
+                        <h5>Medidas e preços</h5>
+                    </div>
+
+                    <?php if (empty($especificacoes)): ?>
+                    <div class="show-item-value">Nenhuma medida cadastrada</div>
+                    <?php else: ?>
+                    <div class="show-tabela-box">
+                        <table class="table table-bordered show-tabela">
+                            <thead>
+                                <tr>
+                                    <th>Medida</th>
+                                    <th class="text-center">Preço</th>
+                                    <th class="text-center">Customizável</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($especificacoes as $esp): ?>
+                                <tr>
+                                    <td><?= e($esp->medida_nome) ?></td>
+                                    <td class="text-center"><?= e(moedaBR($esp->preco)) ?></td>
+                                    <td class="text-center">
+                                        <?= !empty($esp->customizavel)
+                                                    ? '<span class="show-status active">Sim</span>'
+                                                    : '<span class="show-status inactive">Não</span>' ?>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="show-contador"><?= count($especificacoes) ?> medida(s)</div>
                     <?php endif; ?>
                 </div>
 

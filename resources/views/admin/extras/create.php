@@ -157,6 +157,15 @@
 
                     <div class="row">
 
+                        <!-- Preço -->
+                        <div class="form-group col-md-6">
+                            <label for="preco">Preço</label>
+                            <input type="text"
+                                class="form-control <?= hasError('preco') ? 'is-invalid' : '' ?> dinheiro" id="preco"
+                                name="preco" value="<?= old('preco', '') ?>" placeholder="Preço" autofocus>
+                            <?= erroInput('preco') ?>
+                        </div>
+
                         <!-- Imagem -->
                         <div class="form-group col-md-6">
                             <label for="imagem">Imagem</label>

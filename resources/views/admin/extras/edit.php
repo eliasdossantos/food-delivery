@@ -13,84 +13,84 @@
 
 <?php View::start('styles'); ?>
 <style>
-    .upload-box {
-        border: 2px dashed #ced4da;
-        border-radius: 12px;
-        background: #f8f9fa;
-        transition: border-color .2s, background .2s;
-    }
+.upload-box {
+    border: 2px dashed #ced4da;
+    border-radius: 12px;
+    background: #f8f9fa;
+    transition: border-color .2s, background .2s;
+}
 
-    .upload-box.is-dragover,
-    .upload-box:hover {
-        border-color: #4e73df;
-        background: #eef3ff;
-    }
+.upload-box.is-dragover,
+.upload-box:hover {
+    border-color: #4e73df;
+    background: #eef3ff;
+}
 
-    .upload-box.is-invalid {
-        border-color: #dc3545;
-    }
+.upload-box.is-invalid {
+    border-color: #dc3545;
+}
 
-    .upload-drop {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 150px;
-        padding: 12px;
-        cursor: pointer;
-    }
+.upload-drop {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    padding: 12px;
+    cursor: pointer;
+}
 
-    /* O input cobre toda a área: clicar e arrastar funcionam nativamente */
-    .upload-input {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-        cursor: pointer;
-    }
+/* O input cobre toda a área: clicar e arrastar funcionam nativamente */
+.upload-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
 
-    .upload-placeholder {
-        text-align: center;
-        color: #6c757d;
-        pointer-events: none;
-    }
+.upload-placeholder {
+    text-align: center;
+    color: #6c757d;
+    pointer-events: none;
+}
 
-    .upload-placeholder .mdi {
-        display: block;
-        font-size: 40px;
-        line-height: 1.2;
-        color: #4e73df;
-    }
+.upload-placeholder .mdi {
+    display: block;
+    font-size: 40px;
+    line-height: 1.2;
+    color: #4e73df;
+}
 
-    .upload-placeholder small {
-        display: block;
-    }
+.upload-placeholder small {
+    display: block;
+}
 
-    .upload-img {
-        max-width: 100%;
-        max-height: 180px;
-        object-fit: cover;
-        border-radius: 10px;
-        pointer-events: none;
-    }
+.upload-img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    pointer-events: none;
+}
 
-    .upload-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 6px 12px 10px;
-        font-size: 13px;
-        color: #6c757d;
-        min-height: 36px;
-    }
+.upload-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px 10px;
+    font-size: 13px;
+    color: #6c757d;
+    min-height: 36px;
+}
 
-    .upload-nome {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        margin-right: 10px;
-    }
+.upload-nome {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+}
 </style>
 <?php View::end(); ?>
 
@@ -137,6 +137,16 @@
                                 id="nome" name="nome" value="<?= old('nome', $extras->nome ?? '') ?>"
                                 placeholder="Nome do extra" autofocus>
                             <?= erroInput('nome') ?>
+                        </div>
+
+                        <!-- Preço -->
+                        <div class="form-group col-md-4">
+                            <label for="preco">Preço</label>
+                            <input type="text"
+                                class="form-control <?= hasError('preco') ? 'is-invalid' : '' ?> dinheiro" id="preco"
+                                name="preco" value="<?= old('preco', $extras->preco ?? '') ?>" placeholder="Preço"
+                                autofocus>
+                            <?= erroInput('preco') ?>
                         </div>
 
                         <!-- Slug -->
@@ -289,83 +299,83 @@
 
 <?php View::start('scripts'); ?>
 <script nonce="<?= e(cspNonce()) ?>">
-    // Pré-visualização do ícone MDI ao digitar
-    $('#icone').on('input', function() {
-        $('#iconePreview').attr('class', 'mdi ' + $(this).val().trim());
+// Pré-visualização do ícone MDI ao digitar
+$('#icone').on('input', function() {
+    $('#iconePreview').attr('class', 'mdi ' + $(this).val().trim());
+});
+
+// Campo de upload da imagem
+(function() {
+    var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
+
+    var $box = $('#uploadBox');
+    var $input = $('#imagem');
+    var $img = $('#uploadImg');
+    var $placeholder = $('#uploadPlaceholder');
+    var $nome = $('#uploadNome');
+    var $limpar = $('#uploadLimpar');
+    var $erro = $('#uploadErro');
+
+    var atual = $img.data('atual') || '';
+    var textoInicial = $nome.text().trim();
+
+    function mostrarImagem(src) {
+        if (src) {
+            $img.attr('src', src).removeClass('d-none');
+            $placeholder.addClass('d-none');
+        } else {
+            $img.attr('src', '').addClass('d-none');
+            $placeholder.removeClass('d-none');
+        }
+    }
+
+    function restaurar() {
+        $input.val('');
+        mostrarImagem(atual);
+        $nome.text(textoInicial);
+        $limpar.addClass('d-none');
+    }
+
+    $input.on('change', function() {
+        var arquivo = this.files && this.files[0];
+        $erro.addClass('d-none').text('');
+
+        if (!arquivo) {
+            restaurar();
+            return;
+        }
+
+        if (arquivo.type.indexOf('image/') !== 0) {
+            $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
+            restaurar();
+            return;
+        }
+
+        if (arquivo.size > MAX_BYTES) {
+            $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
+            restaurar();
+            return;
+        }
+
+        var leitor = new FileReader();
+        leitor.onload = function(e) {
+            mostrarImagem(e.target.result);
+        };
+        leitor.readAsDataURL(arquivo);
+
+        $nome.text(arquivo.name);
+        $limpar.removeClass('d-none');
     });
 
-    // Campo de upload da imagem
-    (function() {
-        var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
+    $limpar.on('click', restaurar);
 
-        var $box = $('#uploadBox');
-        var $input = $('#imagem');
-        var $img = $('#uploadImg');
-        var $placeholder = $('#uploadPlaceholder');
-        var $nome = $('#uploadNome');
-        var $limpar = $('#uploadLimpar');
-        var $erro = $('#uploadErro');
-
-        var atual = $img.data('atual') || '';
-        var textoInicial = $nome.text().trim();
-
-        function mostrarImagem(src) {
-            if (src) {
-                $img.attr('src', src).removeClass('d-none');
-                $placeholder.addClass('d-none');
-            } else {
-                $img.attr('src', '').addClass('d-none');
-                $placeholder.removeClass('d-none');
-            }
-        }
-
-        function restaurar() {
-            $input.val('');
-            mostrarImagem(atual);
-            $nome.text(textoInicial);
-            $limpar.addClass('d-none');
-        }
-
-        $input.on('change', function() {
-            var arquivo = this.files && this.files[0];
-            $erro.addClass('d-none').text('');
-
-            if (!arquivo) {
-                restaurar();
-                return;
-            }
-
-            if (arquivo.type.indexOf('image/') !== 0) {
-                $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
-                restaurar();
-                return;
-            }
-
-            if (arquivo.size > MAX_BYTES) {
-                $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
-                restaurar();
-                return;
-            }
-
-            var leitor = new FileReader();
-            leitor.onload = function(e) {
-                mostrarImagem(e.target.result);
-            };
-            leitor.readAsDataURL(arquivo);
-
-            $nome.text(arquivo.name);
-            $limpar.removeClass('d-none');
-        });
-
-        $limpar.on('click', restaurar);
-
-        // Destaque visual ao arrastar um arquivo sobre a área
-        $box.on('dragenter dragover', function() {
-            $box.addClass('is-dragover');
-        });
-        $box.on('dragleave drop', function() {
-            $box.removeClass('is-dragover');
-        });
-    })();
+    // Destaque visual ao arrastar um arquivo sobre a área
+    $box.on('dragenter dragover', function() {
+        $box.addClass('is-dragover');
+    });
+    $box.on('dragleave drop', function() {
+        $box.removeClass('is-dragover');
+    });
+})();
 </script>
 <?php View::end(); ?>

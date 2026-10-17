@@ -57,6 +57,7 @@ class StoreExtrasRequest extends FormRequest
             'nome'           => 'required|min:2|max:100|unique:extras,nome',
             'slug'           => 'nullable|max:120|unique:extras,slug',
             'descricao'      => 'nullable|max:500',
+            'preco'          => 'required|numeric|min:0|max:99999999.99',
             'icone'          => 'nullable|max:50',
             'ordem_exibicao' => 'nullable|integer',
             'ativo'          => 'required|in:0,1',
@@ -75,6 +76,11 @@ class StoreExtrasRequest extends FormRequest
             'nome.max'      => 'O nome do extra deve ter no máximo 100 caracteres.',
 
             'slug.max'      => 'O slug deve ter no máximo 120 caracteres.',
+
+            'preco.required' => 'O preço do extra é obrigatório.',
+            'preco.numeric'  => 'O preço do extra deve ser um valor numérico.',
+            'preco.min'      => 'O preço do extra não pode ser negativo.',
+            'preco.max'      => 'O preço do extra não pode ser maior que R$ 99.999.999,99.',
 
             'descricao.max' => 'A descrição deve ter no máximo 500 caracteres.',
 
@@ -110,6 +116,12 @@ class StoreExtrasRequest extends FormRequest
 
             'descricao' => trim(
                 Request::sanitizeValue($this->input['descricao'] ?? '')
+            ),
+
+            'preco' => str_replace(
+                ',',
+                '.',
+                str_replace('.', '', trim($this->input['preco'] ?? '0'))
             ),
 
             'icone' => strtolower(

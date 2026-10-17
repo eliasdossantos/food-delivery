@@ -25,10 +25,14 @@ class UpdateProdutosRequest extends FormRequest
             'codigo'            => 'nullable|string|max:100|unique:produtos,codigo,{id}',
             'categoria_id'      => 'nullable|integer|exists:categorias,id',
             'extra_ids'         => 'nullable|array',
+            'especificacoes'    => 'nullable|array',
 
             // Conteúdo
             'descricao'         => 'nullable|max:500',
             'ingredientes'      => 'nullable|max:500',
+
+            // Preços (decimal 10,2)
+            'preco'             => 'required|numeric|min:0|max:99999999.99',
 
             // Operação e estoque (unsigned smallint: 0..65535)
             'tempo_preparo'     => 'nullable|integer|min:0|max:65535',
@@ -58,6 +62,9 @@ class UpdateProdutosRequest extends FormRequest
 
             'codigo.max'    => 'O código deve ter no máximo 100 caracteres.',
             'codigo.unique' => 'Já existe um produto com este código.',
+
+            'preco.required'            => 'O preço do produto é obrigatório.',
+            'preco.numeric'             => 'O preço deve ser numérico.',
 
             'categoria_id.integer' => 'A categoria selecionada é inválida.',
             'categoria_id.exists'  => 'A categoria selecionada não existe.',
@@ -93,6 +100,8 @@ class UpdateProdutosRequest extends FormRequest
             'descricao'    => trim(Request::sanitizeValue($this->input['descricao'] ?? '')),
             'ingredientes' => trim(Request::sanitizeValue($this->input['ingredientes'] ?? '')),
 
+            'preco'             => self::moeda($this->input['preco'] ?? '') ?? '0',
+
             'tempo_preparo'    => $tempo === '' ? null : $tempo,
             'controla_estoque' => $this->input['controla_estoque'] ?? '0',
             'estoque'          => $estoque === '' ? '0' : $estoque,
@@ -106,7 +115,40 @@ class UpdateProdutosRequest extends FormRequest
                 ? array_values($this->input['extra_ids'])
                 : [],
 
+            'extra_ids' => is_array($this->input['extra_ids'] ?? null)
+                ? array_values($this->input['extra_ids'])
+                : [],
+
+            'especificacoes' => $this->sanitizarEspecificacoes($this->input['especificacoes'] ?? []),
+
         ];
+    }
+
+    /**
+     * especificacoes[i][medida_id|preco|customizavel] → lista limpa, sem índices soltos.
+     * A conversão do preço e as demais validações ficam no controller.
+     */
+    private function sanitizarEspecificacoes(mixed $linhas): array
+    {
+        if (!is_array($linhas)) {
+            return [];
+        }
+
+        $saida = [];
+
+        foreach ($linhas as $linha) {
+            if (!is_array($linha)) {
+                continue;
+            }
+
+            $saida[] = [
+                'medida_id'    => trim(Request::sanitizeValue($linha['medida_id'] ?? '')),
+                'preco'        => trim(Request::sanitizeValue($linha['preco'] ?? '')),
+                'customizavel' => !empty($linha['customizavel']) ? '1' : '0',
+            ];
+        }
+
+        return $saida;
     }
 
     /**

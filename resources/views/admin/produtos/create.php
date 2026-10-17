@@ -149,11 +149,110 @@
     overflow-y: auto;
     padding: 12px 12px 4px;
 }
+
+/* ── Medidas e preços ─────────────────────────────────────────────── */
+.espec-box {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.espec-lista {
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 12px 12px 0;
+}
+
+.espec-linha {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.espec-linha:last-child {
+    border-bottom: 0;
+}
+
+.espec-rodape {
+    padding: 8px 12px;
+    border-top: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+}
+
+/* ── Busca da medida (campo + lista de opções) ────────────────────── */
+.medida-combo {
+    position: relative;
+}
+
+.medida-combo .form-control {
+    padding-right: 32px;
+}
+
+.medida-combo .mdi {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+}
+
+/* A lista fica fora da área com rolagem (position: fixed) para não ser cortada */
+.medida-painel {
+    display: none;
+    position: fixed;
+    z-index: 1080;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+}
+
+.medida-painel.aberto {
+    display: block;
+}
+
+.medida-painel .item {
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.medida-painel .item:hover,
+.medida-painel .item.ativo {
+    background: #eef3ff;
+}
+
+.medida-painel .item.selecionado {
+    font-weight: 600;
+    color: #4e73df;
+}
+
+.medida-painel .vazio {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #6c757d;
+}
 </style>
 
 <?php View::end(); ?>
 
 <?php View::start('content'); ?>
+
+<?php
+// Medidas e especificações iniciais (no create, o controller envia lista vazia)
+$medidas = $medidas ?? [];
+$especificacoes = $especificacoes ?? [];
+
+$especIniciais = array_map(fn($e) => [
+    'medida_id'    => (int) $e->medida_id,
+    'preco'        => number_format((float) $e->preco, 2, ',', '.'),
+    'customizavel' => (int) $e->customizavel,
+], $especificacoes);
+?>
 
 <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
@@ -246,52 +345,128 @@
                                     <?= erroInput('codigo') ?>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Extras -->
-                            <div class="form-section">
-                                <div class="form-section-title">
-                                    <h5>Extras disponíveis (opcional)</h5>
-                                </div>
+                    <!-- Extras -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <h5>Extras disponíveis (opcional)</h5>
+                        </div>
 
-                                <?php if (empty($extras)): ?>
-                                <p class="text-muted mb-0">Nenhuma extra ativa cadastrada.</p>
-                                <?php else: ?>
-                                <div class="extras-box">
-                                    <div class="extras-toolbar">
-                                        <input type="search" class="form-control form-control-sm" id="extrasBusca"
-                                            placeholder="Buscar extra..." autocomplete="off">
-                                        <span class="extras-contador" id="extrasContador"></span>
-                                    </div>
+                        <?php if (empty($extras)): ?>
+                        <p class="text-muted mb-0">Nenhuma extra ativa cadastrada.</p>
+                        <?php else: ?>
+                        <div class="extras-box">
+                            <div class="extras-toolbar">
+                                <input type="search" class="form-control form-control-sm" id="extrasBusca"
+                                    placeholder="Buscar extra..." autocomplete="off">
+                                <span class="extras-contador" id="extrasContador"></span>
+                            </div>
 
-                                    <div class="extras-lista" id="extrasLista">
-                                        <div class="row">
-                                            <?php foreach ($extras as $extra): ?>
-                                            <?php
-                                                    $extraId = (int) $extra->id;
-                                                    $selecionada = in_array($extraId, $extraIds ?? [], true);
-                                                    ?>
-                                            <div class="col-md-4 col-sm-6 extra-item"
-                                                data-nome="<?= e($extra->nome) ?>">
-                                                <div class="custom-control custom-checkbox mb-2">
-                                                    <input type="checkbox" class="custom-control-input extra-check"
-                                                        id="extra_<?= $extraId ?>" name="extra_ids[]"
-                                                        value="<?= $extraId ?>" <?= $selecionada ? 'checked' : '' ?>>
-                                                    <label class="custom-control-label" for="extra_<?= $extraId ?>">
-                                                        <?= e($extra->nome) ?>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <?php endforeach; ?>
+                            <div class="extras-lista" id="extrasLista">
+                                <div class="row">
+                                    <?php foreach ($extras as $extra): ?>
+                                    <?php
+                                            $extraId = (int) $extra->id;
+                                            $selecionada = in_array($extraId, $extraIds ?? [], true);
+                                            ?>
+                                    <div class="col-md-4 col-sm-6 extra-item" data-nome="<?= e($extra->nome) ?>">
+                                        <div class="custom-control custom-checkbox mb-2">
+                                            <input type="checkbox" class="custom-control-input extra-check"
+                                                id="extra_<?= $extraId ?>" name="extra_ids[]" value="<?= $extraId ?>"
+                                                <?= $selecionada ? 'checked' : '' ?>>
+                                            <label class="custom-control-label" for="extra_<?= $extraId ?>">
+                                                <?= e($extra->nome) ?> - $R: <?= e(moedaBR($extra->preco)) ?>
+                                            </label>
                                         </div>
-
-                                        <p class="text-muted d-none" id="extrasVazio">Nenhuma extra encontrada.</p>
                                     </div>
+                                    <?php endforeach; ?>
                                 </div>
-                                <?php endif; ?>
 
-                                <?= erroInput('extra_ids') ?>
+                                <p class="text-muted d-none" id="extrasVazio">Nenhuma extra encontrada.</p>
                             </div>
                         </div>
+                        <?php endif; ?>
+
+                        <?= erroInput('extra_ids') ?>
+                    </div>
+
+                    <!-- Medidas e preços -->
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <h5>Medidas e preços <small class="text-danger">*</small></h5>
+                        </div>
+
+                        <?php if (empty($medidas)): ?>
+                        <p class="text-muted mb-0">Nenhuma medida ativa cadastrada.</p>
+                        <?php else: ?>
+                        <div class="espec-box">
+                            <div class="espec-lista" id="especLista"
+                                data-iniciais="<?= e(json_encode($especIniciais, JSON_UNESCAPED_UNICODE)) ?>">
+                            </div>
+
+                            <div class="espec-rodape">
+                                <button type="button" class="btn btn-outline-primary btn-sm" id="especAdd">
+                                    <i class="mdi mdi-plus"></i> Adicionar medida
+                                </button>
+                            </div>
+                        </div>
+
+                        <small class="form-text text-muted mt-2">
+                            Informe ao menos uma medida com o respectivo preço.
+                        </small>
+
+                        <small class="form-text text-muted mt-2">
+                            <i class="mdi mdi-information-outline"></i>
+                            <strong>Customizável:</strong> use para medidas como Pizza P, M, G etc.
+                            Vale para todos os produtos que tiverem essas especificações.
+                        </small>
+
+                        <template id="especTemplate">
+                            <div class="row align-items-center espec-linha">
+                                <div class="col-md-5 mb-2 mb-md-0">
+                                    <!-- Campo de busca: o select escondido guarda o valor enviado -->
+                                    <div class="medida-combo">
+                                        <input type="text" class="form-control espec-busca"
+                                            placeholder="Buscar medida..." autocomplete="off" role="combobox"
+                                            aria-autocomplete="list" aria-expanded="false" required>
+                                        <i class="mdi mdi-magnify"></i>
+
+                                        <select class="espec-medida d-none" tabindex="-1" aria-hidden="true">
+                                            <option value="">Selecione a medida</option>
+                                            <?php foreach ($medidas as $medida): ?>
+                                            <option value="<?= (int) $medida->id ?>">
+                                                <?= e($medida->nome) ?><?= empty($medida->ativo) ? ' (inativa)' : '' ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <input type="text" class="form-control espec-preco" inputmode="decimal"
+                                        placeholder="0,00" required>
+                                </div>
+
+                                <div class="col-md-3 mb-2 mb-md-0">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input espec-custom" value="1">
+                                        <label class="custom-control-label">Customizável</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1 text-md-right">
+                                    <button type="button" class="btn btn-outline-danger btn-sm espec-remover"
+                                        title="Remover linha" aria-label="Remover linha">
+                                        <i class="mdi mdi-close"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                        <?php endif; ?>
+
+                        <?= erroInput('especificacoes') ?>
                     </div>
 
                     <!-- Conteúdo -->
@@ -362,7 +537,6 @@
                         </div>
 
                         <div class="row">
-                            <!-- Tempo de preparo -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="tempo_preparo">Tempo de preparo (min)</label>
@@ -579,6 +753,7 @@
     });
 })();
 </script>
+
 <script nonce="<?= e(CSP_NONCE) ?>">
 // Só habilita a quantidade em estoque quando o produto controla estoque
 (function() {
@@ -651,6 +826,385 @@
     });
 
     atualizarContador();
+})();
+</script>
+
+<script nonce="<?= e(CSP_NONCE) ?>">
+// Linhas de medida + preço + customizável (com busca na medida)
+(function() {
+    var lista = document.getElementById('especLista');
+    var modelo = document.getElementById('especTemplate');
+    var botaoAdd = document.getElementById('especAdd');
+
+    if (!lista || !modelo) {
+        return;
+    }
+
+    var indice = 0;
+    var ativo = null; // linha com a lista de opções aberta: { busca, select, preco }
+    var itemAtivo = -1; // item destacado pelo teclado
+
+    // Lista de opções única, fora da área com rolagem para não ser cortada
+    var painel = document.createElement('div');
+    painel.className = 'medida-painel';
+    painel.setAttribute('role', 'listbox');
+    document.body.appendChild(painel);
+
+    // Evita que o campo perca o foco antes do clique no item
+    painel.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+    });
+
+    function normalizar(texto) {
+        return (texto || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function textoOpcao(opcao) {
+        return (opcao.textContent || '').replace(/\s+/g, ' ').trim();
+    }
+
+    function textoSelecionado(select) {
+        var opcao = select.options[select.selectedIndex];
+
+        return (select.value && opcao) ? textoOpcao(opcao) : '';
+    }
+
+    // Opções que ainda podem ser escolhidas (as usadas em outras linhas ficam de fora)
+    function opcoesFiltradas(select, termo) {
+        var t = normalizar(termo.trim());
+        var saida = [];
+
+        Array.prototype.forEach.call(select.options, function(o) {
+            if (o.value === '' || o.disabled) {
+                return;
+            }
+
+            if (t !== '' && normalizar(textoOpcao(o)).indexOf(t) === -1) {
+                return;
+            }
+
+            saida.push(o);
+        });
+
+        return saida;
+    }
+
+    function renderizar(termo) {
+        var select = ativo.select;
+        var opcoes = opcoesFiltradas(select, termo);
+
+        painel.innerHTML = '';
+        itemAtivo = -1;
+
+        if (!opcoes.length) {
+            var vazio = document.createElement('div');
+            vazio.className = 'vazio';
+            vazio.textContent = 'Nenhuma medida encontrada.';
+            painel.appendChild(vazio);
+            return;
+        }
+
+        opcoes.forEach(function(o) {
+            var item = document.createElement('div');
+            item.className = 'item' + (o.value === select.value ? ' selecionado' : '');
+            item.setAttribute('role', 'option');
+            item.dataset.valor = o.value;
+            item.textContent = textoOpcao(o);
+            item.addEventListener('click', function() {
+                escolher(o.value);
+            });
+            painel.appendChild(item);
+        });
+    }
+
+    function posicionar() {
+        if (!ativo) {
+            return;
+        }
+
+        var r = ativo.busca.getBoundingClientRect();
+
+        painel.style.width = r.width + 'px';
+        painel.style.left = r.left + 'px';
+        painel.style.top = (r.bottom + 2) + 'px';
+
+        // Sem espaço embaixo: abre para cima
+        var altura = painel.offsetHeight;
+
+        if (r.bottom + altura + 8 > window.innerHeight && r.top > altura + 8) {
+            painel.style.top = (r.top - altura - 2) + 'px';
+        }
+    }
+
+    function abrir(contexto) {
+        if (ativo && ativo.busca === contexto.busca) {
+            return;
+        }
+
+        if (ativo) {
+            fechar();
+        }
+
+        ativo = contexto;
+        contexto.busca.setAttribute('aria-expanded', 'true');
+        painel.classList.add('aberto');
+        renderizar('');
+        posicionar();
+    }
+
+    function fechar() {
+        painel.classList.remove('aberto');
+
+        if (!ativo) {
+            return;
+        }
+
+        var anterior = ativo;
+
+        ativo = null;
+        itemAtivo = -1;
+
+        anterior.busca.setAttribute('aria-expanded', 'false');
+        // Mostra de novo a medida realmente escolhida (descarta texto digitado pela metade)
+        anterior.busca.value = textoSelecionado(anterior.select);
+    }
+
+    function escolher(valor) {
+        if (!ativo) {
+            return;
+        }
+
+        var linha = ativo;
+
+        linha.select.value = valor;
+        linha.select.dispatchEvent(new Event('change', {
+            bubbles: true
+        }));
+
+        fechar();
+        linha.preco.focus();
+    }
+
+    function mover(passo) {
+        var itens = painel.querySelectorAll('.item');
+        var total = itens.length;
+
+        if (!total) {
+            return;
+        }
+
+        if (itemAtivo === -1) {
+            itemAtivo = passo > 0 ? 0 : total - 1;
+        } else {
+            itemAtivo = (itemAtivo + passo + total) % total;
+        }
+
+        itens.forEach(function(item, i) {
+            item.classList.toggle('ativo', i === itemAtivo);
+        });
+
+        var atual = itens[itemAtivo];
+
+        if (atual.offsetTop < painel.scrollTop) {
+            painel.scrollTop = atual.offsetTop;
+        } else if (atual.offsetTop + atual.offsetHeight > painel.scrollTop + painel.clientHeight) {
+            painel.scrollTop = atual.offsetTop + atual.offsetHeight - painel.clientHeight;
+        }
+    }
+
+    // Mantém a lista junto do campo ao rolar a página ou redimensionar a janela
+    window.addEventListener('scroll', posicionar, true);
+    window.addEventListener('resize', posicionar);
+
+    // Desabilita, em cada select, as medidas já escolhidas nas outras linhas
+    function atualizarOpcoes() {
+        var selects = lista.querySelectorAll('.espec-medida');
+        var usadas = [];
+
+        selects.forEach(function(s) {
+            if (s.value) {
+                usadas.push(s.value);
+            }
+        });
+
+        selects.forEach(function(s) {
+            s.querySelectorAll('option').forEach(function(o) {
+                o.disabled = o.value !== '' && o.value !== s.value && usadas.indexOf(o.value) !== -
+                    1;
+            });
+        });
+    }
+
+    function adicionarLinha(dados, focar) {
+        var i = indice++;
+        var linha = modelo.content.firstElementChild.cloneNode(true);
+
+        var busca = linha.querySelector('.espec-busca');
+        var medida = linha.querySelector('.espec-medida');
+        var preco = linha.querySelector('.espec-preco');
+        var custom = linha.querySelector('.espec-custom');
+        var rotulo = linha.querySelector('.custom-control-label');
+
+        var contexto = {
+            busca: busca,
+            select: medida,
+            preco: preco
+        };
+
+        medida.name = 'especificacoes[' + i + '][medida_id]';
+        preco.name = 'especificacoes[' + i + '][preco]';
+        custom.name = 'especificacoes[' + i + '][customizavel]';
+        custom.id = 'espec_custom_' + i;
+        rotulo.setAttribute('for', custom.id);
+
+        if (dados) {
+            medida.value = String(dados.medida_id);
+            busca.value = textoSelecionado(medida);
+            preco.value = dados.preco;
+            custom.checked = Number(dados.customizavel) === 1;
+        } else {
+            custom.checked = true; // padrão da coluna: 1
+        }
+
+        medida.addEventListener('change', atualizarOpcoes);
+
+        // ── Busca da medida ──
+        busca.addEventListener('focus', function() {
+            abrir(contexto);
+
+            // Seleciona o texto para que digitar substitua a medida atual
+            setTimeout(function() {
+                busca.select();
+            }, 0);
+        });
+
+        busca.addEventListener('click', function() {
+            abrir(contexto);
+        });
+
+        busca.addEventListener('input', function() {
+            abrir(contexto);
+
+            // Campo apagado: libera a medida para outras linhas
+            if (busca.value.trim() === '' && medida.value !== '') {
+                medida.value = '';
+                medida.dispatchEvent(new Event('change', {
+                    bubbles: true
+                }));
+            }
+
+            renderizar(busca.value);
+            posicionar();
+        });
+
+        busca.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                abrir(contexto);
+                mover(e.key === 'ArrowDown' ? 1 : -1);
+                return;
+            }
+
+            if (e.key === 'Enter') {
+                // Enter na busca não deve enviar o formulário
+                e.preventDefault();
+
+                if (ativo && ativo.busca === busca) {
+                    var itens = painel.querySelectorAll('.item');
+
+                    if (itemAtivo >= 0 && itens[itemAtivo]) {
+                        escolher(itens[itemAtivo].dataset.valor);
+                    } else if (itens.length === 1) {
+                        escolher(itens[0].dataset.valor);
+                    }
+                }
+                return;
+            }
+
+            if (e.key === 'Escape' && ativo) {
+                e.preventDefault();
+                fechar();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                fechar();
+            }
+        });
+
+        busca.addEventListener('blur', function() {
+            if (ativo && ativo.busca === busca) {
+                fechar();
+            }
+        });
+
+        mascaraDinheiro(preco);
+
+        linha.querySelector('.espec-remover').addEventListener('click', function() {
+            if (ativo && ativo.busca === busca) {
+                fechar();
+            }
+
+            linha.remove();
+            atualizarOpcoes();
+        });
+
+        lista.appendChild(linha);
+        atualizarOpcoes();
+
+        // Linha nova (botão): rola até ela e já deixa a busca pronta
+        if (focar) {
+            lista.scrollTop = lista.scrollHeight;
+            busca.focus();
+        }
+    }
+
+    // Máscara de dinheiro no padrão BR (1.234,56), aplicada a cada linha criada
+    function mascaraDinheiro(input) {
+        function formatar() {
+            var digitos = input.value.replace(/\D/g, '');
+
+            if (digitos === '') {
+                input.value = '';
+                return;
+            }
+
+            while (digitos.length < 3) {
+                digitos = '0' + digitos;
+            }
+
+            var inteiro = digitos.slice(0, -2).replace(/^0+(?=\d)/, '');
+            var centavos = digitos.slice(-2);
+
+            input.value = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + centavos;
+        }
+
+        input.addEventListener('input', formatar);
+        formatar(); // formata também o valor que já vem preenchido na edição
+    }
+
+    var iniciais = [];
+
+    try {
+        iniciais = JSON.parse(lista.dataset.iniciais || '[]');
+    } catch (e) {
+        iniciais = [];
+    }
+
+    if (iniciais.length) {
+        iniciais.forEach(function(dados) {
+            adicionarLinha(dados, false);
+        });
+    } else {
+        adicionarLinha(null, false);
+    }
+
+    botaoAdd.addEventListener('click', function() {
+        adicionarLinha(null, true);
+    });
 })();
 </script>
 
