@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
+use App\Http\Controllers\Web\Admin\FormasPagamentoController;
 use App\Http\Controllers\Web\Admin\HomeController;
 use App\Http\Controllers\Web\Admin\MedidasController;
 use App\Http\Controllers\Web\Admin\PerfisController;
@@ -112,7 +113,7 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->delete('/{id}', [ExtrasController::class, 'destroy'])->name('destroy');
     });
 
-    // ── Área MEDIDAS
+    // ── Área MEDIDAS E VALORES
     $r->group(['prefix' => '/medida', 'as' => 'medida.'], function (Router $r) {
 
         $r->get('', [MedidasController::class, 'index'])->name('index');
@@ -136,5 +137,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [ProdutosController::class, 'edit'])->name('edit');
         $r->put('/{id}', [ProdutosController::class, 'update'])->name('update');
         $r->delete('/{id}', [ProdutosController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área FORMAS DE PAGAMENTO
+    $r->group(['prefix' => '/pagamento', 'as' => 'pagamento.'], function (Router $r) {
+
+        $r->get('', [FormasPagamentoController::class, 'index'])->name('index');
+        $r->get('/create', [FormasPagamentoController::class, 'create'])->name('create');
+        $r->get('/procurar', [FormasPagamentoController::class, 'procurar'])->name('procurar');
+        $r->post('', [FormasPagamentoController::class, 'store'])->name('store');
+        $r->get('/{id}', [FormasPagamentoController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [FormasPagamentoController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [FormasPagamentoController::class, 'update'])->name('update');
+        $r->delete('/{id}', [FormasPagamentoController::class, 'destroy'])->name('destroy');
     });
 });

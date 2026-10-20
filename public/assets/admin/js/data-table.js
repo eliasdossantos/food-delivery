@@ -3,8 +3,8 @@
   $(function () {
     $("#table-BR").DataTable({
       aLengthMenu: [
-        [5, 10, 15, -1],
-        [5, 10, 15, "Todos"],
+        [5, 10, 15, 50, 100 - 1],
+        [5, 10, 15, 50, 100],
       ],
       iDisplayLength: 10,
       language: {

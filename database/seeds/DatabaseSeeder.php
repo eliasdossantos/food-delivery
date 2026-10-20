@@ -14,5 +14,6 @@ return [
     CategoriaSeeder::class,
     ExtraSeeder::class,
     MedidaSeeder::class,
-    ProdutoSeeder::class
+    ProdutoSeeder::class,
+    FormaPagamentoSeeder::class
 ];

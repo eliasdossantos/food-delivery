@@ -6,6 +6,7 @@
 [![Arquitetura](https://img.shields.io/badge/arquitetura-MVC-blue)](#arquitetura)
 [![Banco de dados](https://img.shields.io/badge/banco-MySQL%20%7C%20MariaDB-orange)](#requisitos)
 [![License](https://img.shields.io/badge/license-GPL--3.0-red)](LICENSE)
+[![Documentação](https://img.shields.io/badge/Documentação-online-brightgreen)](https://documentacao-snowy.vercel.app/)
 
 ---
 
@@ -350,11 +351,7 @@ A aplicação pode expor endpoints para clientes web, aplicativos móveis e inte
 - não expor dados internos ou sensíveis;
 - registrar eventos importantes para auditoria.
 
-A documentação técnica disponível no projeto fica em:
-
-```
-docs/index.html
-```
+A documentação técnica disponível no projeto fica em: [Documentação](https://documentacao-snowy.vercel.app/)
 
 Consulte esse arquivo para os detalhes da infraestrutura do framework e da API implementada.
 

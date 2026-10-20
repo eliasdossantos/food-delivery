@@ -8,6 +8,7 @@ $menuUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
 $menuCategorias  = str_contains($menuUri, '/admin/categoria');
+$menuPagamentos  = str_contains($menuUri, '/admin/pagamento');
 $menuProdutos  = str_contains($menuUri, '/admin/produto');
 $menuExtras  = str_contains($menuUri, '/admin/extra');
 $menuMedidas  = str_contains($menuUri, '/admin/medida');
@@ -43,9 +44,16 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             </a>
         </li>
 
+        <li class="nav-item<?= $menuPagamentos ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/pagamento') ?>">
+                <i class="mdi mdi-cash-multiple menu-icon"></i>
+                <span class="menu-title">Formas de Pagamentos</span>
+            </a>
+        </li>
+
         <li class="nav-item<?= $menuProdutos ? ' active' : '' ?>">
             <a class="nav-link" href="<?= url('/admin/produto') ?>">
-                <i class="mdi mdi-package-variant-closed menu-icon"></i>
+                <i class="mdi mdi-silverware-variant menu-icon"></i>
                 <span class="menu-title">Produtos</span>
             </a>
         </li>
@@ -67,7 +75,7 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
         <li class="nav-item<?= $menuSistema ? ' active' : '' ?>">
             <a class="nav-link" data-toggle="collapse" href="#sistema"
                 aria-expanded="<?= $menuSistema ? 'true' : 'false' ?>" aria-controls="sistema">
-                <i class="mdi mdi-archive menu-icon"></i>
+                <i class="mdi mdi-settings menu-icon"></i>
                 <span class="menu-title">Sistema</span>
                 <i class="menu-arrow"></i>
             </a>
@@ -81,17 +89,17 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
                     </li>
 
                     <?php if (Auth::isAny('Super Administrador')): ?>
-                        <li class="nav-item">
-                            <a class="nav-link<?= $menuConfig ? ' active' : '' ?>"
-                                href="<?= url('/admin/configuracoes') ?>">
-                                Configurações
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link<?= $menuPerfis ? ' active' : '' ?>" href="<?= url('/admin/perfil') ?>">
-                                Perfis
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $menuConfig ? ' active' : '' ?>"
+                            href="<?= url('/admin/configuracoes') ?>">
+                            Configurações
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link<?= $menuPerfis ? ' active' : '' ?>" href="<?= url('/admin/perfil') ?>">
+                            Perfis
+                        </a>
+                    </li>
                     <?php endif; ?>
                 </ul>
             </div>
