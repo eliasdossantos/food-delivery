@@ -5,7 +5,7 @@
 [![PHP](https://img.shields.io/badge/PHP-8.1%2B-777BB4?logo=php&logoColor=white)](https://www.php.net/)
 [![Arquitetura](https://img.shields.io/badge/arquitetura-MVC-blue)](#arquitetura)
 [![Banco de dados](https://img.shields.io/badge/banco-MySQL%20%7C%20MariaDB-orange)](#requisitos)
-[![License](https://img.shields.io/badge/license-GPL--3.0-red)](LICENSE)
+[![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red)](LICENSE)
 [![Documentação](https://img.shields.io/badge/Documentação-online-brightgreen)](https://documentacao-snowy.vercel.app/)
 
 ---
@@ -169,7 +169,6 @@ food-delivery/
 ├── database/
 │   ├── migrations/
 │   └── seeds/
-├── docs/
 ├── framework/
 ├── public/
 ├── resources/
@@ -290,7 +289,7 @@ Para recriar o banco durante o desenvolvimento:
 php mvc migrate --fresh
 ```
 
-Toda migration deve implementar corretamente `up( )` e `down()`. Alterações de schema devem ser revisadas antes de serem aplicadas em ambientes compartilhados ou de produção.
+Toda migration deve implementar corretamente `up()` e `down()`. Alterações de schema devem ser revisadas antes de serem aplicadas em ambientes compartilhados ou de produção.
 
 ### Seeders
 
@@ -351,9 +350,9 @@ A aplicação pode expor endpoints para clientes web, aplicativos móveis e inte
 - não expor dados internos ou sensíveis;
 - registrar eventos importantes para auditoria.
 
-A documentação técnica disponível no projeto fica em: [Documentação](https://documentacao-snowy.vercel.app/)
+A documentação do framework e da API v1 está disponível online em [documentacao-snowy.vercel.app](https://documentacao-snowy.vercel.app/).
 
-Consulte esse arquivo para os detalhes da infraestrutura do framework e da API implementada.
+Consulte essa documentação para os detalhes da infraestrutura do framework e da API implementada.
 
 ---
 
@@ -402,15 +401,19 @@ Antes de publicar a aplicação:
 1. Configure filas, webhooks e tarefas assíncronas caso sejam adotados;
 1. Monitore erros, logs, falhas de pagamento e indisponibilidade de restaurantes.
 
+> O uso em produção, com dados ou clientes reais, depende de autorização prévia do autor, conforme a seção [Licença](#licença).
+
 ---
 
 ## Contribuição
 
-Contribuições são bem-vindas:
+Este projeto não aceita forks públicos nem alterações sem autorização prévia. Para contribuir:
 
-1. Faça um fork do projeto;
+1. Abra uma issue descrevendo a alteração que você deseja propor;
 
-1. Crie uma branch para sua alteração;
+1. Aguarde a autorização do autor;
+
+1. Com a autorização, crie um fork e uma branch exclusivamente para preparar a sua alteração;
 
 1. Implemente a mudança seguindo a arquitetura existente;
 
@@ -423,6 +426,8 @@ Contribuições são bem-vindas:
 1. Abra um Pull Request descrevendo o que foi alterado.
 
 Para mudanças de banco, informe claramente a migration, possíveis impactos e o procedimento de rollback.
+
+Ao contribuir, você concede ao autor o direito de usar, modificar e distribuir a sua contribuição como parte do projeto, conforme descrito no arquivo [LICENSE](LICENSE).
 
 ---
 
@@ -468,9 +473,28 @@ O projeto segue, quando aplicável, o [Semantic Versioning](https://semver.org/l
 
 ## Licença
 
-Este projeto é distribuído sob a licença **GNU General Public License v3.0 (GPL-3.0)**.
+Copyright (C) 2026 Elias dos Santos. Todos os direitos reservados.
 
-Consulte o arquivo [LICENSE](LICENSE) para o texto completo da licença. A base técnica utilizada está disponível no repositório [eliasdossantos/php-mvc](https://github.com/eliasdossantos/php-mvc).
+O código-fonte deste projeto está disponível publicamente para **estudo e avaliação**. Este projeto **não** é open source: os termos completos estão no arquivo [LICENSE](LICENSE).
+
+Você pode:
+
+- Estudar o código-fonte, a arquitetura e as soluções adotadas;
+- Executar uma cópia local, sem modificá-la, para estudo, avaliação e testes, sem finalidade comercial.
+
+Você **não** pode, sem autorização prévia e por escrito do autor:
+
+- Utilizar o software em produção, com dados ou clientes reais, ou para fins comerciais;
+- Copiar ou redistribuir o código, total ou parcialmente, inclusive por meio de forks públicos;
+- Vender, sublicenciar ou oferecer o software como produto ou serviço;
+- Apresentar o projeto como de sua autoria;
+- Remover ou alterar os avisos de copyright.
+
+Para solicitar autorização, entre em contato com o autor pelo GitHub: [@eliasdossantos](https://github.com/eliasdossantos).
+
+A base técnica utilizada, o framework [eliasdossantos/php-mvc](https://github.com/eliasdossantos/php-mvc), é mantida em repositório próprio, com licença própria. Recursos de terceiros seguem as suas respectivas licenças, conforme a seção anterior.
+
+Este software é fornecido **"COMO ESTÁ"**, sem qualquer garantia expressa ou implícita.
 
 ---
 

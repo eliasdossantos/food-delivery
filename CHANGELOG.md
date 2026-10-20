@@ -4,6 +4,47 @@ Todas as alterações relevantes deste projeto serão documentadas neste arquivo
 
 O formato segue o padrão [**Keep a Changelog**](https://keepachangelog.com/pt-BR/1.0.0/) e este projeto adota o [**Versionamento Semântico**](https://semver.org/lang/pt-BR/).
 
+## [2.1.3] — 2026-10-20
+
+### Alterado
+
+- A documentação oficial passou a ser publicada online em [documentacao-snowy.vercel.app](https://documentacao-snowy.vercel.app/), e o README agora aponta para esse link.
+- Licença alterada de GPL-3.0 para uma licença própria de uso e estudo (source-available), com todos os direitos reservados. Os termos completos estão no arquivo `LICENSE`.
+- Campo `license` do `composer.json` alterado de `Unlicense` para `proprietary`.
+- README atualizado: seção "Sobre o Projeto" reescrita, badge de licença atualizado, seção "Contribuições" ajustada aos novos termos e seção "Configuração de Proxy e CORS" reposicionada antes de "Contribuições".
+
+### Removido
+
+- Diretório `docs/` (`docs/index.html` e `docs/API.md`) removido do repositório.
+
+### Compatibilidade
+
+- Não há alteração de código, de schema ou de migrations nesta versão.
+- Cópias obtidas em versões anteriores sob a GPL-3.0 continuam regidas por essa licença. Os novos termos valem para as versões publicadas a partir desta.
+- Referências a `docs/index.html` ou `docs/API.md` devem ser substituídas pelo link da documentação online.
+
+---
+
+## [2.1.2] — AAAA-MM-DD
+
+### Adicionado
+
+- Novo método `BaseController::bootstrap()`, chamado pelo `Router` logo após instanciar o controller e antes da action. Os controllers filhos não precisam mais chamar `parent::__construct()`: basta declarar o próprio `__construct()` com as dependências. O método é idempotente, e controllers antigos que chamam `parent::__construct()` continuam funcionando.
+- Stub de controller do CLI (`controller.stub`) atualizado para o fluxo de upload da v2.1.1: constantes `UPLOAD_ENTITY` e `UPLOAD_MAX_MB`, `uploadMaxMb` repassado às views `create` e `edit`, blocos de upload comentados em `store()` e `update()`, helper privado `nomeArquivoLocal()` (ignora URLs externas) e `BaseController` como classe base.
+
+### Alterado
+
+- `Request::sanitizeValue()` remove HTML (`strip_tags`) e espaços (`trim`), mas não faz mais escape HTML. O escape deve ser feito somente na saída, através de `e()`. Arrays continuam sendo tratados de forma recursiva e valores que não são string passam intactos.
+- Comentários e exemplos de `destroy()` no stub atualizados de `storage/uploads` para `public/uploads`.
+
+### Compatibilidade
+
+- **Revise as views:** como a sanitização não escapa mais HTML, confirme que toda saída de dados do usuário usa `e()`.
+- Mantém a estrutura de pastas e os namespaces de `v2.1.x`. Nenhuma migration foi adicionada e nenhuma tabela foi alterada.
+- Controllers já gerados pelo CLI não são alterados; só os novos usam o stub atualizado.
+
+---
+
 ## [2.0.0] — 2026-09-27
 
 ### Alterado

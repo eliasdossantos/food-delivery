@@ -4,6 +4,8 @@ Obrigado por considerar contribuir com o **PHP MVC Boilerplate**!
 
 Este projeto tem como objetivo fornecer uma base sólida, organizada e reutilizável para aplicações desenvolvidas em PHP puro utilizando o padrão MVC.
 
+> **Importante:** o código-fonte deste projeto está disponível para uso e estudo, mas **não** é open source. Alterações, forks e Pull Requests dependem de **autorização prévia e por escrito do autor**, conforme o arquivo [LICENSE](LICENSE). Leia a seção [Licença](#licença) antes de começar.
+
 ## Código de Conduta
 
 Ao participar deste projeto, esperamos que todos os colaboradores mantenham um ambiente respeitoso, profissional e colaborativo.
@@ -28,16 +30,20 @@ Inclua as seguintes informações:
 - Sistema operacional;
 - Versão do projeto.
 
+Reportar bugs não exige autorização prévia.
+
 ### 2. Sugerir Melhorias
 
-Antes de iniciar uma nova funcionalidade, abra uma issue descrevendo sua proposta.
+Antes de iniciar qualquer alteração, abra uma issue descrevendo sua proposta.
 
-Isso permite discutir a implementação e manter a consistência do projeto.
+Isso permite discutir a implementação, manter a consistência do projeto e **obter a autorização do autor**, que é necessária para o próximo passo.
 
 ### 3. Enviar Pull Requests
 
+Só envie um Pull Request depois que o autor autorizar a alteração na issue correspondente. Com a autorização, você pode criar um fork e modificar o código **exclusivamente** para preparar e enviar essa contribuição a este repositório.
+
 ```bash
-# Faça um fork do projeto
+# Com a autorização do autor, faça um fork do projeto
 
 # Clone seu fork
 git clone https://github.com/SEU_USERNAME/php-mvc.git
@@ -60,7 +66,9 @@ git commit -m "feat: adiciona nova funcionalidade"
 git push origin feat/minha-feature
 ```
 
-Após isso, abra um Pull Request para a branch `main`.
+Após isso, abra um Pull Request para a branch `main`, referenciando a issue em que a alteração foi autorizada.
+
+O fork não pode ser usado, publicado ou distribuído para nenhuma outra finalidade. Pull Requests enviados sem autorização prévia podem ser fechados sem análise.
 
 ## Padrões de Código
 
@@ -127,8 +135,8 @@ git commit -m "docs: atualiza README"
 
 ## Licença
 
-Ao contribuir com este projeto, você concorda que suas contribuições serão licenciadas sob os termos da GNU General Public License v3.0 (GPL-3.0).
+Este projeto é distribuído sob uma licença própria de uso e estudo (source-available), com todos os direitos reservados. Os termos completos estão no arquivo [LICENSE](LICENSE).
 
-Licença completa:
+Ao enviar uma contribuição (issue, Pull Request ou qualquer código), você concede ao autor uma licença perpétua, mundial, gratuita e irrevogável para usar, modificar e distribuir essa contribuição como parte do projeto, inclusive sob outras licenças.
 
-https://www.gnu.org/licenses/gpl-3.0.html
+Para solicitar autorização de cópia, modificação ou redistribuição, entre em contato com o autor pelo GitHub: [@eliasdossantos](https://github.com/eliasdossantos).
