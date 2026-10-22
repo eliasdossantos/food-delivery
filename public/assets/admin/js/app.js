@@ -30,6 +30,9 @@ $(function () {
   // CPF
   $(".cpf").mask("000.000.000-00");
 
+  // RG
+  $(".rg").mask("00.000.000-0");
+
   // CNPJ
   $(".cnpj").mask("00.000.000/0000-00");
 
@@ -133,16 +136,37 @@ $(function () {
   // VEÍCULOS
   // ============================================================
 
-  // Placa antiga
-  $(".placa-antiga").mask("AAA-0000");
+  // Placas antigas e Mercosul
+  $(".placa").each(function () {
+    const campo = $(this);
+    let atualizando = false;
 
-  // Placa Mercosul
-  $(".placa").mask("AAA-0A00", {
-    translation: {
-      A: {
-        pattern: /[A-Za-z]/,
-      },
-    },
+    function aplicarMascara() {
+      if (atualizando) return;
+      atualizando = true;
+
+      const valor = (campo.val() || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+
+      // Mercosul: ABC1D23
+      const mercosul = valor.length >= 5 && /^[A-Z]{3}[0-9][A-Z]/.test(valor);
+
+      const mascara = mercosul ? "SSS-0S00" : "SSS-0000";
+
+      campo.unmask();
+
+      campo.mask(mascara, {
+        translation: {
+          S: { pattern: /[A-Z]/ },
+          0: { pattern: /[0-9]/ },
+        },
+      });
+
+      campo.val(valor);
+      atualizando = false;
+    }
+
+    campo.on("input", aplicarMascara);
+    aplicarMascara();
   });
 
   // RENAVAM

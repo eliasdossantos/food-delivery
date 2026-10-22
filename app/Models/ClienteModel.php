@@ -43,6 +43,8 @@ class ClienteModel extends Model
      * Campos ocultos ao serializar o objeto.
      */
     protected array $hidden = [
+        'cpf',
+        'data_nascimento',
         'password_cliente',
         'lembrar_cliente_token',
     ];

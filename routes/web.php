@@ -3,6 +3,7 @@
 use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
+use App\Http\Controllers\Web\Admin\EntregadoresController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\FormasPagamentoController;
 use App\Http\Controllers\Web\Admin\HomeController;
@@ -150,5 +151,18 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [FormasPagamentoController::class, 'edit'])->name('edit');
         $r->put('/{id}', [FormasPagamentoController::class, 'update'])->name('update');
         $r->delete('/{id}', [FormasPagamentoController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área ENTREGADORES
+    $r->group(['prefix' => '/entregador', 'as' => 'entregador.'], function (Router $r) {
+
+        $r->get('', [EntregadoresController::class, 'index'])->name('index');
+        $r->get('/create', [EntregadoresController::class, 'create'])->name('create');
+        $r->get('/procurar', [EntregadoresController::class, 'procurar'])->name('procurar');
+        $r->post('', [EntregadoresController::class, 'store'])->name('store');
+        $r->get('/{id}', [EntregadoresController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [EntregadoresController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [EntregadoresController::class, 'update'])->name('update');
+        $r->delete('/{id}', [EntregadoresController::class, 'destroy'])->name('destroy');
     });
 });

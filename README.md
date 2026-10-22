@@ -90,6 +90,28 @@ A solução foi pensada para atender diferentes perfis de utilização:
 
 ---
 
+## 🎨 Frontend
+
+O frontend utiliza um template de terceiros. Os recursos visuais pertencem aos seus respectivos autores e seguem suas licenças originais.
+
+**Créditos:**
+
+- [Majestic Admin](https://github.com/BootstrapDash/MajesticAdmin-Free-Bootstrap-Admin-Template)
+
+---
+
+## ⚙️ Backend
+
+O backend deste projeto foi desenvolvido em PHP puro, utilizando um MVC próprio construído do zero, sem o uso de frameworks externos.
+
+Toda a estrutura segue padrões inspirados em frameworks modernos, com separação de responsabilidades entre Controllers, Models, Services e Repositories.
+
+**Créditos do backend:**
+
+- [Elias PHP-MVC](https://github.com/eliasdossantos/php-mvc)
+
+---
+
 ## Perfis e controle de acesso
 
 A plataforma deve utilizar autorização por perfil e permissões para separar as responsabilidades de cada usuário:
@@ -498,10 +520,12 @@ Este software é fornecido **"COMO ESTÁ"**, sem qualquer garantia expressa ou i
 
 ---
 
-## Créditos
+## 👨‍💻 Créditos
 
 - Base do framework: [Elias dos Santos — PHP MVC](https://github.com/eliasdossantos/php-mvc);
 
 - Infraestrutura: PHP, Composer, PDO, MySQL/MariaDB;
 
 - Projeto: Food Delivery.
+
+## **Elias dos Santos** · [github.com/eliasdossantos](https://github.com/eliasdossantos)

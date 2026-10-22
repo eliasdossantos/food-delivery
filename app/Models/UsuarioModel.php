@@ -29,6 +29,7 @@ class UsuarioModel extends Model
         'perfil_id',
         'nome',
         'cpf',
+        'data_nascimento',
         'celular',
         'email',
         'password',
@@ -51,6 +52,8 @@ class UsuarioModel extends Model
      * Campos ocultos ao serializar o objeto (ex: para JSON de API).
      */
     protected array $hidden = [
+        'cpf',
+        'data_nascimento',
         'password',
         'lembrar_token',
     ];
