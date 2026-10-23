@@ -23,6 +23,11 @@ namespace Framework\Support;
  *
  *   No layout (dentro de um bloco de eco, ex: echo View::section):
  *     View::section('styles')
+ *
+ * CSP (nonce automático):
+ *   Toda tag <script> e <style> dentro de uma section (e do conteúdo da view)
+ *   recebe automaticamente nonce="CSP_NONCE". Tags que já têm nonce= são
+ *   mantidas como estão.
  */
 class View
 {
@@ -105,7 +110,8 @@ class View
             throw $e;
         }
 
-        $content = ob_get_clean() ?: '';
+        // Conteúdo solto da view (fora de sections) também recebe o nonce
+        $content = static::injectNonce(ob_get_clean() ?: '');
 
         if ($layout) {
             require static::resolve("layouts.{$layout}");
@@ -176,7 +182,7 @@ class View
         return $path;
     }
 
-// ── Sections ──────────────────────────────────────────────────────────────
+    // ── Sections ──────────────────────────────────────────────────────────────
 
     /** Inicia a captura de uma section nomeada */
     public static function start(string $name): void
@@ -194,6 +200,9 @@ class View
      * isso guardava `false` em $sections[$name] — e section() tem tipo de
      * retorno declarado `string`, então um `false` ali vira TypeError na
      * hora de usar aquela section no layout. A implementação cai pra string vazia.
+     *
+     * O HTML capturado passa por injectNonce(), que adiciona o nonce da CSP
+     * em <script> e <style> que ainda não o possuem.
      */
     public static function end(): void
     {
@@ -203,7 +212,34 @@ class View
             throw new \RuntimeException('View::end() chamado sem um View::start() correspondente.');
         }
 
-        self::$sections[$name] = ob_get_clean() ?: '';
+        self::$sections[$name] = static::injectNonce(ob_get_clean() ?: '');
+    }
+
+    /**
+     * Adiciona nonce da CSP em <script> e <style> que ainda não o possuem.
+     * Tags que já têm nonce="..." são mantidas como estão.
+     * Se CSP_NONCE não estiver definido, devolve o HTML sem alterar.
+     */
+    protected static function injectNonce(string $html): string
+    {
+        if ($html === '' || !defined('CSP_NONCE') || (string) CSP_NONCE === '') {
+            return $html;
+        }
+
+        $nonce = htmlspecialchars((string) CSP_NONCE, ENT_QUOTES, 'UTF-8');
+
+        return preg_replace_callback(
+            '/<(script|style)\b([^>]*)>/i',
+            static function (array $m) use ($nonce): string {
+                // Já tem nonce: não mexe
+                if (preg_match('/\snonce\s*=/i', $m[2])) {
+                    return $m[0];
+                }
+
+                return '<' . $m[1] . ' nonce="' . $nonce . '"' . $m[2] . '>';
+            },
+            $html
+        ) ?? $html;
     }
 
     /** Retorna o conteúdo de uma section (ou $default, se não existir) */

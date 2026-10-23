@@ -330,11 +330,18 @@ class ProdutosController extends BaseController
             return;
         }
 
-        $slug = trim((string) ($data['slug'] ?? ''));
-        $data['slug'] = $this->produtoModel->gerarSlugUnico(
-            $slug !== '' ? $slug : $data['nome'],
-            $id
-        );
+        // Slug: só altera quando o nome do produto mudar.
+        $nomeAtual = trim((string) $produtos->nome);
+        $nomeNovo = trim((string) ($data['nome'] ?? $nomeAtual));
+
+        if ($nomeNovo !== $nomeAtual) {
+            $data['slug'] = $this->produtoModel->gerarSlugUnico(
+                $nomeNovo,
+                $id
+            );
+        } else {
+            $data['slug'] = $produtos->slug;
+        }
 
         // Código (SKU): o digitado; em branco, mantém o atual (ou gera, se o produto não tinha)
         $codigo = trim((string) ($data['codigo'] ?? ''));

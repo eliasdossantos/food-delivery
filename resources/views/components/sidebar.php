@@ -8,6 +8,7 @@ $menuUri = rtrim(parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
 $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
 $menuEntregadores  = str_contains($menuUri, '/admin/entregador');
+$menuBairros  = str_contains($menuUri, '/admin/bairro');
 $menuCategorias  = str_contains($menuUri, '/admin/categoria');
 $menuPagamentos  = str_contains($menuUri, '/admin/pagamento');
 $menuProdutos  = str_contains($menuUri, '/admin/produto');
@@ -42,6 +43,13 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             <a class="nav-link" href="<?= url('/admin/entregador') ?>">
                 <i class="mdi mdi-motorbike menu-icon"></i>
                 <span class="menu-title">Entregadores</span>
+            </a>
+        </li>
+
+        <li class="nav-item<?= $menuBairros ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/bairro') ?>">
+                <i class="mdi mdi-google-maps menu-icon"></i>
+                <span class="menu-title">Bairros Atendidos</span>
             </a>
         </li>
 

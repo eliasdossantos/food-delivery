@@ -170,6 +170,9 @@ class CategoriasController extends BaseController
      */
     public function update(UpdateCategoriasRequest $request, int $id): void
     {
+        $categoria = $this->categoriaModel->findById($id);
+        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
+
         if ($request->fails()) {
             Session::flash('error', $request->firstError());
             Session::flashErrors($request->errors());
@@ -179,17 +182,20 @@ class CategoriasController extends BaseController
             return;
         }
 
-        $categoria = $this->categoriaModel->findById($id);
-        $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
-
         $data = $this->prepararDados($request->validated());
 
-        // Slug: o digitado ou, em branco, gerado a partir do nome.
-        // Passa o $id para a categoria não conflitar consigo mesma.
-        $data['slug'] = $this->categoriaModel->gerarSlugUnico(
-            $data['slug'] !== '' ? $data['slug'] : $data['nome'],
-            $id
-        );
+        // Mantém o slug atual quando o nome não mudar.
+        // Quando o nome mudar, gera um novo slug com base nele.
+        if ($data['nome'] !== $categoria->nome) {
+            $data['slug'] = $this->categoriaModel->gerarSlugUnico(
+                $data['nome'],
+                $id
+            );
+        } else {
+            // Preserva o slug original, mesmo que o formulário
+            // envie um valor diferente ou vazio.
+            $data['slug'] = $categoria->slug;
+        }
 
         // ── Troca da imagem (só se um novo arquivo foi enviado) ──────────────
         // O arquivo antigo só é apagado se o novo for salvo com sucesso.

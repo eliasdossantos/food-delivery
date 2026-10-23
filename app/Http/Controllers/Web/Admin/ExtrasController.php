@@ -172,6 +172,9 @@ class ExtrasController extends BaseController
      */
     public function update(UpdateExtrasRequest $request, int $id): void
     {
+        $extras = $this->extrasModel->findById($id);
+        $this->abortUnless((bool) $extras, 404, 'Extras não encontrado.');
+
         if ($request->fails()) {
             Session::flash('error', $request->firstError());
             Session::flashErrors($request->errors());
@@ -181,17 +184,20 @@ class ExtrasController extends BaseController
             return;
         }
 
-        $extras = $this->extrasModel->findById($id);
-        $this->abortUnless((bool) $extras, 404, 'Extras não encontrado.');
-
         $data = $this->prepararDados($request->validated());
 
-        // Slug: o digitado ou, em branco, gerado a partir do nome.
-        // Passa o $id para a extra não conflitar consigo mesma.
-        $data['slug'] = $this->extrasModel->gerarSlugUnico(
-            $data['slug'] !== '' ? $data['slug'] : $data['nome'],
-            $id
-        );
+        // Mantém o slug atual quando o nome não mudar.
+        // Quando o nome mudar, gera um novo slug com base nele.
+        if ($data['nome'] !== $extras->nome) {
+            $data['slug'] = $this->extrasModel->gerarSlugUnico(
+                $data['nome'],
+                $id
+            );
+        } else {
+            // Preserva o slug original, mesmo que o formulário
+            // envie um valor diferente ou vazio.
+            $data['slug'] = $extras->slug;
+        }
 
         // ── Troca da imagem (só se um novo arquivo foi enviado) ──────────────
         // O arquivo antigo só é apagado se o novo for salvo com sucesso.

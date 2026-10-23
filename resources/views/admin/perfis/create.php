@@ -88,6 +88,4 @@
 <!-- Aqui enviamos para o template principal os scripts -->
 <?php View::start('scripts'); ?>
 
-<script src="<?= asset('js/demo.js') ?>"></script>
-
 <?php View::end(); ?>

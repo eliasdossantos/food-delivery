@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
+use App\Http\Controllers\Web\Admin\BairrosController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\EntregadoresController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
@@ -164,5 +165,19 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
         $r->get('/{id}/edit', [EntregadoresController::class, 'edit'])->name('edit');
         $r->put('/{id}', [EntregadoresController::class, 'update'])->name('update');
         $r->delete('/{id}', [EntregadoresController::class, 'destroy'])->name('destroy');
+    });
+
+    // ── Área BAIRROS ATENDIDOS
+    $r->group(['prefix' => '/bairro', 'as' => 'bairro.'], function (Router $r) {
+
+        $r->get('', [BairrosController::class, 'index'])->name('index');
+        $r->get('/create', [BairrosController::class, 'create'])->name('create');
+        $r->get('/procurar', [BairrosController::class, 'procurar'])->name('procurar');
+        $r->get('/cep', [BairrosController::class, 'consultarCep'])->name('cep');
+        $r->post('', [BairrosController::class, 'store'])->name('store');
+        $r->get('/{id}', [BairrosController::class, 'show'])->name('show');
+        $r->get('/{id}/edit', [BairrosController::class, 'edit'])->name('edit');
+        $r->put('/{id}', [BairrosController::class, 'update'])->name('update');
+        $r->delete('/{id}', [BairrosController::class, 'destroy'])->name('destroy');
     });
 });

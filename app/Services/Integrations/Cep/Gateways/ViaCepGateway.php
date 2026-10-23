@@ -21,7 +21,7 @@ class ViaCepGateway implements CepGatewayInterface
 
     public function __construct()
     {
-        $this->client = new ApiClient('https://viacep.com.br/ws', timeout: 10);
+        $this->client = new ApiClient('https://viacep.com.br/ws', defaultTimeout: 10);
     }
 
     public function consultar(string $cep): ?array
