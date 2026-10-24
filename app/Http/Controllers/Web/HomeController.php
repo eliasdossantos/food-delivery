@@ -2,18 +2,30 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Controllers\Web\BaseController;
+use App\Repositories\CategoriaRepository;
+use App\Repositories\ProdutoEspecificacaoRepository;
+use App\Repositories\ProdutoRepository;
 
 class HomeController extends BaseController
 {
     public function index(): void
     {
-        $this->auth()
-            ? $this->redirect('dashboard')
-            : $this->view('home.index', ['title' => 'Início'], 'home');
-        //                                                       ^^^^
-        //  Alterado de 'main' → 'home' para usar o layout sem
-        //  sidebar e topbar (resources/views/layouts/home.php).
-        //  Sidebar e topbar só aparecem após o login, no layout 'main'.
+        $categorias = (new CategoriaRepository())->getAtivas();
+        $produtos   = (new ProdutoRepository())->getAtivas();
+
+        // [categoria_id => [produto, produto...]]
+        $produtosPorCategoria = [];
+        foreach ($produtos as $produto) {
+            $produtosPorCategoria[$produto->categoria_id][] = $produto;
+        }
+
+        $data = [
+            'titulo'                   => 'Seja todos bem vindo(a)!',
+            'categorias'               => $categorias,
+            'produtosPorCategoria'     => $produtosPorCategoria,
+            'especificacoesPorProduto' => (new ProdutoEspecificacaoRepository())->getAgrupadasPorProduto(),
+        ];
+
+        $this->view('home.index', $data, 'home');
     }
 }

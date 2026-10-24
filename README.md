@@ -96,6 +96,8 @@ O frontend utiliza um template de terceiros. Os recursos visuais pertencem aos s
 
 **Créditos:**
 
+- [Butazzo Pizza](https://butazzopizza.netlify.app/landing/)
+
 - [Majestic Admin](https://github.com/BootstrapDash/MajesticAdmin-Free-Bootstrap-Admin-Template)
 
 ---

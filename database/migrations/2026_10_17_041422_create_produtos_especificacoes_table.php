@@ -6,6 +6,9 @@ use Framework\Database\Blueprint;
 
 /**
  * Migration — Create Produtos Especificacoes Table
+ *
+ * medida_id é NULLABLE: produto sem medida guarda só o preço
+ * (uma linha com medida_id NULL).
  */
 return new class extends Migration {
     public function up(): void
@@ -17,7 +20,9 @@ return new class extends Migration {
                 ->constrained('produtos')
                 ->onDelete('CASCADE');
 
+            // Medida opcional (NULL = produto de preço único)
             $table->foreignId('medida_id')
+                ->nullable()
                 ->constrained('medidas')
                 ->onDelete('CASCADE');
 
@@ -27,7 +32,9 @@ return new class extends Migration {
 
             $table->timestamps();
 
-            // Impede repetir o mesmo vínculo
+            // Impede repetir o mesmo vínculo.
+            // Obs.: no MySQL, NULL não conta como duplicado nesse índice;
+            // a regra "só uma linha sem medida" é garantida no controller.
             $table->unique(['produto_id', 'medida_id']);
         });
     }

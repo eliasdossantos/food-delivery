@@ -247,8 +247,9 @@
 $medidas = $medidas ?? [];
 $especificacoes = $especificacoes ?? [];
 
+// medida_id pode ser NULL (produto só com preço)
 $especIniciais = array_map(fn($e) => [
-    'medida_id'    => (int) $e->medida_id,
+    'medida_id'    => !empty($e->medida_id) ? (int) $e->medida_id : null,
     'preco'        => number_format((float) $e->preco, 2, ',', '.'),
     'customizavel' => (int) $e->customizavel,
 ], $especificacoes);
@@ -392,15 +393,13 @@ $especIniciais = array_map(fn($e) => [
                         <?= erroInput('extra_ids') ?>
                     </div>
 
-                    <!-- Medidas e preços -->
+                    <!-- Preços e medidas -->
                     <div class="form-section">
                         <div class="form-section-title">
-                            <h5>Medidas e preços <small class="text-danger">*</small></h5>
+                            <h5>Preços e medidas <small class="text-danger">*</small></h5>
                         </div>
 
-                        <?php if (empty($medidas)): ?>
-                        <p class="text-muted mb-0">Nenhuma medida ativa cadastrada.</p>
-                        <?php else: ?>
+                        <?php /* A medida é opcional: o bloco aparece mesmo sem medidas cadastradas */ ?>
                         <div class="espec-box">
                             <div class="espec-lista" id="especLista"
                                 data-iniciais="<?= e(json_encode($especIniciais, JSON_UNESCAPED_UNICODE)) ?>">
@@ -408,19 +407,21 @@ $especIniciais = array_map(fn($e) => [
 
                             <div class="espec-rodape">
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="especAdd">
-                                    <i class="mdi mdi-plus"></i> Adicionar medida
+                                    <i class="mdi mdi-plus"></i> Adicionar preço / medida
                                 </button>
                             </div>
                         </div>
 
                         <small class="form-text text-muted mt-2">
-                            Informe ao menos uma medida com o respectivo preço.
+                            Informe ao menos um preço. A medida é opcional: para um produto sem medida,
+                            deixe a medida em branco e preencha apenas o preço (use somente uma linha).
                         </small>
 
                         <small class="form-text text-muted mt-2">
                             <i class="mdi mdi-information-outline"></i>
                             <strong>Customizável:</strong> use para medidas como Pizza P, M, G etc.
                             Vale para todos os produtos que tiverem essas especificações.
+                            Fica desativado quando a linha não tem medida.
                         </small>
 
                         <template id="especTemplate">
@@ -429,12 +430,12 @@ $especIniciais = array_map(fn($e) => [
                                     <!-- Campo de busca: o select escondido guarda o valor enviado -->
                                     <div class="medida-combo">
                                         <input type="text" class="form-control espec-busca"
-                                            placeholder="Buscar medida..." autocomplete="off" role="combobox"
-                                            aria-autocomplete="list" aria-expanded="false" required>
+                                            placeholder="Medida (opcional) — buscar..." autocomplete="off"
+                                            role="combobox" aria-autocomplete="list" aria-expanded="false">
                                         <i class="mdi mdi-magnify"></i>
 
                                         <select class="espec-medida d-none" tabindex="-1" aria-hidden="true">
-                                            <option value="">Selecione a medida</option>
+                                            <option value="">Sem medida</option>
                                             <?php foreach ($medidas as $medida): ?>
                                             <option value="<?= (int) $medida->id ?>">
                                                 <?= e($medida->nome) ?><?= empty($medida->ativo) ? ' (inativa)' : '' ?>
@@ -464,7 +465,6 @@ $especIniciais = array_map(fn($e) => [
                                 </div>
                             </div>
                         </template>
-                        <?php endif; ?>
 
                         <?= erroInput('especificacoes') ?>
                     </div>
@@ -830,7 +830,7 @@ $especIniciais = array_map(fn($e) => [
 </script>
 
 <script nonce="<?= e(CSP_NONCE) ?>">
-// Linhas de medida + preço + customizável (com busca na medida)
+// Linhas de medida (opcional) + preço + customizável (com busca na medida)
 (function() {
     var lista = document.getElementById('especLista');
     var modelo = document.getElementById('especTemplate');
@@ -1060,16 +1060,29 @@ $especIniciais = array_map(fn($e) => [
         custom.id = 'espec_custom_' + i;
         rotulo.setAttribute('for', custom.id);
 
+        // "Customizável" só faz sentido com medida: sem medida fica desmarcado e desabilitado
+        // (campo desabilitado não é enviado, e o controller grava 0)
+        function sincronizarCustom() {
+            if (medida.value === '') {
+                custom.checked = false;
+                custom.disabled = true;
+            } else if (custom.disabled) {
+                custom.disabled = false;
+                custom.checked = true; // padrão da coluna: 1
+            }
+        }
+
         if (dados) {
-            medida.value = String(dados.medida_id);
+            medida.value = dados.medida_id ? String(dados.medida_id) : '';
             busca.value = textoSelecionado(medida);
             preco.value = dados.preco;
             custom.checked = Number(dados.customizavel) === 1;
-        } else {
-            custom.checked = true; // padrão da coluna: 1
         }
 
+        sincronizarCustom();
+
         medida.addEventListener('change', atualizarOpcoes);
+        medida.addEventListener('change', sincronizarCustom);
 
         // ── Busca da medida ──
         busca.addEventListener('focus', function() {
@@ -1088,7 +1101,7 @@ $especIniciais = array_map(fn($e) => [
         busca.addEventListener('input', function() {
             abrir(contexto);
 
-            // Campo apagado: libera a medida para outras linhas
+            // Campo apagado: libera a medida para outras linhas (linha vira "só preço")
             if (busca.value.trim() === '' && medida.value !== '') {
                 medida.value = '';
                 medida.dispatchEvent(new Event('change', {

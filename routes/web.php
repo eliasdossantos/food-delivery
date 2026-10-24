@@ -8,7 +8,8 @@ use App\Http\Controllers\Web\Admin\EntregadoresController;
 use App\Http\Controllers\Web\Admin\ExpedienteController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\FormasPagamentoController;
-use App\Http\Controllers\Web\Admin\HomeController;
+use App\Http\Controllers\Web\HomeController;
+use App\Http\Controllers\Web\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Web\Admin\MedidasController;
 use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\ProdutosController;
@@ -19,10 +20,10 @@ use Framework\Http\Router;
 
 /** @var Router $router */
 
-// ── Raiz ──────────────────────────────────────────────────────────────────────
+// ── Raiz (Site) ──────────────────────────────────────────────────────────────────────
 $router->get('/', [HomeController::class, 'index'])->name('home');
 
-// ── Fluxo de autenticação (admin e cliente) ──────────────────────────────────
+// ── Fluxo de autenticação (Administradores e Clientes) ──────────────────────────────────
 $authFlows = [
     'admin'   => [AdminAuthController::class,   'AdminGuestMiddleware',   'AdminAuthMiddleware'],
     'cliente' => [ClienteAuthController::class, 'ClienteGuestMiddleware', 'ClienteAuthMiddleware'],
@@ -55,7 +56,7 @@ $router->get('/cliente', [ClienteHomeController::class, 'index'], ['ClienteAuthM
 // ── Área do Administrador ────────────────────────────────────────────────────
 $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminAuthMiddleware']], function (Router $r) {
 
-    $r->get('', [HomeController::class, 'index'])->name('home');
+    $r->get('', [AdminHomeController::class, 'index'])->name('home');
 
     // CRUDs padrão (index, create, procurar, store, show, edit, update, destroy)
     $r->resource('/perfil',     PerfisController::class);

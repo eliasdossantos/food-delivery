@@ -145,8 +145,8 @@ class ProdutosController extends BaseController
             return;
         }
 
-        // Medidas, preços e customizável.
-        // No cadastro, é obrigatório informar ao menos uma medida com preço.
+        // Preços (com ou sem medida) e customizável.
+        // No cadastro, é obrigatório informar ao menos um preço.
         $erroEspec = null;
         $especificacoes = $this->validarEspecificacoes($input, [], $erroEspec, true);
 
@@ -228,7 +228,7 @@ class ProdutosController extends BaseController
             $this->redirectWith(
                 'admin/produto',
                 'error',
-                'O produto foi criado, mas não foi possível salvar as medidas e preços.'
+                'O produto foi criado, mas não foi possível salvar os preços e medidas.'
             );
             return;
         }
@@ -259,7 +259,7 @@ class ProdutosController extends BaseController
                 $this->produtoExtraModel->getIdsDasExtrasDoProduto($id)
             ),
             'medidas'        => $this->medidasDisponiveis(
-                array_map(fn($e) => (int) $e->medida_id, $especificacoes)
+                $this->idsDasMedidas($especificacoes)
             ),
             'especificacoes' => $especificacoes,
         ];
@@ -297,17 +297,16 @@ class ProdutosController extends BaseController
             return;
         }
 
-        // Medidas, preços e customizável (medidas já vinculadas podem continuar mesmo inativas)
-        $atuais = array_map(
-            fn($e) => (int) $e->medida_id,
-            $this->especificacaoModel->getDoProduto($id)
-        );
+        // Preços e medidas (medidas já vinculadas podem continuar mesmo inativas).
+        // Linhas sem medida (preço único) não entram na lista de medidas vinculadas.
+        $atuais = $this->idsDasMedidas($this->especificacaoModel->getDoProduto($id));
 
         $erroEspec = null;
         $especificacoes = $this->validarEspecificacoes($input, $atuais, $erroEspec);
 
         if ($especificacoes === false) {
             Session::flash('error', $erroEspec);
+            Session::flashErrors(['especificacoes' => [$erroEspec]]);
             Session::flashInput($input);
             $this->back();
             return;
@@ -396,7 +395,7 @@ class ProdutosController extends BaseController
             $this->redirectWith(
                 'admin/produto',
                 'error',
-                'O produto foi atualizado, mas não foi possível salvar as medidas e preços.'
+                'O produto foi atualizado, mas não foi possível salvar os preços e medidas.'
             );
             return;
         }
@@ -453,6 +452,25 @@ class ProdutosController extends BaseController
         }
 
         return $imagem;
+    }
+
+    /**
+     * IDs das medidas de uma lista de especificações.
+     * Linhas sem medida (preço único, medida_id NULL) são ignoradas.
+     *
+     * @return int[]
+     */
+    private function idsDasMedidas(array $especificacoes): array
+    {
+        $ids = [];
+
+        foreach ($especificacoes as $especificacao) {
+            if (!empty($especificacao->medida_id)) {
+                $ids[] = (int) $especificacao->medida_id;
+            }
+        }
+
+        return $ids;
     }
 
     /**
@@ -571,13 +589,19 @@ class ProdutosController extends BaseController
 
     /**
      * Lê especificacoes[i][medida_id|preco|customizavel] do formulário.
-     * Linhas totalmente vazias são ignoradas. Em toda linha preenchida,
-     * a medida e o preço (maior que zero) são obrigatórios.
+     *
+     * Regras:
+     *  - Linhas totalmente vazias (sem medida e sem preço) são ignoradas.
+     *  - Em toda linha preenchida, o preço (maior que zero) é obrigatório.
+     *  - A medida é OPCIONAL. Linha sem medida = produto de preço único
+     *    (medida_id NULL, customizavel 0).
+     *  - Só pode existir UMA linha sem medida, e ela não pode conviver
+     *    com linhas que tenham medida (o produto é "preço único" ou "por medida").
      *
      * @param int[]       $medidasJaVinculadas medidas que podem continuar mesmo inativas
      * @param string|null $erro                recebe a mensagem de erro, se houver
-     * @param bool        $exigirUma           exige ao menos uma medida com preço
-     * @return array<int, array{medida_id:int, preco:float, customizavel:int}>|false
+     * @param bool        $exigirUma           exige ao menos uma linha com preço
+     * @return array<int, array{medida_id:int|null, preco:float, customizavel:int}>|false
      */
     private function validarEspecificacoes(
         array $input,
@@ -588,41 +612,31 @@ class ProdutosController extends BaseController
         $linhas = $input['especificacoes'] ?? [];
 
         if (!is_array($linhas)) {
-            $erro = 'Medidas e preços inválidos.';
+            $erro = 'Preços e medidas inválidos.';
             return false;
         }
 
         $itens = [];
         $vistas = [];
+        $temSemMedida = false;
 
         foreach ($linhas as $linha) {
             if (!is_array($linha)) {
-                $erro = 'Medidas e preços inválidos.';
+                $erro = 'Preços e medidas inválidos.';
                 return false;
             }
 
             $medidaId = trim((string) ($linha['medida_id'] ?? ''));
             $precoTxt = trim((string) ($linha['preco'] ?? ''));
 
+            // Linha totalmente vazia: ignora
             if ($medidaId === '' && $precoTxt === '') {
                 continue;
             }
 
-            if (!filter_var($medidaId, FILTER_VALIDATE_INT) || (int) $medidaId < 1) {
-                $erro = 'Selecione a medida em todas as linhas de preço.';
-                return false;
-            }
-
-            $medidaId = (int) $medidaId;
-
-            if (isset($vistas[$medidaId])) {
-                $erro = 'A mesma medida foi informada mais de uma vez.';
-                return false;
-            }
-
-            // Preço obrigatório em toda medida
+            // Preço obrigatório em toda linha preenchida
             if ($precoTxt === '') {
-                $erro = 'Informe o preço de todas as medidas.';
+                $erro = 'Informe o preço de todas as linhas.';
                 return false;
             }
 
@@ -630,7 +644,40 @@ class ProdutosController extends BaseController
             $normalizado = str_replace(',', '.', str_replace('.', '', $precoTxt));
 
             if (!is_numeric($normalizado) || (float) $normalizado <= 0) {
-                $erro = 'O preço de cada medida deve ser maior que zero.';
+                $erro = 'O preço de cada linha deve ser maior que zero.';
+                return false;
+            }
+
+            $preco = round((float) $normalizado, 2);
+
+            // ── Sem medida: preço único do produto ──
+            if ($medidaId === '') {
+                if ($temSemMedida) {
+                    $erro = 'Só é possível informar um preço sem medida.';
+                    return false;
+                }
+
+                $temSemMedida = true;
+
+                $itens[] = [
+                    'medida_id'    => null,
+                    'preco'        => $preco,
+                    'customizavel' => 0, // customizável só faz sentido com medida
+                ];
+
+                continue;
+            }
+
+            // ── Com medida ──
+            if (!filter_var($medidaId, FILTER_VALIDATE_INT) || (int) $medidaId < 1) {
+                $erro = 'Medida inválida.';
+                return false;
+            }
+
+            $medidaId = (int) $medidaId;
+
+            if (isset($vistas[$medidaId])) {
+                $erro = 'A mesma medida foi informada mais de uma vez.';
                 return false;
             }
 
@@ -645,13 +692,20 @@ class ProdutosController extends BaseController
 
             $itens[] = [
                 'medida_id'    => $medidaId,
-                'preco'        => round((float) $normalizado, 2),
+                'preco'        => $preco,
                 'customizavel' => !empty($linha['customizavel']) ? 1 : 0,
             ];
         }
 
+        // Preço único não convive com medidas
+        if ($temSemMedida && count($itens) > 1) {
+            $erro = 'Produto com preço sem medida deve ter apenas uma linha. '
+                . 'Informe a medida em todas as linhas ou deixe só o preço único.';
+            return false;
+        }
+
         if ($exigirUma && empty($itens)) {
-            $erro = 'Cadastre ao menos uma medida com preço.';
+            $erro = 'Informe ao menos um preço (com ou sem medida).';
             return false;
         }
 
