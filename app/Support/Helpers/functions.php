@@ -395,6 +395,39 @@ function descreverMinutos(int|string|null $minutos): string
     return implode(' e ', $partes);
 }
 
+/**
+ * Formata um horário do banco para campos de formulário e tabelas simples.
+ *
+ *   '18:00:00' → '18:00'
+ *   null / ''  → $vazio
+ */
+function horaBR(?string $hora, string $vazio = '-'): string
+{
+    if ($hora === null || trim($hora) === '') {
+        return $vazio;
+    }
+
+    return substr(trim($hora), 0, 5);
+}
+
+/**
+ * Formata horário no estilo brasileiro, para exibição (badges, listas).
+ *
+ *   '18:00:00' → '18h'
+ *   '18:30:00' → '18h30'
+ *   null / ''  → $vazio
+ */
+function horaBonita(?string $hora, string $vazio = '-'): string
+{
+    if ($hora === null || trim($hora) === '') {
+        return $vazio;
+    }
+
+    [$h, $m] = array_pad(explode(':', trim($hora)), 2, '00');
+
+    return $m === '00' ? $h . 'h' : $h . 'h' . $m;
+}
+
 // ── Moeda ─────────────────────────────────────────────────────────────────────
 
 /**

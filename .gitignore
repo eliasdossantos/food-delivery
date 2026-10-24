@@ -39,3 +39,6 @@ yarn-debug.log*
 
 # ── Uploads públicos ──────────────────────────────────────────────────────────
 /public/uploads/
+
+# ── Ignorar qualquer backup old_* dentro de routes ──────────────────────────────────────────────────────────
+routes/old_*.php

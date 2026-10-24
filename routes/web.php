@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\BairrosController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
+use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\EntregadoresController;
+use App\Http\Controllers\Web\Admin\ExpedienteController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
 use App\Http\Controllers\Web\Admin\FormasPagamentoController;
 use App\Http\Controllers\Web\Admin\HomeController;
@@ -21,163 +22,55 @@ use Framework\Http\Router;
 // ── Raiz ──────────────────────────────────────────────────────────────────────
 $router->get('/', [HomeController::class, 'index'])->name('home');
 
-// ── Fluxo administrativo: rotas próprias ─────────────────────────────────────
-$router->get('/admin/login', [AdminAuthController::class, 'loginForm'], ['AdminGuestMiddleware'])->name('admin.login');
-$router->post('/admin/login', [AdminAuthController::class, 'login'], ['AdminGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:login'])->name('admin.login.store');
-$router->get('/admin/cadastro', [AdminAuthController::class, 'registerForm'], ['AdminGuestMiddleware'])->name('admin.cadastro');
-$router->post('/admin/cadastro', [AdminAuthController::class, 'register'], ['AdminGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:register'])->name('admin.cadastro.store');
-$router->get('/admin/esqueci-senha', [AdminAuthController::class, 'forgotForm'], ['AdminGuestMiddleware'])->name('admin.esqueci_senha');
-$router->post('/admin/esqueci-senha', [AdminAuthController::class, 'forgot'], ['AdminGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:forgot'])->name('admin.esqueci_senha.store');
-$router->get('/admin/redefinir-senha', [AdminAuthController::class, 'resetForm'], ['AdminGuestMiddleware'])->name('admin.redefinir_senha');
-$router->post('/admin/redefinir-senha', [AdminAuthController::class, 'reset'], ['AdminGuestMiddleware', 'CsrfMiddleware'])->name('admin.redefinir_senha.store');
-$router->post('/admin/logout', [AdminAuthController::class, 'logout'], ['AdminAuthMiddleware', 'CsrfMiddleware'])->name('admin.logout');
+// ── Fluxo de autenticação (admin e cliente) ──────────────────────────────────
+$authFlows = [
+    'admin'   => [AdminAuthController::class,   'AdminGuestMiddleware',   'AdminAuthMiddleware'],
+    'cliente' => [ClienteAuthController::class, 'ClienteGuestMiddleware', 'ClienteAuthMiddleware'],
+];
 
-// ── Fluxo do cliente: rotas próprias ─────────────────────────────────────────
-$router->get('/cliente/login', [ClienteAuthController::class, 'loginForm'], ['ClienteGuestMiddleware'])->name('cliente.login');
-$router->post('/cliente/login', [ClienteAuthController::class, 'login'], ['ClienteGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:login'])->name('cliente.login.store');
-$router->get('/cliente/cadastro', [ClienteAuthController::class, 'registerForm'], ['ClienteGuestMiddleware'])->name('cliente.cadastro');
-$router->post('/cliente/cadastro', [ClienteAuthController::class, 'register'], ['ClienteGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:register'])->name('cliente.cadastro.store');
-$router->get('/cliente/esqueci-senha', [ClienteAuthController::class, 'forgotForm'], ['ClienteGuestMiddleware'])->name('cliente.esqueci_senha');
-$router->post('/cliente/esqueci-senha', [ClienteAuthController::class, 'forgot'], ['ClienteGuestMiddleware', 'CsrfMiddleware', 'RateLimitMiddleware:forgot'])->name('cliente.esqueci_senha.store');
-$router->get('/cliente/redefinir-senha', [ClienteAuthController::class, 'resetForm'], ['ClienteGuestMiddleware'])->name('cliente.redefinir_senha');
-$router->post('/cliente/redefinir-senha', [ClienteAuthController::class, 'reset'], ['ClienteGuestMiddleware', 'CsrfMiddleware'])->name('cliente.redefinir_senha.store');
+foreach ($authFlows as $area => [$ctrl, $guest, $auth]) {
+    $router->group(
+        ['prefix' => "/{$area}", 'as' => "{$area}.", 'middleware' => [$guest]],
+        function (Router $r) use ($ctrl) {
+            $r->get('/login', [$ctrl, 'loginForm'])->name('login');
+            $r->post('/login', [$ctrl, 'login'], ['CsrfMiddleware', 'RateLimitMiddleware:login'])->name('login.store');
+
+            $r->get('/cadastro', [$ctrl, 'registerForm'])->name('cadastro');
+            $r->post('/cadastro', [$ctrl, 'register'], ['CsrfMiddleware', 'RateLimitMiddleware:register'])->name('cadastro.store');
+
+            $r->get('/esqueci-senha', [$ctrl, 'forgotForm'])->name('esqueci_senha');
+            $r->post('/esqueci-senha', [$ctrl, 'forgot'], ['CsrfMiddleware', 'RateLimitMiddleware:forgot'])->name('esqueci_senha.store');
+
+            $r->get('/redefinir-senha', [$ctrl, 'resetForm'])->name('redefinir_senha');
+            $r->post('/redefinir-senha', [$ctrl, 'reset'], ['CsrfMiddleware'])->name('redefinir_senha.store');
+        }
+    );
+
+    $router->post("/{$area}/logout", [$ctrl, 'logout'], [$auth, 'CsrfMiddleware'])->name("{$area}.logout");
+}
+
+// ── Home do cliente ──────────────────────────────────────────────────────────
 $router->get('/cliente', [ClienteHomeController::class, 'index'], ['ClienteAuthMiddleware'])->name('cliente.home');
-$router->post('/cliente/logout', [ClienteAuthController::class, 'logout'], ['ClienteAuthMiddleware', 'CsrfMiddleware'])->name('cliente.logout');
 
-// ── Área do Administrador ────────────────────────────────────────────────
+// ── Área do Administrador ────────────────────────────────────────────────────
 $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminAuthMiddleware']], function (Router $r) {
 
-    // ── Home do Admin ──────────────────────────────────────────────────
     $r->get('', [HomeController::class, 'index'])->name('home');
 
-    // ── Área PERFIS
-    $r->group(['prefix' => '/perfil', 'as' => 'perfil.'], function (Router $r) {
+    // CRUDs padrão (index, create, procurar, store, show, edit, update, destroy)
+    $r->resource('/perfil',     PerfisController::class);
+    $r->resource('/usuario',    UsuariosController::class);
+    $r->resource('/cliente',    ClientesController::class);
+    $r->resource('/categoria',  CategoriasController::class);
+    $r->resource('/extra',      ExtrasController::class);
+    $r->resource('/medida',     MedidasController::class);
+    $r->resource('/produto',    ProdutosController::class);
+    $r->resource('/pagamento',  FormasPagamentoController::class);
+    $r->resource('/entregador', EntregadoresController::class);
+    $r->resource('/expediente', ExpedienteController::class);
 
-        $r->get('', [PerfisController::class, 'index'])->name('index');
-        $r->get('/create', [PerfisController::class, 'create'])->name('create');
-        $r->get('/procurar', [PerfisController::class, 'procurar'])->name('procurar');
-        $r->post('', [PerfisController::class, 'store'])->name('store');
-        $r->get('/{id}', [PerfisController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [PerfisController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [PerfisController::class, 'update'])->name('update');
-        $r->delete('/{id}', [PerfisController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área USUÁRIOS
-    $r->group(['prefix' => '/usuario', 'as' => 'usuario.'], function (Router $r) {
-
-        $r->get('', [UsuariosController::class, 'index'])->name('index');
-        $r->get('/create', [UsuariosController::class, 'create'])->name('create');
-        $r->get('/procurar', [UsuariosController::class, 'procurar'])->name('procurar');
-        $r->post('', [UsuariosController::class, 'store'])->name('store');
-        $r->get('/{id}', [UsuariosController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [UsuariosController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [UsuariosController::class, 'update'])->name('update');
-        $r->delete('/{id}', [UsuariosController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área CLIENTES
-    $r->group(['prefix' => '/cliente', 'as' => 'cliente.'], function (Router $r) {
-
-        $r->get('', [ClientesController::class, 'index'])->name('index');
-        $r->get('/create', [ClientesController::class, 'create'])->name('create');
-        $r->get('/procurar', [ClientesController::class, 'procurar'])->name('procurar');
-        $r->post('', [ClientesController::class, 'store'])->name('store');
-        $r->get('/{id}', [ClientesController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [ClientesController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [ClientesController::class, 'update'])->name('update');
-        $r->delete('/{id}', [ClientesController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área CATEGORIAS
-    $r->group(['prefix' => '/categoria', 'as' => 'categoria.'], function (Router $r) {
-
-        $r->get('', [CategoriasController::class, 'index'])->name('index');
-        $r->get('/create', [CategoriasController::class, 'create'])->name('create');
-        $r->get('/procurar', [CategoriasController::class, 'procurar'])->name('procurar');
-        $r->post('', [CategoriasController::class, 'store'])->name('store');
-        $r->get('/{id}', [CategoriasController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [CategoriasController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [CategoriasController::class, 'update'])->name('update');
-        $r->delete('/{id}', [CategoriasController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área EXTRAS
-    $r->group(['prefix' => '/extra', 'as' => 'extra.'], function (Router $r) {
-
-        $r->get('', [ExtrasController::class, 'index'])->name('index');
-        $r->get('/create', [ExtrasController::class, 'create'])->name('create');
-        $r->get('/procurar', [ExtrasController::class, 'procurar'])->name('procurar');
-        $r->post('', [ExtrasController::class, 'store'])->name('store');
-        $r->get('/{id}', [ExtrasController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [ExtrasController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [ExtrasController::class, 'update'])->name('update');
-        $r->delete('/{id}', [ExtrasController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área MEDIDAS E VALORES
-    $r->group(['prefix' => '/medida', 'as' => 'medida.'], function (Router $r) {
-
-        $r->get('', [MedidasController::class, 'index'])->name('index');
-        $r->get('/create', [MedidasController::class, 'create'])->name('create');
-        $r->get('/procurar', [MedidasController::class, 'procurar'])->name('procurar');
-        $r->post('', [MedidasController::class, 'store'])->name('store');
-        $r->get('/{id}', [MedidasController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [MedidasController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [MedidasController::class, 'update'])->name('update');
-        $r->delete('/{id}', [MedidasController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área PRODUTOS
-    $r->group(['prefix' => '/produto', 'as' => 'produto.'], function (Router $r) {
-
-        $r->get('', [ProdutosController::class, 'index'])->name('index');
-        $r->get('/create', [ProdutosController::class, 'create'])->name('create');
-        $r->get('/procurar', [ProdutosController::class, 'procurar'])->name('procurar');
-        $r->post('', [ProdutosController::class, 'store'])->name('store');
-        $r->get('/{id}', [ProdutosController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [ProdutosController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [ProdutosController::class, 'update'])->name('update');
-        $r->delete('/{id}', [ProdutosController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área FORMAS DE PAGAMENTO
-    $r->group(['prefix' => '/pagamento', 'as' => 'pagamento.'], function (Router $r) {
-
-        $r->get('', [FormasPagamentoController::class, 'index'])->name('index');
-        $r->get('/create', [FormasPagamentoController::class, 'create'])->name('create');
-        $r->get('/procurar', [FormasPagamentoController::class, 'procurar'])->name('procurar');
-        $r->post('', [FormasPagamentoController::class, 'store'])->name('store');
-        $r->get('/{id}', [FormasPagamentoController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [FormasPagamentoController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [FormasPagamentoController::class, 'update'])->name('update');
-        $r->delete('/{id}', [FormasPagamentoController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área ENTREGADORES
-    $r->group(['prefix' => '/entregador', 'as' => 'entregador.'], function (Router $r) {
-
-        $r->get('', [EntregadoresController::class, 'index'])->name('index');
-        $r->get('/create', [EntregadoresController::class, 'create'])->name('create');
-        $r->get('/procurar', [EntregadoresController::class, 'procurar'])->name('procurar');
-        $r->post('', [EntregadoresController::class, 'store'])->name('store');
-        $r->get('/{id}', [EntregadoresController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [EntregadoresController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [EntregadoresController::class, 'update'])->name('update');
-        $r->delete('/{id}', [EntregadoresController::class, 'destroy'])->name('destroy');
-    });
-
-    // ── Área BAIRROS ATENDIDOS
-    $r->group(['prefix' => '/bairro', 'as' => 'bairro.'], function (Router $r) {
-
-        $r->get('', [BairrosController::class, 'index'])->name('index');
-        $r->get('/create', [BairrosController::class, 'create'])->name('create');
-        $r->get('/procurar', [BairrosController::class, 'procurar'])->name('procurar');
+    // CRUD com rota extra (registrada antes de /{id})
+    $r->resource('/bairro', BairrosController::class, [], function (Router $r) {
         $r->get('/cep', [BairrosController::class, 'consultarCep'])->name('cep');
-        $r->post('', [BairrosController::class, 'store'])->name('store');
-        $r->get('/{id}', [BairrosController::class, 'show'])->name('show');
-        $r->get('/{id}/edit', [BairrosController::class, 'edit'])->name('edit');
-        $r->put('/{id}', [BairrosController::class, 'update'])->name('update');
-        $r->delete('/{id}', [BairrosController::class, 'destroy'])->name('destroy');
     });
 });

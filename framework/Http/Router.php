@@ -125,22 +125,50 @@ class Router
      *   PUT    /resource/{id}      → update
      *   DELETE /resource/{id}      → destroy
      */
-    public function resource(string $path, string $controller, array $only = []): void
+    //public function resource(string $path, string $controller, array $only = []): void
+    //{
+    //    $name = ltrim($path, '/');
+    //    $all  = [
+    //        'index'   => ['GET',    $path],
+    //        'create'  => ['GET',    $path . '/create'],
+    //        'store'   => ['POST',   $path],
+    //        'show'    => ['GET',    $path . '/{id}'],
+    //        'edit'    => ['GET',    $path . '/{id}/edit'],
+    //        'update'  => ['PUT',    $path . '/{id}'],
+    //        'destroy' => ['DELETE', $path . '/{id}'],
+    //    ];
+    //
+    //    foreach ($all as $action => [$method, $route]) {
+    //        if ($only && !in_array($action, $only)) continue;
+    //        $this->addRoute($method, $route, [$controller, $action])
+    //            ->name("{$name}.{$action}");
+    //    }
+    //}
+    public function resource(string $path, string $controller, array $options = [], ?callable $extra = null): void
     {
-        $name = ltrim($path, '/');
-        $all  = [
-            'index'   => ['GET',    $path],
-            'create'  => ['GET',    $path . '/create'],
-            'store'   => ['POST',   $path],
-            'show'    => ['GET',    $path . '/{id}'],
-            'edit'    => ['GET',    $path . '/{id}/edit'],
-            'update'  => ['PUT',    $path . '/{id}'],
-            'destroy' => ['DELETE', $path . '/{id}'],
+        $name  = $options['name'] ?? ltrim($path, '/');
+        $only  = $options['only'] ?? [];
+        $mw    = $options['middleware'] ?? [];
+
+        // Rotas extras primeiro (precisam vir antes de /{id})
+        if ($extra) {
+            $this->group(['prefix' => $path, 'as' => "{$name}."], $extra);
+        }
+
+        $all = [
+            'index'    => ['GET',    ''],
+            'create'   => ['GET',    '/create'],
+            'procurar' => ['GET',    '/procurar'],
+            'store'    => ['POST',   ''],
+            'show'     => ['GET',    '/{id}'],
+            'edit'     => ['GET',    '/{id}/edit'],
+            'update'   => ['PUT',    '/{id}'],
+            'destroy'  => ['DELETE', '/{id}'],
         ];
 
-        foreach ($all as $action => [$method, $route]) {
-            if ($only && !in_array($action, $only)) continue;
-            $this->addRoute($method, $route, [$controller, $action])
+        foreach ($all as $action => [$method, $suffix]) {
+            if ($only && !in_array($action, $only, true)) continue;
+            $this->addRoute($method, $path . $suffix, [$controller, $action], $mw)
                 ->name("{$name}.{$action}");
         }
     }

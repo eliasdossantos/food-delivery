@@ -9,6 +9,7 @@ $menuDashboard = str_ends_with($menuUri, '/admin');
 $menuUsuarios  = str_contains($menuUri, '/admin/usuario');
 $menuEntregadores  = str_contains($menuUri, '/admin/entregador');
 $menuBairros  = str_contains($menuUri, '/admin/bairro');
+$menuExpediente  = str_contains($menuUri, '/admin/expediente');
 $menuCategorias  = str_contains($menuUri, '/admin/categoria');
 $menuPagamentos  = str_contains($menuUri, '/admin/pagamento');
 $menuProdutos  = str_contains($menuUri, '/admin/produto');
@@ -50,6 +51,13 @@ $menuSistema = $menuClientes || $menuConfig || $menuPerfis;
             <a class="nav-link" href="<?= url('/admin/bairro') ?>">
                 <i class="mdi mdi-google-maps menu-icon"></i>
                 <span class="menu-title">Bairros Atendidos</span>
+            </a>
+        </li>
+
+        <li class="nav-item<?= $menuExpediente ? ' active' : '' ?>">
+            <a class="nav-link" href="<?= url('/admin/expediente') ?>">
+                <i class="mdi mdi-timer menu-icon"></i>
+                <span class="menu-title">Horário de Funcionamento</span>
             </a>
         </li>
 

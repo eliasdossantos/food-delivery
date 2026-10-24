@@ -17,4 +17,6 @@ return [
     ProdutoSeeder::class,
     FormaPagamentoSeeder::class,
     EntregadorSeeder::class,
+    BairroSeeder::class,
+    ExpedienteSeeder::class,
 ];
