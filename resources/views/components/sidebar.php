@@ -97,7 +97,7 @@ $menu = [
         'filhos' => [
             ['titulo' => 'Usuários',      'url' => '/admin/usuario',       'perfis' => $administradores],
             ['titulo' => 'Perfis',        'url' => '/admin/perfil',        'perfis' => $somenteSuper],
-            ['titulo' => 'Configurações', 'url' => '/admin/configuracoes', 'perfis' => $somenteSuper],
+            ['titulo' => 'Configurações', 'url' => '/admin/configuracao',  'perfis' => $somenteSuper],
         ],
     ],
 ];

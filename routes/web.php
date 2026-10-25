@@ -4,6 +4,7 @@ use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\BairrosController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\ClientesController;
+use App\Http\Controllers\Web\Admin\ConfiguracoesController;
 use App\Http\Controllers\Web\Admin\EntregadoresController;
 use App\Http\Controllers\Web\Admin\ExpedienteController;
 use App\Http\Controllers\Web\Admin\ExtrasController;
@@ -73,5 +74,10 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
     // CRUD com rota extra (registrada antes de /{id})
     $r->resource('/bairro', BairrosController::class, [], function (Router $r) {
         $r->get('/cep', [BairrosController::class, 'consultarCep'])->name('cep');
+    });
+
+    // CRUD com rota configuracao (registrada antes de /{id})
+    $r->resource('/configuracao', ConfiguracoesController::class, [], function (Router $r) {
+        $r->get('/cep', [ConfiguracoesController::class, 'consultarCep'])->name('cep');
     });
 });
