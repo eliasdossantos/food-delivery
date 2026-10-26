@@ -17,14 +17,18 @@ use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\ProdutosController;
 use App\Http\Controllers\Web\Admin\SobreNosController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
+use App\Http\Controllers\Web\CardapioController;
 use App\Http\Controllers\Web\Cliente\AuthController as ClienteAuthController;
 use App\Http\Controllers\Web\Cliente\HomeController as ClienteHomeController;
 use Framework\Http\Router;
 
 /** @var Router $router */
+// ── Área Pública (Site) ──────────────────────────────────────────────────────
+$router->group([], function (Router $r) {
 
-// ── Raiz (Site) ──────────────────────────────────────────────────────────────────────
-$router->get('/', [HomeController::class, 'index'])->name('home');
+    $r->get('/', [HomeController::class, 'index'])->name('home');
+    $r->get('/produtos', [HomeController::class, 'produtos'])->name('produtos');
+});
 
 // ── Fluxo de autenticação (Administradores e Clientes) ──────────────────────────────────
 $authFlows = [

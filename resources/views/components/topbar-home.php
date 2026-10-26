@@ -3,10 +3,7 @@
 
         <div class="navbar_top hidden-xs">
             <div class="top_addr">
-                <span><i class="fa fa-map-marker" aria-hidden="true"></i> Seu país, sua cidade,
-                    12345</span>
-                <span><i class="fa fa-phone" aria-hidden="true"></i> 123 456 789</span>
-                <span><i class="fa fa-clock-o" aria-hidden="true"></i> 11:00 - 21:00</span>
+                <?= \Framework\Support\View::render('components.contato-topo') ?>
                 <div class="pull-right search-block">
                     <i class="fa fa-search" id="search" aria-hidden="true"></i>
                 </div>
@@ -39,12 +36,11 @@
                 <div class="collapse navbar-collapse" id="navbar">
                     <div class="navbar-right">
                         <ul class="nav navbar-nav">
-                            <li><a class="page-scroll" href="#header">Início</a></li>
-                            <li><a class="page-scroll" href="#about_us">Sobre nós</a></li>
-                            <li><a class="page-scroll" href="#menu">Cardápio</a></li>
-                            <li><a class="page-scroll" href="#gallery">Galeria</a></li>
-                            <li><a class="page-scroll" href="#reservation">Reservas</a></li>
-                            <li><a class="page-scroll" href="#footer">Contato</a></li>
+                            <li><a href="<?= url('/') ?>">Início</a></li>
+                            <li><a class="<?= homeAnchorClass() ?>" href="<?= homeAnchor('menu') ?>">Cardápio</a></li>
+                            <li><a class="<?= homeAnchorClass() ?>" href="<?= homeAnchor('gallery') ?>">Galeria</a></li>
+                            <li><a class="<?= homeAnchorClass() ?>" href="<?= homeAnchor('footer') ?>">Contato</a></li>
+                            <li><a href="<?= url('/produtos') ?>">Produtos</a></li>
                         </ul>
                     </div>
                 </div>

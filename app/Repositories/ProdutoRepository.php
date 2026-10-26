@@ -267,6 +267,26 @@ class ProdutoRepository extends Repository
         return true;
     }
 
+    /**
+     * Produtos mais vendidos (soma da quantidade em pedido_itens).
+     * AJUSTE o nome da tabela/colunas conforme o seu banco de pedidos.
+     */
+    public function getMaisVendidos(int $limite = 6): array
+    {
+        return $this->queryComCategoria()
+            ->select(
+                'produtos.*',
+                'categorias.nome AS categoria_nome',
+                'SUM(pedido_itens.quantidade) AS total_vendido'
+            )
+            ->join('pedido_itens', 'pedido_itens.produto_id', '=', 'produtos.id')
+            ->whereRaw('produtos.ativo = :ativo', ['ativo' => 1])
+            ->groupBy('produtos.id')
+            ->orderBy('total_vendido', 'DESC')
+            ->limit($limite)
+            ->get();
+    }
+
     // ── Interno ───────────────────────────────────────────────────────────────
 
     /**

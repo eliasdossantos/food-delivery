@@ -151,45 +151,8 @@
 
 <?php View::start('content'); ?>
 
-<!--    About Us    -->
-<?php
-// Dados da seção: do admin quando existir; senão, o conteúdo padrão do tema
-$sobreTitulo = trim((string) ($sobreNos->titulo ?? '')) ?: 'Sobre nós';
-
-$sobreTexto = trim((string) ($sobreNos->texto ?? '')) ?: 'Somos apaixonados por comida de verdade. '
-    . 'Cada prato é preparado com ingredientes frescos e muito carinho, '
-    . 'para você receber em casa o melhor sabor, com entrega rápida.';
-
-$sobreImagem = trim((string) ($sobreNos->imagem ?? ''));
-
-if ($sobreImagem === '') {
-    $sobreImagemUrl = asset('home/img/photos/about-us.jpg');
-} elseif (preg_match('#^https?://#i', $sobreImagem)) {
-    $sobreImagemUrl = $sobreImagem;
-} else {
-    $sobreImagemUrl = uploadUrl('sobrenos', $sobreImagem);
-}
-
-$sobreImagemAlt = trim((string) ($sobreNos->imagem_alt ?? '')) ?: $sobreTitulo;
-?>
-<div class="container section" id="about_us">
-    <div class="col-sm-12 d-flex flex-xs-column">
-        <div class="col-sm-6 d-flex align-items-center padd_lr0" data-aos="fade-up">
-            <div class="content">
-                <h1 class="section-title title_sty1"><?= e($sobreTitulo) ?></h1>
-                <p class="short"><?= nl2br(e($sobreTexto)) ?></p>
-            </div>
-        </div>
-        <div class="col-sm-6 img text-center padd_lr0" data-aos="fade-down">
-            <div class="border_on">
-                <img src="<?= e($sobreImagemUrl) ?>" alt="<?= e($sobreImagemAlt) ?>" class="about_img" />
-            </div>
-        </div>
-    </div>
-</div>
-
 <!--    Menus   -->
-<div class="container section" id="menu" data-aos="fade-up">
+<div class="container section" id="menu" data-aos="fade-up" style="margin-top: 3em">
     <div class="title-block">
         <h1 class="section-title">Nosso Cardápio</h1>
     </div>
@@ -277,71 +240,6 @@ $sobreImagemAlt = trim((string) ($sobreNos->imagem_alt ?? '')) ?: $sobreTitulo;
             <ul class="pagination" id="menu_pagination"></ul>
         </div>
 
-    </div>
-</div>
-
-<!--    Reservation    -->
-
-<div class="fixed_layer section" id="reservation">
-    <div class="fixed_layer_padd container">
-        <div class="row">
-            <div class="col-md-offset-6 col-md-6" data-aos="fade-down">
-                <div class="reserv_box">
-                    <h1 class="section-title title_sty1">online reservation</h1>
-                    <p class="short">Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
-                    <form id="reserv_form" method="post">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <div class="form-group form_pos">
-                                    <input type="text" name="name" required="" placeholder="Your name"
-                                        class="form-control" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Your name'" />
-                                    <span class="form_icon"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group form_pos">
-                                    <input type="email" name="email" required="" placeholder="Your email"
-                                        class="form-control" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Your email'" />
-                                    <span class="form_icon"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <div class="form-group form_pos">
-                                    <input type="text" name="phone" required="" placeholder="Phone" class="form-control"
-                                        onfocus="this.placeholder = ''" onblur="this.placeholder = 'Phone'" />
-                                    <span class="form_icon"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group form_pos">
-                                    <input type="text" name="date" required="" placeholder="Date" class="form-control"
-                                        id="reserv_date" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Date'" />
-                                    <span class="form_icon"></span>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group form_pos">
-                                    <input type="text" name="time" required="" placeholder="Time" class="form-control"
-                                        id="reserv_time" onfocus="this.placeholder = ''"
-                                        onblur="this.placeholder = 'Time'" />
-                                    <span class="form_icon"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <textarea rows="3" name="message" placeholder="Message" class="form-control"
-                                onfocus="this.placeholder = ''" onblur="this.placeholder = 'Message'"></textarea>
-                        </div>
-                        <input type="submit" name="send" value="book now" class="btn btn-block" />
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 

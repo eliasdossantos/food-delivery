@@ -555,3 +555,97 @@ function bannerImagemUrl(object $b): string
         ? $imagem
         : uploadUrl('banners', $imagem);
 }
+
+/**
+ * Link de âncora do menu: na home fica só "#id" (rolagem suave);
+ * em outras páginas aponta para a home com a âncora.
+ */
+function homeAnchor(string $id): string
+{
+    return homeAtual() ? '#' . $id : url('/') . '#' . $id;
+}
+
+/** Classe do scroll suave: só faz sentido quando já estamos na home. */
+function homeAnchorClass(): string
+{
+    return homeAtual() ? 'page-scroll' : '';
+}
+
+function homeAtual(): bool
+{
+    $base  = rtrim((string) parse_url(url('/'), PHP_URL_PATH), '/');
+    $atual = rtrim((string) parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH), '/');
+
+    return $atual === $base;
+}
+/**
+ * Dados do site vindos do banco, buscados uma vez por requisição:
+ *  - config:     primeiro registro de `configuracoes` (ou null)
+ *  - expediente: registros de `expediente` indexados por dia_semana (0 = domingo ... 6 = sábado)
+ */
+function dadosSite(): array
+{
+    static $cache = null;
+
+    if ($cache !== null) {
+        return $cache;
+    }
+
+    $cache = ['config' => null, 'expediente' => []];
+
+    try {
+        $configs         = (new \App\Repositories\ConfiguracaoRepository())->all();
+        $cache['config'] = $configs ? reset($configs) : null;
+
+        foreach ((new \App\Repositories\ExpedienteRepository())->all() as $dia) {
+            $cache['expediente'][(int) $dia->dia_semana] = $dia;
+        }
+    } catch (\Throwable $e) {
+        // Banco indisponível: o site simplesmente não mostra esses dados
+    }
+
+    return $cache;
+}
+
+/**
+ * Endereço, telefone e horário de hoje para o topo do site.
+ *
+ * @return array{endereco: string, telefone: string, horario: string}
+ */
+function infoTopo(): array
+{
+    $site = dadosSite();
+    $c    = $site['config'];
+    $info = ['endereco' => '', 'telefone' => '', 'horario' => ''];
+
+    if ($c) {
+        $rua    = trim((string) ($c->logradouro ?? ''));
+        $numero = trim((string) ($c->numero ?? ''));
+        $cidade = trim((string) ($c->cidade ?? ''));
+        $uf     = trim((string) ($c->estado ?? ''));
+
+        $partes = array_filter([
+            $numero !== '' && $rua !== '' ? "$rua, $numero" : $rua,
+            trim((string) ($c->bairro ?? '')),
+            $uf !== '' && $cidade !== '' ? "$cidade/$uf" : $cidade,
+        ], fn($p) => $p !== '');
+
+        $info['endereco'] = implode(' - ', $partes);
+
+        $tel = trim((string) ($c->telefone ?? ''));
+        $info['telefone'] = $tel !== '' ? $tel : trim((string) ($c->whatsapp ?? ''));
+    }
+
+    $dia = $site['expediente'][(int) date('w')] ?? null;
+
+    if ($dia && (int) $dia->ativo) {
+        if (!(int) $dia->aberto) {
+            $info['horario'] = 'Fechado hoje';
+        } elseif (!empty($dia->abertura) && !empty($dia->fechamento)) {
+            $info['horario'] = substr((string) $dia->abertura, 0, 5)
+                . ' - ' . substr((string) $dia->fechamento, 0, 5);
+        }
+    }
+
+    return $info;
+}
