@@ -52,7 +52,7 @@
 <body data-spy="scroll" data-target=".navbar" data-offset="50">
 
     <!-- BEGIN  Loading Section -->
-    <div class="loading-overlay">
+    <!-- <div class="loading-overlay">
         <div class="spinner">
             <span></span>
             <span></span>
@@ -60,7 +60,7 @@
             <span></span>
             <span></span>
         </div>
-    </div>
+    </div> -->
     <!-- END Loading Section -->
 
     <!-- BEGIN body wrapper -->
@@ -118,6 +118,12 @@
     <script src="<?= asset('home/js/jquery.fancybox.js') ?>"></script>
     <script src="<?= asset('home/js/loadMoreResults.js') ?>"></script>
     <script src="<?= asset('home/js/main.js') ?>"></script>
+
+    <!-- Mask plugin -->
+    <script src="<?= asset('admin/js/app.js') ?>"></script>
+    <script src="<?= asset('admin/js/jquery.mask.min.js') ?>"></script>
+    <script src="<?= asset('admin/js/alert-autohide.js') ?>"></script>
+
     <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcg5Y2D1fpGI12T8wcbtPIsyGdw-_NV1Y&amp;callback=myMap">
     </script>

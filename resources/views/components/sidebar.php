@@ -87,6 +87,8 @@ $menu = [
         'filhos' => [
             ['titulo' => 'Horário de Funcionamento', 'url' => '/admin/expediente', 'perfis' => $gestao],
             ['titulo' => 'Formas de Pagamento',      'url' => '/admin/pagamento',  'perfis' => $gestao],
+            ['titulo' => 'Banners do sistema',       'url' => '/admin/banner',     'perfis' => $gestao],
+            ['titulo' => 'Sobre nós',                'url' => '/admin/sobrenos',   'perfis' => $gestao],
         ],
     ],
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Repositories\CategoriaRepository;
 use App\Repositories\ProdutoEspecificacaoRepository;
 use App\Repositories\ProdutoRepository;
+use App\Repositories\SobreNosRepository;
 
 class HomeController extends BaseController
 {
@@ -21,6 +22,7 @@ class HomeController extends BaseController
 
         $data = [
             'titulo'                   => 'Seja todos bem vindo(a)!',
+            'sobreNos'                 => (new SobreNosRepository())->ativo(),
             'categorias'               => $categorias,
             'produtosPorCategoria'     => $produtosPorCategoria,
             'especificacoesPorProduto' => (new ProdutoEspecificacaoRepository())->getAgrupadasPorProduto(),

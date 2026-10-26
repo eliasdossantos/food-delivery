@@ -162,17 +162,17 @@ $sim = static fn(string $campo): string => (int) $valor($campo, '0') === 1 ? 'Si
                     <div class="row">
                         <?php $campoTexto('aceita_entrega', 'Aceita entrega', 'col-md-3', $sim('aceita_entrega')); ?>
                         <?php $campoTexto('aceita_retirada', 'Aceita retirada', 'col-md-3', $sim('aceita_retirada')); ?>
-                        <?php $campoTexto('valor_pedido_minimo', 'Valor do pedido mínimo (R$)', 'col-md-6'); ?>
+                        <?php $campoTexto('valor_pedido_minimo', 'Valor do pedido mínimo (R$)', 'col-md-6', moedaBR($valor('valor_pedido_minimo'))); ?>
                     </div>
 
                     <div class="row">
-                        <?php $campoTexto('tempo_medio_entrega_min', 'Tempo médio de entrega (min)'); ?>
-                        <?php $campoTexto('tempo_medio_retirada_min', 'Tempo médio de retirada (min)'); ?>
+                        <?php $campoTexto('tempo_medio_entrega_min', 'Tempo médio de entrega (min)', 'col-md-6', descreverMinutos($valor('tempo_medio_entrega_min'))); ?>
+                        <?php $campoTexto('tempo_medio_retirada_min', 'Tempo médio de retirada (min)', 'col-md-6', descreverMinutos($valor('tempo_medio_retirada_min'))); ?>
                     </div>
 
                     <div class="row">
-                        <?php $campoTexto('taxa_entrega_padrao', 'Taxa de entrega padrão (R$)', 'col-md-4'); ?>
-                        <?php $campoTexto('frete_gratis_acima_de', 'Frete grátis acima de (R$)', 'col-md-4'); ?>
+                        <?php $campoTexto('taxa_entrega_padrao', 'Taxa de entrega padrão (R$)', 'col-md-4', moedaBR($valor('taxa_entrega_padrao'))); ?>
+                        <?php $campoTexto('frete_gratis_acima_de', 'Frete grátis acima de (R$)', 'col-md-4', moedaBR($valor('frete_gratis_acima_de'))); ?>
                         <?php $campoTexto('raio_entrega_km', 'Raio de entrega (km)', 'col-md-4'); ?>
                     </div>
 

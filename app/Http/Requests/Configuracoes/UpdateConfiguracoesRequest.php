@@ -93,7 +93,7 @@ class UpdateConfiguracoesRequest extends FormRequest
             // Entrega
             'taxa_entrega_padrao'   => 'nullable|numeric|min:0|max:99999999.99',
             'frete_gratis_acima_de' => 'nullable|numeric|min:0|max:99999999.99',
-            'raio_entrega_km'       => 'nullable|numeric|min:0|max:9999.99',
+            'raio_entrega_km'       => 'nullable|min:2|max:100',
 
             // Pagamento
             'chave_pix' => 'nullable|max:200',
@@ -173,9 +173,9 @@ class UpdateConfiguracoesRequest extends FormRequest
             'frete_gratis_acima_de.numeric' => 'O valor para frete grátis deve ser numérico.',
             'frete_gratis_acima_de.min'     => 'O valor para frete grátis não pode ser negativo.',
             'frete_gratis_acima_de.max'     => 'O valor para frete grátis é muito alto.',
-            'raio_entrega_km.numeric'       => 'O raio de entrega deve ser numérico (km).',
-            'raio_entrega_km.min'           => 'O raio de entrega não pode ser negativo.',
-            'raio_entrega_km.max'           => 'O raio de entrega deve ser de no máximo 9999,99 km.',
+            'raio_entrega_km.nullable' => 'O Raio de entrega (km) não é obrigatório.',
+            'raio_entrega_km.min'      => 'O Raio de entrega (km) deve ter pelo menos 2 caracteres.',
+            'raio_entrega_km.max'      => 'O Raio de entrega (km) deve ter no máximo 100 caracteres.',
 
             // Pagamento
             'chave_pix.max' => 'A chave PIX deve ter no máximo 200 caracteres.',
@@ -241,7 +241,7 @@ class UpdateConfiguracoesRequest extends FormRequest
             // Entrega
             'taxa_entrega_padrao'   => $this->moedaOuNulo($this->input['taxa_entrega_padrao'] ?? ''),
             'frete_gratis_acima_de' => $this->moedaOuNulo($this->input['frete_gratis_acima_de'] ?? ''),
-            'raio_entrega_km'       => $this->moedaOuNulo($this->input['raio_entrega_km'] ?? ''),
+            'raio_entrega_km'     => $this->nuloSeVazio(trim(Request::sanitizeValue($this->input['raio_entrega_km'] ?? ''))),
 
             // Pagamento
             'chave_pix' => $this->nuloSeVazio(trim(Request::sanitizeValue($this->input['chave_pix'] ?? ''))),

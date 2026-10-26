@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Web\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Web\Admin\BairrosController;
+use App\Http\Controllers\Web\Admin\BannersController;
 use App\Http\Controllers\Web\Admin\CategoriasController;
 use App\Http\Controllers\Web\Admin\ClientesController;
 use App\Http\Controllers\Web\Admin\ConfiguracoesController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\Web\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Web\Admin\MedidasController;
 use App\Http\Controllers\Web\Admin\PerfisController;
 use App\Http\Controllers\Web\Admin\ProdutosController;
+use App\Http\Controllers\Web\Admin\SobreNosController;
 use App\Http\Controllers\Web\Admin\UsuariosController;
 use App\Http\Controllers\Web\Cliente\AuthController as ClienteAuthController;
 use App\Http\Controllers\Web\Cliente\HomeController as ClienteHomeController;
@@ -70,6 +72,8 @@ $router->group(['prefix' => '/admin', 'as' => 'admin.', 'middleware' => ['AdminA
     $r->resource('/pagamento',  FormasPagamentoController::class);
     $r->resource('/entregador', EntregadoresController::class);
     $r->resource('/expediente', ExpedienteController::class);
+    $r->resource('/banner',     BannersController::class);
+    $r->resource('/sobrenos',   SobreNosController::class);
 
     // CRUD com rota extra (registrada antes de /{id})
     $r->resource('/bairro', BairrosController::class, [], function (Router $r) {

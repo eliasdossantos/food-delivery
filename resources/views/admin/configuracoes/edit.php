@@ -6,7 +6,7 @@ $logoAtual = '';
 if (!empty($configuracao->logo)) {
     $logoAtual = preg_match('#^https?://#i', $configuracao->logo)
         ? $configuracao->logo
-        : uploadUrl('configuracao', $configuracao->logo);
+        : uploadUrl('configuracoes', $configuracao->logo);
 }
 
 $estados = [
@@ -218,8 +218,9 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         <div class="form-group col-md-6">
                             <label for="cnpj">CNPJ</label>
                             <input type="text" maxlength="25"
-                                class="form-control <?= hasError('cnpj') ? 'is-invalid' : '' ?>" id="cnpj" name="cnpj"
-                                value="<?= old('cnpj', $configuracao->cnpj ?? '') ?>" placeholder="00.000.000/0000-00">
+                                class="form-control <?= hasError('cnpj') ? 'is-invalid' : '' ?> cnpj" id="cnpj"
+                                name="cnpj" value="<?= old('cnpj', $configuracao->cnpj ?? '') ?>"
+                                placeholder="00.000.000/0000-00">
                             <?= erroInput('cnpj') ?>
                         </div>
 
@@ -454,8 +455,8 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="valor_pedido_minimo">Valor do pedido mínimo (R$)</label>
-                                <input type="number" step="0.01" min="0"
-                                    class="form-control <?= hasError('valor_pedido_minimo') ? 'is-invalid' : '' ?>"
+                                <input type="text" step="0.01" min="0"
+                                    class="form-control <?= hasError('valor_pedido_minimo') ? 'is-invalid' : '' ?> dinheiro"
                                     id="valor_pedido_minimo" name="valor_pedido_minimo"
                                     value="<?= old('valor_pedido_minimo', $configuracao->valor_pedido_minimo ?? '') ?>"
                                     placeholder="0,00">
@@ -497,8 +498,8 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="taxa_entrega_padrao">Taxa de entrega padrão (R$)</label>
-                                <input type="number" step="0.01" min="0"
-                                    class="form-control <?= hasError('taxa_entrega_padrao') ? 'is-invalid' : '' ?>"
+                                <input type="text" step="0.01" min="0"
+                                    class="form-control <?= hasError('taxa_entrega_padrao') ? 'is-invalid' : '' ?> dinheiro"
                                     id="taxa_entrega_padrao" name="taxa_entrega_padrao"
                                     value="<?= old('taxa_entrega_padrao', $configuracao->taxa_entrega_padrao ?? '') ?>"
                                     placeholder="0,00">
@@ -510,8 +511,8 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="frete_gratis_acima_de">Frete grátis acima de (R$)</label>
-                                <input type="number" step="0.01" min="0"
-                                    class="form-control <?= hasError('frete_gratis_acima_de') ? 'is-invalid' : '' ?>"
+                                <input type="text" step="0.01" min="0"
+                                    class="form-control <?= hasError('frete_gratis_acima_de') ? 'is-invalid' : '' ?> dinheiro"
                                     id="frete_gratis_acima_de" name="frete_gratis_acima_de"
                                     value="<?= old('frete_gratis_acima_de', $configuracao->frete_gratis_acima_de ?? '') ?>"
                                     placeholder="0,00">
@@ -523,8 +524,8 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="raio_entrega_km">Raio de entrega (km)</label>
-                                <input type="number" step="0.01" min="0"
-                                    class="form-control <?= hasError('raio_entrega_km') ? 'is-invalid' : '' ?>"
+                                <input type="text" step="0.01" min="0"
+                                    class="form-control <?= hasError('raio_entrega_km') ? 'is-invalid' : '' ?> raio-entrega-km"
                                     id="raio_entrega_km" name="raio_entrega_km"
                                     value="<?= old('raio_entrega_km', $configuracao->raio_entrega_km ?? '') ?>"
                                     placeholder="Ex.: 5">

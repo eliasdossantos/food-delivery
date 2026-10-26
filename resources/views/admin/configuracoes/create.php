@@ -1,8 +1,8 @@
 <!-- Aqui enviamos para o template principal o título da página -->
 
-<?php View::start('title'); ?>
+<?php View::start('titulo'); ?>
 
-<?= e($title ?? 'Novo Configuracoes') ?> | Admin
+<?= e($titulo ?? 'Novo Configuracoes') ?> | Admin
 
 <?php View::end(); ?>
 
@@ -17,104 +17,6 @@
 <!-- Aqui enviamos para o template principal o conteúdo -->
 
 <?php View::start('content'); ?>
-
-<!-- Begin Page Content -->
-
-<div class="container-fluid">
-
-    <div class="page-header">
-        <div>
-            <a href="<?= url('dashboard/admin/configuracoes') ?>"
-               class="btn btn-outline btn-sm">
-                ← Voltar
-            </a>
-
-            <h1 class="h3 mb-4 text-gray-800" style="margin-top: 12px">
-                <?= e($title ?? 'Novo Configuracoes') ?>
-            </h1>
-        </div>
-    </div>
-
-    <?= \Framework\Support\View::render('components.alerts'); ?>
-
-    <div class="card">
-        <div class="card-body">
-
-            <!--
-                Se o Model tiver campo de arquivo, adicione enctype="multipart/form-data"
-                abaixo — sem isso, $_FILES chega vazio no controller.
-                Ex: <form method="POST" action="..." enctype="multipart/form-data">
-            -->
-            <form method="POST"
-                  action="<?= url('dashboard/admin/configuracoes') ?>">
-
-                <?= csrf_field() ?>
-
-                <!-- Campo: nome -->
-                <div class="form-group">
-                    <label for="nome">
-                        Nome
-                        <span style="color:var(--color-danger)">*</span>
-                    </label>
-
-                    <input type="text"
-                           id="nome"
-                           name="nome"
-                           value="<?= e(old('nome')) ?>"
-                           class="<?= inputClass('nome') ?>"
-                           required
-                           autofocus>
-
-                    <?php if (hasError('nome')): ?>
-                        <span class="form-error">
-                            <?= e(error('nome')) ?>
-                        </span>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Adicione mais campos conforme o Model -->
-
-                <!-- Campo de arquivo (exemplo — descomente e ajuste o nome do campo) -->
-                <!--
-                <div class="form-group">
-                    <label for="imagem">Imagem</label>
-
-                    <input type="file"
-                           id="imagem"
-                           name="imagem"
-                           accept="image/*"
-                           class="<?= inputClass('imagem') ?>">
-
-                    <?php if (hasError('imagem')): ?>
-                        <span class="form-error">
-                            <?= e(error('imagem')) ?>
-                        </span>
-                    <?php endif; ?>
-                </div>
-                -->
-
-                <div class="mt-2" style="display:flex;gap:10px">
-
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Salvar
-                    </button>
-
-                    <a href="<?= url('dashboard/admin/configuracoes') ?>"
-                       class="btn btn-secondary">
-                        Cancelar
-                    </a>
-
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-
-</div>
-
-<!-- /.container-fluid -->
 
 <?php View::end(); ?>
 

@@ -524,3 +524,34 @@ function dump(mixed ...$values): void
         echo '</pre>';
     }
 }
+
+function statusBanner(object $b): array
+{
+    if (!(int) $b->ativo) {
+        return ['Inativo', 'secondary'];
+    }
+
+    $agora = time();
+
+    if ($b->data_inicio && strtotime($b->data_inicio) > $agora) {
+        return ['Agendado', 'info'];
+    }
+    if ($b->data_fim && strtotime($b->data_fim) < $agora) {
+        return ['Expirado', 'danger'];
+    }
+
+    return ['Vigente', 'success'];
+}
+
+function bannerImagemUrl(object $b): string
+{
+    $imagem = trim((string) ($b->imagem ?? ''));
+
+    if ($imagem === '') {
+        return '';
+    }
+
+    return preg_match('#^https?://#i', $imagem)
+        ? $imagem
+        : uploadUrl('banners', $imagem);
+}

@@ -155,7 +155,7 @@ class CategoriasController extends BaseController
         $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
 
         $data = [
-            'titulo'    => 'Editar Categoria',
+            'titulo'    => 'Categoria',
             'subtitulo' => 'Editar Categoria',
             'categoria' => $categoria,
             'uploadMaxMb' => self::UPLOAD_MAX_MB,

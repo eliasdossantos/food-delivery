@@ -79,6 +79,13 @@ $(function () {
   // Andar
   $(".andar").mask("0#");
 
+  // Raio de entrega (km)
+  $(".raio-entrega-km").on("input", function () {
+    let valor = this.value.replace(/[^\d,]/g, "");
+
+    this.value = valor ? valor + " km" : "";
+  });
+
   // ============================================================
   // TELEFONE / CONTATO
   // ============================================================

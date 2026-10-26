@@ -152,21 +152,37 @@
 <?php View::start('content'); ?>
 
 <!--    About Us    -->
+<?php
+// Dados da seção: do admin quando existir; senão, o conteúdo padrão do tema
+$sobreTitulo = trim((string) ($sobreNos->titulo ?? '')) ?: 'Sobre nós';
+
+$sobreTexto = trim((string) ($sobreNos->texto ?? '')) ?: 'Somos apaixonados por comida de verdade. '
+    . 'Cada prato é preparado com ingredientes frescos e muito carinho, '
+    . 'para você receber em casa o melhor sabor, com entrega rápida.';
+
+$sobreImagem = trim((string) ($sobreNos->imagem ?? ''));
+
+if ($sobreImagem === '') {
+    $sobreImagemUrl = asset('home/img/photos/about-us.jpg');
+} elseif (preg_match('#^https?://#i', $sobreImagem)) {
+    $sobreImagemUrl = $sobreImagem;
+} else {
+    $sobreImagemUrl = uploadUrl('sobrenos', $sobreImagem);
+}
+
+$sobreImagemAlt = trim((string) ($sobreNos->imagem_alt ?? '')) ?: $sobreTitulo;
+?>
 <div class="container section" id="about_us">
     <div class="col-sm-12 d-flex flex-xs-column">
         <div class="col-sm-6 d-flex align-items-center padd_lr0" data-aos="fade-up">
             <div class="content">
-                <h1 class="section-title title_sty1">about us</h1>
-                <p class="short">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et dolore magna aliqua.</p>
+                <h1 class="section-title title_sty1"><?= e($sobreTitulo) ?></h1>
+                <p class="short"><?= nl2br(e($sobreTexto)) ?></p>
             </div>
         </div>
         <div class="col-sm-6 img text-center padd_lr0" data-aos="fade-down">
             <div class="border_on">
-                <img src="<?= asset('home/img/photos/about-us.jpg') ?>" alt="sample" class="about_img" />
+                <img src="<?= e($sobreImagemUrl) ?>" alt="<?= e($sobreImagemAlt) ?>" class="about_img" />
             </div>
         </div>
     </div>

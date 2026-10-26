@@ -57,7 +57,7 @@ return new class extends Migration {
             // Entrega
             $table->decimal('taxa_entrega_padrao', 10, 2)->nullable();
             $table->decimal('frete_gratis_acima_de', 10, 2)->nullable();
-            $table->decimal('raio_entrega_km', 6, 2)->nullable();
+            $table->string('raio_entrega_km', 100)->nullable();
 
             // Pagamento
             $table->string('chave_pix', 200)->nullable();
