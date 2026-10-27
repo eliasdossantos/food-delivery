@@ -1,5 +1,6 @@
-<!-- resources/views/admin/entregadores/index.php -->
-
+<?php
+$rota  = 'admin.entregador';
+?>
 <!-- Aqui enviamos para o template principal o título da página -->
 
 <?php View::start('titulo'); ?>
@@ -79,7 +80,7 @@ $badgesAprovacao = [
                 <h5 class="card-title mt-3 mb-0 text-gray-800">
                     <?= e($subtitulo ?? 'Lista de Entregadores') ?>
                 </h5>
-                <a href="<?= route('admin.entregador.create') ?>" class="btn btn-primary btn-sm float-right">
+                <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right">
                     <i class="mdi mdi-plus"></i>
                     Novo Entregador
                 </a>
@@ -88,8 +89,8 @@ $badgesAprovacao = [
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light"
                         placeholder="Digite Nome, Vínculo, Marca-Veículo, Placa-Veículo"
-                        data-busca-url="<?= e(route('admin.entregador.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.entregador.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
                 <div class="table-responsive">
                     <table id="table-BR" class="table table-striped table-hover tabela-entregador">
@@ -184,12 +185,12 @@ $badgesAprovacao = [
                                         <td><?= dateBR(e($entregador->created_at ?? '')); ?></td>
 
                                         <td class="col-acoes">
-                                            <a href="<?= route('admin.entregador.show', ['id' => $entregador->id]) ?>"
+                                            <a href="<?= route($rota . '.show', ['id' => $entregador->id]) ?>"
                                                 class="btn btn-primary btn-sm" title="Visualizar"
                                                 aria-label="Visualizar Entregador">
                                                 <i class="mdi mdi-eye"></i>
                                             </a>
-                                            <a href="<?= route('admin.entregador.edit', ['id' => $entregador->id]) ?>"
+                                            <a href="<?= route($rota . '.edit', ['id' => $entregador->id]) ?>"
                                                 class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Entregador">
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>
@@ -252,7 +253,7 @@ $badgesAprovacao = [
                         <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
                             Cancelar
                         </button>
-                        <form method="POST" action="<?= route('admin.entregador.destroy', ['id' => $entregador->id]) ?>">
+                        <form method="POST" action="<?= route($rota . '.destroy', ['id' => $entregador->id]) ?>">
                             <?= csrf_field() ?>
                             <?= method_field('DELETE') ?>
                             <button type="submit" class="btn btn-danger px-4">

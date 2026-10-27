@@ -1,5 +1,6 @@
-<!-- resources/views/admin/perfis/index.php -->
-
+<?php
+$rota  = 'admin.perfil';
+?>
 <!-- Aqui enviamos para o template principal o título da página -->
 
 <?php View::start('titulo'); ?>
@@ -27,7 +28,7 @@
                 <h5 class="card-title mt-3 mb-0 text-gray-800">
                     <?= e($tituloTabela ?? 'Lista de Perfis') ?>
                 </h5>
-                <a href="<?= route('admin.perfil.create') ?>" class="btn btn-primary btn-sm float-right">
+                <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right">
                     <i class="mdi mdi-plus"></i>
                     Novo Perfil
                 </a>
@@ -35,8 +36,8 @@
             <div class="card-body">
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light" placeholder="Digite o nome do Perfil"
-                        data-busca-url="<?= e(route('admin.perfil.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.perfil.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
                 <div class="table-responsive">
                     <table id="table-BR" class="table table-striped table-hover">
@@ -61,12 +62,12 @@
                                             </span></td>
                                         <td><?= dateBR(e($p->created_at ?? '')); ?></td>
                                         <td>
-                                            <a href="<?= route('admin.perfil.show', ['id' => $p->id]) ?>"
+                                            <a href="<?= route($rota . '.show', ['id' => $p->id]) ?>"
                                                 class="btn btn-primary btn-sm" title="Visualizar"
                                                 aria-label="Visualizar perfil">
                                                 <i class="mdi mdi-eye"></i>
                                             </a>
-                                            <a href="<?= route('admin.perfil.edit', ['id' => $p->id]) ?>"
+                                            <a href="<?= route($rota . '.edit', ['id' => $p->id]) ?>"
                                                 class="btn btn-warning btn-sm" title="Editar" aria-label="Editar perfil">
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>
@@ -128,7 +129,7 @@
                         <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
                             Cancelar
                         </button>
-                        <form method="POST" action="<?= route('admin.perfil.destroy', ['id' => $p->id]) ?>">
+                        <form method="POST" action="<?= route($rota . '.destroy', ['id' => $p->id]) ?>">
                             <?= csrf_field() ?>
                             <?= method_field('DELETE') ?>
                             <button type="submit" class="btn btn-danger px-4">

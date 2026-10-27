@@ -31,6 +31,12 @@ class CategoriasController extends BaseController
     /** Tamanho máximo da imagem, em MB */
     private const UPLOAD_MAX_MB = 5;
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/categoria';
+
+    // Caminho base das views
+    private string $rota = 'admin.categorias';
+
     private CategoriaRepository $categoriaModel;
 
     public function __construct()
@@ -50,7 +56,7 @@ class CategoriasController extends BaseController
             'categorias'   => $this->categoriaModel->getOrdenadas(),
         ];
 
-        $this->view('admin.categorias.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -68,7 +74,7 @@ class CategoriasController extends BaseController
             'categoria' => $categoria,
         ];
 
-        $this->view('admin.categorias.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -83,7 +89,7 @@ class CategoriasController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.categorias.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -138,11 +144,11 @@ class CategoriasController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível criar a categoria.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar a categoria.');
             return;
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria criada com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Categoria criada com sucesso!');
     }
 
     /**
@@ -161,7 +167,7 @@ class CategoriasController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.categorias.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -225,11 +231,11 @@ class CategoriasController extends BaseController
         $atualizada = $this->categoriaModel->update($id, $data);
 
         if (!$atualizada) {
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível atualizar a categoria.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar a categoria.');
             return;
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria atualizada com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Categoria atualizada com sucesso!');
     }
 
     /**
@@ -242,7 +248,7 @@ class CategoriasController extends BaseController
         $this->abortUnless((bool) $categoria, 404, 'Categoria não encontrada.');
 
         if (!$this->categoriaModel->delete($id)) {
-            $this->redirectWith('admin/categoria', 'error', 'Não foi possível remover a categoria.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover a categoria.');
             return;
         }
 
@@ -253,7 +259,7 @@ class CategoriasController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/categoria', 'success', 'Categoria removida com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Categoria removida com sucesso.');
     }
 
     /**

@@ -1,5 +1,6 @@
-<!-- Aqui enviamos para o template principal o título da página -->
-
+<?php
+$rota  = 'admin.cliente';
+?>
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Editar Cliente') ?> | Admin
@@ -12,31 +13,31 @@
 <?php View::start('styles'); ?>
 
 <style>
-.form-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .form-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.form-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.form-section-title::after {
-    content: '';
-    flex: 1;
-    height: 2px;
-    background: #878f96;
-    margin-left: 15px;
-}
+    .form-section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #878f96;
+        margin-left: 15px;
+    }
 
-.form-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .form-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -61,7 +62,7 @@
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.cliente.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -71,7 +72,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.cliente.update', ['id' => $cliente->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $cliente->id]) ?>"
                     class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -312,13 +313,13 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.cliente.show', ['id' => $cliente->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $cliente->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar" aria-label="Visualizar cliente">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.cliente.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar edição">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>

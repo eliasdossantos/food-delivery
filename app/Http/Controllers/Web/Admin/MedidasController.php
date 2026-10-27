@@ -32,6 +32,12 @@ class MedidasController extends BaseController
     /** Tamanho máximo da imagem, em MB */
     private const UPLOAD_MAX_MB = 5;
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/medida';
+
+    // Caminho base das views
+    private string $rota = 'admin.medidas';
+
     private MedidaRepository $medidasModel;
 
     public function __construct()
@@ -51,7 +57,7 @@ class MedidasController extends BaseController
             'medidas' => $this->medidasModel->all(),
         ];
 
-        $this->view('admin.medidas.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -69,7 +75,7 @@ class MedidasController extends BaseController
             'medidas' => $medidas,
         ];
 
-        $this->view('admin.medidas.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -84,7 +90,7 @@ class MedidasController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.medidas.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -131,12 +137,12 @@ class MedidasController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/medida', 'error', 'Não foi possível criar a medida.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar a medida.');
             return;
         }
 
         // $id = $this->medidasModel->create($data);
-        $this->redirectWith('admin/medida', 'success', 'Medida criada com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Medida criada com sucesso!');
     }
 
     /**
@@ -156,7 +162,7 @@ class MedidasController extends BaseController
         ];
 
 
-        $this->view('admin.medidas.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -209,12 +215,12 @@ class MedidasController extends BaseController
         $atualizada = $this->medidasModel->update($id, $data);
 
         if (!$atualizada) {
-            $this->redirectWith('admin/medida', 'error', 'Não foi possível atualizar a medida.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar a medida.');
             return;
         }
 
         $this->redirectWith(
-            'admin/medida',
+            self::ROTA_LISTA,
             'success',
             'Medida atualizada com sucesso!'
         );
@@ -230,7 +236,7 @@ class MedidasController extends BaseController
         $this->abortUnless((bool)$medidas, 404, 'Medida não encontrada.');
 
         if (!$this->medidasModel->delete($id)) {
-            $this->redirectWith('admin/medida', 'error', 'Não foi possível remover a medida.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover a medida.');
             return;
         }
 
@@ -241,7 +247,7 @@ class MedidasController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/medida', 'success', 'Medida removida com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Medida removida com sucesso.');
     }
 
     /**

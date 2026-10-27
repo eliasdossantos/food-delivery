@@ -1,5 +1,6 @@
-<!-- Aqui enviamos para o template principal o título da página -->
-
+<?php
+$rota  = 'admin.cliente';
+?>
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Novo Cliente') ?> | Admin
@@ -81,7 +82,7 @@
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.cliente.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -92,7 +93,7 @@
             <div class="card-body">
 
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.cliente.store') ?>" class="forms-sample">
+                <form method="POST" action="<?= route($rota . '.store') ?>" class="forms-sample">
                     <?= csrf_field() ?>
 
                     <!-- Dados pessoais -->
@@ -407,8 +408,8 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Cadastrar
                                     </button>
-                                    <a href="<?= route('admin.cliente.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar cadastro">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar cadastro">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>

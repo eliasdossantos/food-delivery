@@ -1,4 +1,6 @@
-<!-- resources/views/admin/medidas/index.php -->
+<?php
+$rota  = 'admin.medida';
+?>
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
@@ -27,7 +29,7 @@
                 <h5 class="card-title mt-3 mb-0 text-gray-800">
                     <?= e($tituloTabela ?? 'Lista das Medidas dos Produtos') ?>
                 </h5>
-                <a href="<?= route('admin.medida.create') ?>" class="btn btn-primary btn-sm float-right">
+                <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right">
                     <i class="mdi mdi-plus"></i>
                     Nova Medida
                 </a>
@@ -35,8 +37,8 @@
             <div class="card-body">
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light" placeholder="Digite o nome da medida das categoria"
-                        data-busca-url="<?= e(route('admin.medida.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.medida.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
                 <div class="table-responsive">
                     <table id="table-BR" class="table table-striped table-hover">
@@ -95,12 +97,12 @@
                                     </td>
                                     <td><?= dateBR(e($medida->created_at ?? '')); ?></td>
                                     <td>
-                                        <a href="<?= route('admin.medida.show', ['id' => $medida->id]) ?>"
+                                        <a href="<?= route($rota . '.show', ['id' => $medida->id]) ?>"
                                             class="btn btn-primary btn-sm" title="Visualizar"
                                             aria-label="Visualizar medida do produto">
                                             <i class="mdi mdi-eye"></i>
                                         </a>
-                                        <a href="<?= route('admin.medida.edit', ['id' => $medida->id]) ?>"
+                                        <a href="<?= route($rota . '.edit', ['id' => $medida->id]) ?>"
                                             class="btn btn-warning btn-sm" title="Editar"
                                             aria-label="Editar medida do produto">
                                             <i class="mdi mdi-pencil"></i>
@@ -230,7 +232,7 @@
                         <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
                             Cancelar
                         </button>
-                        <form method="POST" action="<?= route('admin.medida.destroy', ['id' => $medida->id]) ?>">
+                        <form method="POST" action="<?= route($rota . '.destroy', ['id' => $medida->id]) ?>">
                             <?= csrf_field() ?>
                             <?= method_field('DELETE') ?>
                             <button type="submit" class="btn btn-danger px-4">

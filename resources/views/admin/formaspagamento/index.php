@@ -1,5 +1,6 @@
-<!-- resources/views/admin/formaspagamento/index.php -->
-
+<?php
+$rota  = 'admin.pagamento';
+?>
 <!-- Aqui enviamos para o template principal o título da página -->
 
 <?php View::start('titulo'); ?>
@@ -26,7 +27,7 @@
             <div class="card-body">
                 <p class="card-title"><?= e($titulo ?? 'Lista as Formas de Pagamento') ?></p>
 
-                <a href="<?= route('admin.pagamento.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
+                <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
                     title="Cadastrar Formas de Pagamento" aria-label="Cadastrar Formas de Pagamento">
                     <i class="mdi mdi-plus"></i>
                     Cadastrar Forma de Pagamento
@@ -34,8 +35,8 @@
 
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light" placeholder="Digite o nome do pagamento"
-                        data-busca-url="<?= e(route('admin.pagamento.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.pagamento.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
                 <div class="alert alert-info d-flex align-items-start" role="alert">
                     <i class="mdi mdi-information-outline mr-2" style="font-size:20px;"></i>
@@ -72,7 +73,7 @@
 
                                         <!-- Ações -->
                                         <td class="text-nowrap">
-                                            <a href="<?= route('admin.pagamento.show', ['id' => $pagamento->id]) ?>"
+                                            <a href="<?= route($rota . '.show', ['id' => $pagamento->id]) ?>"
                                                 class="btn btn-primary btn-sm" title="Visualizar"
                                                 aria-label="Visualizar Formas de Pagamento">
                                                 <i class="mdi mdi-eye"></i>
@@ -84,7 +85,7 @@
                                                     <i class="mdi mdi-lock"></i> Protegida
                                                 </span>
                                             <?php else: ?>
-                                                <a href="<?= route('admin.pagamento.edit', ['id' => $pagamento->id]) ?>"
+                                                <a href="<?= route($rota . '.edit', ['id' => $pagamento->id]) ?>"
                                                     class="btn btn-warning btn-sm" title="Editar"
                                                     aria-label="Editar Formas de Pagamento">
                                                     <i class="mdi mdi-pencil"></i>
@@ -156,7 +157,7 @@
                             Cancelar
                         </button>
 
-                        <form method="POST" action="<?= route('admin.pagamento.destroy', ['id' => $pagamento->id]) ?>">
+                        <form method="POST" action="<?= route($rota . '.destroy', ['id' => $pagamento->id]) ?>">
 
                             <?= csrf_field() ?>
                             <?= method_field('DELETE') ?>

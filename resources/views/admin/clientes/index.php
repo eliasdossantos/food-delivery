@@ -1,6 +1,8 @@
 <?php
+$rota  = 'admin.cliente';
 
-use Framework\Auth\Auth; ?>
+use Framework\Auth\Auth;
+?>
 <?php View::start('title'); ?>
 
 <?= e($title ?? 'Clientes') ?> | Admin
@@ -23,15 +25,15 @@ use Framework\Auth\Auth; ?>
         <div class="card">
             <div class="card-body">
                 <p class="card-title"><?= e($tituloTabela ?? 'Lista de Clientes') ?></p>
-                <a href="<?= route('admin.cliente.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
+                <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
                     title="Cadastrar Cliente" aria-label="Cadastrar Cliente">
                     <i class="mdi mdi-plus"></i>
                     Cadastrar Cliente
                 </a>
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light" placeholder="Digite o nome do cliente ou cpf"
-                        data-busca-url="<?= e(route('admin.cliente.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.cliente.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
 
                 <div class="table-responsive">
@@ -55,7 +57,7 @@ use Framework\Auth\Auth; ?>
                                 <?php foreach ($clientes as $cliente): ?>
                                     <tr>
                                         <td class="d-none"><?= e($cliente->id ?? ''); ?></td>
-                                        <td><a href="<?= route('admin.cliente.show', ['id' => $cliente->id]) ?>">
+                                        <td><a href="<?= route($rota . '.show', ['id' => $cliente->id]) ?>">
                                                 <?= e($cliente->nome ?? '') ?> </a>
                                         </td>
                                         <td><?= e($cliente->email ?? ''); ?></td>
@@ -70,13 +72,13 @@ use Framework\Auth\Auth; ?>
                                             </span></td>
 
                                         <td>
-                                            <a href="<?= route('admin.cliente.show', ['id' => $cliente->id]) ?>"
+                                            <a href="<?= route($rota . '.show', ['id' => $cliente->id]) ?>"
                                                 class="btn btn-primary btn-sm" title="Visualizar"
                                                 aria-label="Visualizar Usuário">
                                                 <i class="mdi mdi-eye"></i>
                                             </a>
                                             <?php if (Auth::isAny('Super Administrador')): ?>
-                                                <a href="<?= route('admin.cliente.edit', ['id' => $cliente->id]) ?>"
+                                                <a href="<?= route($rota . '.edit', ['id' => $cliente->id]) ?>"
                                                     class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
                                                     <i class="mdi mdi-pencil"></i>
                                                 <?php endif; ?>

@@ -46,6 +46,12 @@ use Framework\Support\Session;
  */
 class UsuariosController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/usuario';
+
+    // Caminho base das views
+    private string $rota = 'admin.usuarios';
+
     private UsuarioRepository $usuarioModel;
     private PerfilRepository $perfilRepository;
 
@@ -68,7 +74,7 @@ class UsuariosController extends BaseController
             'usuarios' => $this->usuarioModel->tudoComPerfil()
         ];
 
-        $this->view('admin.usuarios.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -85,7 +91,7 @@ class UsuariosController extends BaseController
             'usuarios' => $usuarios,
         ];
 
-        $this->view('admin.usuarios.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -95,7 +101,7 @@ class UsuariosController extends BaseController
     public function create(): void
     {
         if (!$this->podeCadastrar()) {
-            $this->redirectWith('admin/usuario', 'error', 'Você não tem permissão para cadastrar usuários.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Você não tem permissão para cadastrar usuários.');
             return;
         }
 
@@ -104,7 +110,7 @@ class UsuariosController extends BaseController
             'perfis' => $this->perfisPermitidos(),
         ];
 
-        $this->view('admin.usuarios.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -114,7 +120,7 @@ class UsuariosController extends BaseController
     public function store(StoreUsuariosRequest $request): void
     {
         if (!$this->podeCadastrar()) {
-            $this->redirectWith('admin/usuario', 'error', 'Você não tem permissão para cadastrar usuários.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Você não tem permissão para cadastrar usuários.');
             return;
         }
 
@@ -143,7 +149,7 @@ class UsuariosController extends BaseController
         $id = $this->usuarioModel->create($data);
 
         if (!$id) {
-            $this->redirectWith('admin/usuario', 'error', 'Não foi possível criar o usuário.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o usuário.');
             return;
         }
 
@@ -162,14 +168,14 @@ class UsuariosController extends BaseController
 
         // Só Super Administrador abre a edição de um Super Administrador
         if ($this->ehSuperAdmin($usuario) && !Auth::is('Super Administrador')) {
-            $this->redirectWith('admin/usuario', 'error', 'Você não tem permissão para editar um Super Administrador.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Você não tem permissão para editar um Super Administrador.');
             return;
         }
 
         // Verifica se o usuário logado pode editar o usuário solicitado.
         if (!$this->podeEditarUsuario($id)) {
             $this->redirectWith(
-                'admin/usuario',
+                self::ROTA_LISTA,
                 'error',
                 'Você não tem permissão para editar os dados deste usuário.'
             );
@@ -180,7 +186,7 @@ class UsuariosController extends BaseController
         // Somente Super Administrador pode abrir a edição de outro Super Administrador.
         if ($this->ehSuperAdmin($usuario) && !Auth::is('Super Administrador')) {
             $this->redirectWith(
-                'admin/usuario',
+                self::ROTA_LISTA,
                 'error',
                 'Você não tem permissão para editar um Super Administrador.'
             );
@@ -197,7 +203,7 @@ class UsuariosController extends BaseController
             'podeEditarPerfil' => $this->podeCadastrar(),
         ];
 
-        $this->view('admin.usuarios.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -310,7 +316,7 @@ class UsuariosController extends BaseController
 
         if (!$updateUsuario) {
             $this->redirectWith(
-                'admin/usuario',
+                self::ROTA_LISTA,
                 'error',
                 "Não foi possível atualizar o usuário {$usuarios->nome}."
             );
@@ -321,7 +327,7 @@ class UsuariosController extends BaseController
         $this->atualizarSessaoSeForOProprio($id, $data);
 
         $this->redirectWith(
-            'admin/usuario',
+            self::ROTA_LISTA,
             'success',
             "Usuário {$usuarios->nome} atualizado com sucesso!"
         );
@@ -339,7 +345,7 @@ class UsuariosController extends BaseController
         // Somente Super Administrador e Administrador podem excluir usuários.
         if (!Auth::isAny('Super Administrador', 'Administrador')) {
             $this->redirectWith(
-                'admin/usuario',
+                self::ROTA_LISTA,
                 'error',
                 'Você não tem permissão para excluir usuários.'
             );
@@ -348,19 +354,19 @@ class UsuariosController extends BaseController
 
         // Super Administrador nunca pode ser excluído
         if ($this->ehSuperAdmin($usuarios)) {
-            $this->redirectWith('admin/usuario', 'error', 'Um usuário Super Administrador não pode ser excluído.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Um usuário Super Administrador não pode ser excluído.');
             return;
         }
 
         // Ninguém exclui a própria conta
         if ($id === Auth::id()) {
-            $this->redirectWith('admin/usuario', 'error', 'Você não pode excluir a sua própria conta.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Você não pode excluir a sua própria conta.');
             return;
         }
 
         $this->usuarioModel->delete($id);
 
-        $this->redirectWith('admin/usuario', 'success', 'Usuário removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Usuário removido com sucesso.');
     }
 
     /**

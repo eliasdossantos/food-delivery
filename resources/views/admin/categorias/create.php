@@ -1,6 +1,7 @@
-<!-- resources/views/admin/categorias/create.php -->
-
-<?php $maxMb = (int) ($uploadMaxMb ?? 5); ?>
+<?php
+$rota  = 'admin.categoria';
+$maxMb = (int) ($uploadMaxMb ?? 5);
+?>
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
@@ -116,7 +117,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.categoria.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -126,7 +127,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.categoria.store') ?>" enctype="multipart/form-data"
+                <form method="POST" action="<?= route($rota . '.store') ?>" enctype="multipart/form-data"
                     class="forms-sample">
                     <?= csrf_field() ?>
 
@@ -276,8 +277,8 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Cadastrar
                                     </button>
-                                    <a href="<?= route('admin.categoria.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar criação">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar criação">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>

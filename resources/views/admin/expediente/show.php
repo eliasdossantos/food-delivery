@@ -1,4 +1,6 @@
-<!-- resources/views/admin/expediente/show.php -->
+<?php
+$rota  = 'admin.expediente';
+?>
 
 <?php View::start('titulo'); ?>
 
@@ -103,7 +105,7 @@ $temPausa   = !empty($expediente->pausa_inicio) && !empty($expediente->pausa_fim
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.expediente.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -219,12 +221,12 @@ $temPausa   = !empty($expediente->pausa_inicio) && !empty($expediente->pausa_fim
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="<?= route('admin.expediente.edit', ['id' => $expediente->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $expediente->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar expediente">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
-                                <a href="<?= route('admin.expediente.index') ?>" class="btn btn-danger" title="Voltar"
+                                <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                     aria-label="Voltar para expediente">
                                     <i class="mdi mdi-close"></i>
                                     Voltar

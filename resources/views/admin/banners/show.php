@@ -1,6 +1,6 @@
-<!-- resources/views/admin/banners/show.php -->
-
 <?php
+$rota  = 'admin.banner';
+
 /** Período de exibição → [rótulo, classe do status]. Datas vazias = sem limite naquele lado. */
 $statusBanner = static function (object $b): array {
     if (empty($b->ativo)) {
@@ -49,81 +49,81 @@ if (!empty($banner->imagem)) {
 <?php View::start('styles'); ?>
 
 <style>
-.show-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .show-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.show-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .show-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.show-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e9ecef;
-    margin-left: 15px;
-}
+    .show-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e9ecef;
+        margin-left: 15px;
+    }
 
-.show-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .show-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-.show-item {
-    margin-bottom: 18px;
-}
+    .show-item {
+        margin-bottom: 18px;
+    }
 
-.show-item-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #6c757d;
-}
+    .show-item-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c757d;
+    }
 
-.show-item-value {
-    min-height: 38px;
-    padding: 9px 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    color: #212529;
-    word-break: break-word;
-}
+    .show-item-value {
+        min-height: 38px;
+        padding: 9px 12px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        color: #212529;
+        word-break: break-word;
+    }
 
-.show-status {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .show-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.show-status.active {
-    background: #d4edda;
-    color: #155724;
-}
+    .show-status.active {
+        background: #d4edda;
+        color: #155724;
+    }
 
-.show-status.inactive {
-    background: #f8d7da;
-    color: #721c24;
-}
+    .show-status.inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
 
-.show-status.scheduled {
-    background: #d1ecf1;
-    color: #0c5460;
-}
+    .show-status.scheduled {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
 
-.show-status.off {
-    background: #e2e3e5;
-    color: #383d41;
-}
+    .show-status.off {
+        background: #e2e3e5;
+        color: #383d41;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -148,7 +148,7 @@ if (!empty($banner->imagem)) {
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.banner.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -167,14 +167,14 @@ if (!empty($banner->imagem)) {
                         <!-- Imagem -->
                         <div class="col-md-4 text-center">
                             <?php if ($imagemSrc !== ''): ?>
-                            <img src="<?= e($imagemSrc) ?>" alt="Imagem de <?= e($banner->titulo ?? '') ?>"
-                                class="img-fluid shadow-sm mb-3"
-                                style="border-radius:12px;max-height:220px;object-fit:cover;">
+                                <img src="<?= e($imagemSrc) ?>" alt="Imagem de <?= e($banner->titulo ?? '') ?>"
+                                    class="img-fluid shadow-sm mb-3"
+                                    style="border-radius:12px;max-height:220px;object-fit:cover;">
                             <?php else: ?>
-                            <div class="d-flex align-items-center justify-content-center mx-auto mb-3 text-muted"
-                                style="width:160px;height:160px;border-radius:12px;background:#eef0f4;">
-                                <i class="mdi mdi-image-off" style="font-size:40px;"></i>
-                            </div>
+                                <div class="d-flex align-items-center justify-content-center mx-auto mb-3 text-muted"
+                                    style="width:160px;height:160px;border-radius:12px;background:#eef0f4;">
+                                    <i class="mdi mdi-image-off" style="font-size:40px;"></i>
+                                </div>
                             <?php endif; ?>
                         </div>
 
@@ -350,12 +350,12 @@ if (!empty($banner->imagem)) {
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="<?= route('admin.banner.edit', ['id' => $banner->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $banner->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar banner">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
-                                <a href="<?= route('admin.banner.index') ?>" class="btn btn-danger" title="Voltar"
+                                <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                     aria-label="Voltar para banners">
                                     <i class="mdi mdi-close"></i>
                                     Voltar

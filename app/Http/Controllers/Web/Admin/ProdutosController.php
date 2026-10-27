@@ -43,6 +43,12 @@ class ProdutosController extends BaseController
      */
     private const UPLOAD_MAX_MB = 5;
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/produto';
+
+    // Caminho base das views
+    private string $rota = 'admin.produtos';
+
     private ProdutoRepository $produtoModel;
     private CategoriaRepository $categoriaModel;
     private ExtraRepository $extraModel;
@@ -74,7 +80,7 @@ class ProdutosController extends BaseController
             'especificacoesPorProduto' => $this->especificacaoModel->getAgrupadasPorProduto(),
         ];
 
-        $this->view('admin.produtos.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -95,7 +101,7 @@ class ProdutosController extends BaseController
             'especificacoes' => $this->especificacaoModel->getDoProduto($id),
         ];
 
-        $this->view('admin.produtos.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -115,7 +121,7 @@ class ProdutosController extends BaseController
             'uploadMaxMb'    => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.produtos.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -211,13 +217,13 @@ class ProdutosController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/produto', 'error', 'Não foi possível criar o produto.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o produto.');
             return;
         }
 
         if (!$this->produtoExtraModel->sincronizar((int) $id, $extraIds)) {
             $this->redirectWith(
-                'admin/produto',
+                self::ROTA_LISTA,
                 'error',
                 'O produto foi criado, mas não foi possível salvar as extras.'
             );
@@ -226,14 +232,14 @@ class ProdutosController extends BaseController
 
         if (!$this->especificacaoModel->sincronizar((int) $id, $especificacoes)) {
             $this->redirectWith(
-                'admin/produto',
+                self::ROTA_LISTA,
                 'error',
                 'O produto foi criado, mas não foi possível salvar os preços e medidas.'
             );
             return;
         }
 
-        $this->redirectWith('admin/produto', 'success', 'Produto criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Produto criado com sucesso!');
     }
 
     /**
@@ -264,7 +270,7 @@ class ProdutosController extends BaseController
             'especificacoes' => $especificacoes,
         ];
 
-        $this->view('admin.produtos.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -378,13 +384,13 @@ class ProdutosController extends BaseController
         $atualizada = $this->produtoModel->update($id, $data);
 
         if (!$atualizada) {
-            $this->redirectWith('admin/produto', 'error', 'Não foi possível atualizar o produto.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar o produto.');
             return;
         }
 
         if (!$this->produtoExtraModel->sincronizar($id, $extraIds)) {
             $this->redirectWith(
-                'admin/produto',
+                self::ROTA_LISTA,
                 'error',
                 'O produto foi atualizado, mas não foi possível salvar as extras.'
             );
@@ -393,14 +399,14 @@ class ProdutosController extends BaseController
 
         if (!$this->especificacaoModel->sincronizar($id, $especificacoes)) {
             $this->redirectWith(
-                'admin/produto',
+                self::ROTA_LISTA,
                 'error',
                 'O produto foi atualizado, mas não foi possível salvar os preços e medidas.'
             );
             return;
         }
 
-        $this->redirectWith('admin/produto', 'success', 'Produto atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Produto atualizado com sucesso!');
     }
 
     /**
@@ -413,7 +419,7 @@ class ProdutosController extends BaseController
         $this->abortUnless((bool) $produtos, 404, 'Produto não encontrado.');
 
         if (!$this->produtoModel->delete($id)) {
-            $this->redirectWith('admin/produto', 'error', 'Não foi possível remover o produto.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover o produto.');
             return;
         }
 
@@ -424,7 +430,7 @@ class ProdutosController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/produto', 'success', 'Produto removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Produto removido com sucesso.');
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

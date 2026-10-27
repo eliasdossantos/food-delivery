@@ -27,6 +27,12 @@ use Framework\Support\Session;
  */
 class ClientesController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/cliente';
+
+    // Caminho base das views
+    private string $rota = 'admin.clientes';
+
     private ClienteRepository $clienteModel;
     private EnderecoRepository $enderecoModel;
 
@@ -48,7 +54,7 @@ class ClientesController extends BaseController
             'clientes' => $this->clienteModel->tudoComEndereco(),
         ];
 
-        $this->view('admin.clientes.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -65,7 +71,7 @@ class ClientesController extends BaseController
             'cliente' => $cliente,
         ];
 
-        $this->view('admin.clientes.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -78,7 +84,7 @@ class ClientesController extends BaseController
             'titulo' => 'Cadastrar Cliente',
         ];
 
-        $this->view('admin.clientes.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -120,7 +126,7 @@ class ClientesController extends BaseController
         $id = $this->clienteModel->create($cliente);
 
         if (!$id) {
-            $this->redirectWith('admin/cliente', 'error', 'Não foi possível criar o cliente.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o cliente.');
             return;
         }
 
@@ -134,7 +140,7 @@ class ClientesController extends BaseController
 
         // Após criar, vai direto para a página (show) do cliente criado
         $this->redirectWith(
-            'admin/cliente/' . (int) $id,
+            self::ROTA_LISTA . '/' . (int) $id,
             'success',
             "Cliente {$cliente['nome']} criado com sucesso!"
         );
@@ -154,7 +160,7 @@ class ClientesController extends BaseController
             'cliente' => $cliente,
         ];
 
-        $this->view('admin.clientes.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -197,7 +203,7 @@ class ClientesController extends BaseController
 
         if (!$atualizado) {
             $this->redirectWith(
-                'admin/cliente',
+                self::ROTA_LISTA,
                 'error',
                 "Não foi possível atualizar o cliente {$cliente->nome}."
             );
@@ -217,7 +223,7 @@ class ClientesController extends BaseController
         }
 
         $this->redirectWith(
-            'admin/cliente',
+            self::ROTA_LISTA,
             'success',
             "Cliente {$cliente->nome} atualizado com sucesso!"
         );
@@ -237,7 +243,7 @@ class ClientesController extends BaseController
         $this->clienteModel->delete($id);
         $this->enderecoModel->deleteByCliente($id);
 
-        $this->redirectWith('admin/cliente', 'success', 'Cliente removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Cliente removido com sucesso.');
     }
 
     /**

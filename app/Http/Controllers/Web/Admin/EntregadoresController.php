@@ -18,13 +18,16 @@ class EntregadoresController extends BaseController
      * public/uploads/entregadores/{id}/
      */
     private const UPLOAD_ENTITY = 'entregadores';
-
     private const UPLOAD_MAX_MB = 5;
 
-    /**
-     * Nome da coluna da IMAGEN na tabela de entregadores.
-     */
+    // Nome da coluna da IMAGEN na tabela de entregadores.
     private const FOTO_FIELD = 'avatar';
+
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/entregador';
+
+    // Caminho base das views
+    private string $rota = 'admin.entregadores';
 
     private EntregadorRepository $entregadorModel;
 
@@ -46,7 +49,7 @@ class EntregadoresController extends BaseController
             'entregadores' => $this->entregadorModel->all(),
         ];
 
-        $this->view('admin.entregadores.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -64,7 +67,7 @@ class EntregadoresController extends BaseController
             'entregador'  => $entregador,
         ];
 
-        $this->view('admin.entregadores.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -78,7 +81,7 @@ class EntregadoresController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.entregadores.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -148,7 +151,7 @@ class EntregadoresController extends BaseController
         }
 
         $this->redirectWith(
-            'admin/entregador',
+            self::ROTA_LISTA,
             'success',
             'Entregador cadastrado com sucesso!'
         );
@@ -170,7 +173,7 @@ class EntregadoresController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.entregadores.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -227,11 +230,11 @@ class EntregadoresController extends BaseController
         $atualizado = $this->entregadorModel->update($id, $data);
 
         if (!$atualizado) {
-            $this->redirectWith('admin/entregador', 'error', 'Não foi possível atualizar o entregador.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar o entregador.');
             return;
         }
 
-        $this->redirectWith('admin/entregador', 'success', 'Entregador atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Entregador atualizado com sucesso!');
     }
 
     /**
@@ -248,7 +251,7 @@ class EntregadoresController extends BaseController
         );
 
         if (!$this->entregadorModel->delete($id)) {
-            $this->redirectWith('admin/entregador', 'error', 'Não foi possível remover o entregador.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover o entregador.');
             return;
         }
 
@@ -261,7 +264,7 @@ class EntregadoresController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo, $id);
         }
 
-        $this->redirectWith('admin/entregador', 'success', 'Entregador removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Entregador removido com sucesso.');
     }
 
     /**

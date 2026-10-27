@@ -1,5 +1,7 @@
-<!-- resources/views/admin/bairros/edit.php -->
-
+<?php
+$rota  = 'admin.bairro';
+$rotaVoltar = 'admin/bairro';
+?>
 <!-- Aqui enviamos para o template principal o título da página -->
 
 <?php View::start('titulo'); ?>
@@ -35,7 +37,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= url('admin/bairro') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= url($rotaVoltar) ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -45,7 +47,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.bairro.update', ['id' => $bairros->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $bairros->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -132,12 +134,12 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.bairro.show', ['id' => $bairros->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $bairros->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar" aria-label="Visualizar bairro">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.bairro.index') ?>" class="btn btn-danger" title="Cancelar"
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                                         aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar

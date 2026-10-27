@@ -20,6 +20,12 @@ use Framework\Support\Session;
  */
 class FormasPagamentoController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/pagamento';
+
+    // Caminho base das views
+    private string $rota = 'admin.formaspagamento';
+
     private FormaPagamentoRepository $pagamentoModel;
 
     public function __construct()
@@ -39,7 +45,7 @@ class FormasPagamentoController extends BaseController
             'pagamentos' => $this->pagamentoModel->all(),
         ];
 
-        $this->view('admin.formaspagamento.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -57,7 +63,7 @@ class FormasPagamentoController extends BaseController
             'pagamentos' => $pagamentos,
         ];
 
-        $this->view('admin.formaspagamento.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -71,7 +77,7 @@ class FormasPagamentoController extends BaseController
             'subtitulo' => 'Criar nova Forma de Pagamento',
         ];
 
-        $this->view('admin.formaspagamento.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -94,11 +100,11 @@ class FormasPagamentoController extends BaseController
         $id = $this->pagamentoModel->create($data);
 
         if (!$id) {
-            $this->redirectWith('admin/pagamento', 'error', 'Não foi possível criar forma de pagamento.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar forma de pagamento.');
             return;
         }
 
-        $this->redirectWith('admin/pagamento', 'success', 'Forma de Pagamento criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Forma de Pagamento criado com sucesso!');
     }
 
     /**
@@ -111,7 +117,7 @@ class FormasPagamentoController extends BaseController
         $this->abortUnless((bool)$pagamentos, 404, 'Forma de Pagamento não encontrado.');
 
         if (FormaPagamentoRepository::ehProtegida($pagamentos)) {
-            $this->redirectWith('admin/pagamento', 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
+            $this->redirectWith(self::ROTA_LISTA, 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
             return;
         }
 
@@ -121,7 +127,7 @@ class FormasPagamentoController extends BaseController
             'pagamentos' => $pagamentos,
         ];
 
-        $this->view('admin.formaspagamento.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -135,7 +141,7 @@ class FormasPagamentoController extends BaseController
         $this->abortUnless((bool)$pagamentos, 404, 'Forma de Pagamento não encontrado.');
 
         if (FormaPagamentoRepository::ehProtegida($pagamentos)) {
-            $this->redirectWith('admin/pagamento', 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
+            $this->redirectWith(self::ROTA_LISTA, 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
             return;
         }
         if ($request->fails()) {
@@ -152,11 +158,11 @@ class FormasPagamentoController extends BaseController
         $updateformaPagamento = $this->pagamentoModel->update($id, $data);
 
         if (!$updateformaPagamento) {
-            $this->redirectWith('admin/pagamento', 'error', 'Não foi possível atualizar a forma de pagamento.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar a forma de pagamento.');
             return;
         }
 
-        $this->redirectWith('admin/pagamento', 'success', 'Forma de Pagamento atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Forma de Pagamento atualizado com sucesso!');
     }
 
     /**
@@ -169,13 +175,13 @@ class FormasPagamentoController extends BaseController
         $this->abortUnless((bool)$pagamentos,  404, 'Forma de Pagamento não encontrado.');
 
         if (FormaPagamentoRepository::ehProtegida($pagamentos)) {
-            $this->redirectWith('admin/pagamento', 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
+            $this->redirectWith(self::ROTA_LISTA, 'error', FormaPagamentoRepository::MENSAGEM_PROTEGIDA);
             return;
         }
 
         $this->pagamentoModel->delete($id);
 
-        $this->redirectWith('admin/pagamento', 'success', 'Forma de Pagamento removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Forma de Pagamento removido com sucesso.');
     }
 
     /**

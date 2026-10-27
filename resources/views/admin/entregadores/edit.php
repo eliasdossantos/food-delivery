@@ -1,5 +1,7 @@
-<?php $maxMb = (int) ($uploadMaxMb ?? 5); ?>
-
+<?php
+$rota  = 'admin.entregador';
+$maxMb = (int) ($uploadMaxMb ?? 5);
+?>
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Editar Entregador') ?> | Admin
@@ -181,7 +183,7 @@ $valorRemuneracao = isset($entregador->valor_remuneracao) && $entregador->valor_
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.entregador.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -192,7 +194,7 @@ $valorRemuneracao = isset($entregador->valor_remuneracao) && $entregador->valor_
             <div class="card-body">
 
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.entregador.update', ['id' => $entregador->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $entregador->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -813,14 +815,14 @@ $valorRemuneracao = isset($entregador->valor_remuneracao) && $entregador->valor_
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.entregador.show', ['id' => $entregador->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $entregador->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar"
                                         aria-label="Visualizar entregador">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.entregador.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar edição">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>

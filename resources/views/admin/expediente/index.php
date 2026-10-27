@@ -1,4 +1,6 @@
-<!-- resources/views/admin/expediente/index.php -->
+<?php
+$rota  = 'admin.expediente';
+?>
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
@@ -89,12 +91,12 @@
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <a href="<?= route('admin.expediente.show', ['id' => $dia->id]) ?>"
+                                            <a href="<?= route($rota . '.show', ['id' => $dia->id]) ?>"
                                                 class="btn btn-primary btn-sm" title="Visualizar"
                                                 aria-label="Visualizar expediente">
                                                 <i class="mdi mdi-eye"></i>
                                             </a>
-                                            <a href="<?= route('admin.expediente.edit', ['id' => $dia->id]) ?>"
+                                            <a href="<?= route($rota . '.edit', ['id' => $dia->id]) ?>"
                                                 class="btn btn-warning btn-sm" title="Editar" aria-label="Editar expediente">
                                                 <i class="mdi mdi-pencil"></i>
                                             </a>

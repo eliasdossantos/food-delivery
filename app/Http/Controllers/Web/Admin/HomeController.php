@@ -24,6 +24,8 @@ use App\Repositories\UsuarioRepository;
  */
 class HomeController extends BaseController
 {
+    // Caminho base das views
+    private string $rota = 'admin.home';
 
     private UsuarioRepository $usuarioRepository;
     private ClienteRepository $clienteRepository;
@@ -51,6 +53,6 @@ class HomeController extends BaseController
             'totalProdutos' => count($produtos),
         ];
 
-        $this->view('admin.home.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+$rota  = 'admin.configuracao';
 $maxMb = (int) ($uploadMaxMb ?? 5);
 
 // Se o valor salvo for uma URL externa, ela é exibida como está.
@@ -64,84 +65,84 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
 
 <?php View::start('styles'); ?>
 <style>
-.upload-box {
-    border: 2px dashed #ced4da;
-    border-radius: 12px;
-    background: #f8f9fa;
-    transition: border-color .2s, background .2s;
-}
+    .upload-box {
+        border: 2px dashed #ced4da;
+        border-radius: 12px;
+        background: #f8f9fa;
+        transition: border-color .2s, background .2s;
+    }
 
-.upload-box.is-dragover,
-.upload-box:hover {
-    border-color: #4e73df;
-    background: #eef3ff;
-}
+    .upload-box.is-dragover,
+    .upload-box:hover {
+        border-color: #4e73df;
+        background: #eef3ff;
+    }
 
-.upload-box.is-invalid {
-    border-color: #dc3545;
-}
+    .upload-box.is-invalid {
+        border-color: #dc3545;
+    }
 
-.upload-drop {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 150px;
-    padding: 12px;
-    cursor: pointer;
-}
+    .upload-drop {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+        padding: 12px;
+        cursor: pointer;
+    }
 
-/* O input cobre toda a área: clicar e arrastar funcionam nativamente */
-.upload-input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
+    /* O input cobre toda a área: clicar e arrastar funcionam nativamente */
+    .upload-input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
 
-.upload-placeholder {
-    text-align: center;
-    color: #6c757d;
-    pointer-events: none;
-}
+    .upload-placeholder {
+        text-align: center;
+        color: #6c757d;
+        pointer-events: none;
+    }
 
-.upload-placeholder .mdi {
-    display: block;
-    font-size: 40px;
-    line-height: 1.2;
-    color: #4e73df;
-}
+    .upload-placeholder .mdi {
+        display: block;
+        font-size: 40px;
+        line-height: 1.2;
+        color: #4e73df;
+    }
 
-.upload-placeholder small {
-    display: block;
-}
+    .upload-placeholder small {
+        display: block;
+    }
 
-.upload-img {
-    max-width: 100%;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: 10px;
-    pointer-events: none;
-}
+    .upload-img {
+        max-width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        pointer-events: none;
+    }
 
-.upload-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px 10px;
-    font-size: 13px;
-    color: #6c757d;
-    min-height: 36px;
-}
+    .upload-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px 10px;
+        font-size: 13px;
+        color: #6c757d;
+        min-height: 36px;
+    }
 
-.upload-nome {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-right: 10px;
-}
+    .upload-nome {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 10px;
+    }
 </style>
 <?php View::end(); ?>
 
@@ -165,7 +166,7 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.configuracao.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -175,7 +176,7 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.configuracao.update', ['id' => $configuracao->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $configuracao->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -299,7 +300,7 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                             <input type="text" maxlength="9" autocomplete="off"
                                 class="form-control <?= hasError('cep') ? 'is-invalid' : '' ?>" id="cep" name="cep"
                                 value="<?= old('cep', $configuracao->cep ?? '') ?>" placeholder="00000-000"
-                                data-cep-url="<?= e(route('admin.configuracao.cep')) ?>">
+                                data-cep-url="<?= e(route($rota . '.cep')) ?>">
                             <small id="cep-feedback" class="form-text text-muted">Preenche o endereço</small>
                             <?= erroInput('cep') ?>
                         </div>
@@ -363,9 +364,9 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                                 name="estado">
                                 <option value="">—</option>
                                 <?php foreach ($estados as $uf): ?>
-                                <option value="<?= $uf ?>" <?= $estadoAtual === $uf ? 'selected' : '' ?>>
-                                    <?= $uf ?>
-                                </option>
+                                    <option value="<?= $uf ?>" <?= $estadoAtual === $uf ? 'selected' : '' ?>>
+                                        <?= $uf ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
                             <?= erroInput('estado') ?>
@@ -408,19 +409,19 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                     <div class="row">
                         <!-- Redes sociais -->
                         <?php foreach ($redes as $campo => [$rotulo, $icone, $exemplo]): ?>
-                        <div class="form-group col-md-6">
-                            <label for="<?= $campo ?>"><?= e($rotulo) ?></label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"><i class="mdi <?= $icone ?>"></i></span>
+                            <div class="form-group col-md-6">
+                                <label for="<?= $campo ?>"><?= e($rotulo) ?></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="mdi <?= $icone ?>"></i></span>
+                                    </div>
+                                    <input type="text" maxlength="200"
+                                        class="form-control <?= hasError($campo) ? 'is-invalid' : '' ?>" id="<?= $campo ?>"
+                                        name="<?= $campo ?>" value="<?= old($campo, $configuracao->{$campo} ?? '') ?>"
+                                        placeholder="<?= e($exemplo) ?>">
                                 </div>
-                                <input type="text" maxlength="200"
-                                    class="form-control <?= hasError($campo) ? 'is-invalid' : '' ?>" id="<?= $campo ?>"
-                                    name="<?= $campo ?>" value="<?= old($campo, $configuracao->{$campo} ?? '') ?>"
-                                    placeholder="<?= e($exemplo) ?>">
+                                <?= erroInput($campo) ?>
                             </div>
-                            <?= erroInput($campo) ?>
-                        </div>
                         <?php endforeach; ?>
                     </div>
 
@@ -586,8 +587,8 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.configuracao.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar edição">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>
@@ -608,141 +609,141 @@ $aceitaRetirada = (string) old('aceita_retirada', (string) ($configuracao->aceit
 
 <?php View::start('scripts'); ?>
 <script nonce="<?= e(cspNonce()) ?>">
-// Campo de upload do logo
-(function() {
-    var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
+    // Campo de upload do logo
+    (function() {
+        var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
 
-    var $box = $('#uploadBox');
-    var $input = $('#logo');
-    var $img = $('#uploadImg');
-    var $placeholder = $('#uploadPlaceholder');
-    var $nome = $('#uploadNome');
-    var $limpar = $('#uploadLimpar');
-    var $erro = $('#uploadErro');
+        var $box = $('#uploadBox');
+        var $input = $('#logo');
+        var $img = $('#uploadImg');
+        var $placeholder = $('#uploadPlaceholder');
+        var $nome = $('#uploadNome');
+        var $limpar = $('#uploadLimpar');
+        var $erro = $('#uploadErro');
 
-    var atual = $img.data('atual') || '';
-    var textoInicial = $nome.text().trim();
+        var atual = $img.data('atual') || '';
+        var textoInicial = $nome.text().trim();
 
-    function mostrarImagem(src) {
-        if (src) {
-            $img.attr('src', src).removeClass('d-none');
-            $placeholder.addClass('d-none');
-        } else {
-            $img.attr('src', '').addClass('d-none');
-            $placeholder.removeClass('d-none');
-        }
-    }
-
-    function restaurar() {
-        $input.val('');
-        mostrarImagem(atual);
-        $nome.text(textoInicial);
-        $limpar.addClass('d-none');
-    }
-
-    $input.on('change', function() {
-        var arquivo = this.files && this.files[0];
-        $erro.addClass('d-none').text('');
-
-        if (!arquivo) {
-            restaurar();
-            return;
+        function mostrarImagem(src) {
+            if (src) {
+                $img.attr('src', src).removeClass('d-none');
+                $placeholder.addClass('d-none');
+            } else {
+                $img.attr('src', '').addClass('d-none');
+                $placeholder.removeClass('d-none');
+            }
         }
 
-        if (arquivo.type.indexOf('image/') !== 0) {
-            $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
-            restaurar();
-            return;
+        function restaurar() {
+            $input.val('');
+            mostrarImagem(atual);
+            $nome.text(textoInicial);
+            $limpar.addClass('d-none');
         }
 
-        if (arquivo.size > MAX_BYTES) {
-            $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
-            restaurar();
-            return;
-        }
+        $input.on('change', function() {
+            var arquivo = this.files && this.files[0];
+            $erro.addClass('d-none').text('');
 
-        var leitor = new FileReader();
-        leitor.onload = function(e) {
-            mostrarImagem(e.target.result);
-        };
-        leitor.readAsDataURL(arquivo);
-
-        $nome.text(arquivo.name);
-        $limpar.removeClass('d-none');
-    });
-
-    $limpar.on('click', restaurar);
-
-    // Destaque visual ao arrastar um arquivo sobre a área
-    $box.on('dragenter dragover', function() {
-        $box.addClass('is-dragover');
-    });
-    $box.on('dragleave drop', function() {
-        $box.removeClass('is-dragover');
-    });
-})();
-
-// Busca de CEP: preenche logradouro, bairro, cidade e UF
-(function() {
-    const cepInput = document.getElementById('cep');
-    const feedback = document.getElementById('cep-feedback');
-    const campos = {
-        logradouro: document.getElementById('logradouro'),
-        bairro: document.getElementById('bairro'),
-        cidade: document.getElementById('cidade'),
-        estado: document.getElementById('estado')
-    };
-    const textoPadrao = feedback.textContent;
-    let consulta = 0;
-
-    const setMsg = (txt, cls) => {
-        feedback.textContent = txt;
-        feedback.className = 'form-text ' + cls;
-    };
-
-    cepInput.addEventListener('input', function() {
-        const v = this.value.replace(/\D/g, '').slice(0, 8);
-        this.value = v.length > 5 ? v.slice(0, 5) + '-' + v.slice(5) : v;
-
-        if (v.length === 8) {
-            buscar(v);
-        } else {
-            setMsg(textoPadrao, 'text-muted');
-        }
-    });
-
-    async function buscar(cep) {
-        const id = ++consulta;
-        setMsg('Buscando CEP...', 'text-muted');
-
-        try {
-            const res = await fetch(cepInput.dataset.cepUrl + '?cep=' + cep, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            });
-            const data = await res.json();
-            if (id !== consulta) return; // resposta antiga
-
-            if (!data.ok) {
-                setMsg(data.message || 'Não foi possível consultar o CEP.', 'text-danger');
+            if (!arquivo) {
+                restaurar();
                 return;
             }
 
-            // Só sobrescreve quando a API trouxe valor (CEP geral vem sem logradouro/bairro)
-            if (data.logradouro) campos.logradouro.value = data.logradouro;
-            if (data.bairro) campos.bairro.value = data.bairro;
-            if (data.cidade) campos.cidade.value = data.cidade;
-            if (data.uf) campos.estado.value = data.uf;
+            if (arquivo.type.indexOf('image/') !== 0) {
+                $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
+                restaurar();
+                return;
+            }
 
-            setMsg('Endereço encontrado: ' + (data.cidade || '') + (data.uf ? ' - ' + data.uf : ''),
-                'text-success');
-        } catch (e) {
-            if (id === consulta) setMsg('Erro de comunicação ao consultar o CEP.', 'text-danger');
+            if (arquivo.size > MAX_BYTES) {
+                $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
+                restaurar();
+                return;
+            }
+
+            var leitor = new FileReader();
+            leitor.onload = function(e) {
+                mostrarImagem(e.target.result);
+            };
+            leitor.readAsDataURL(arquivo);
+
+            $nome.text(arquivo.name);
+            $limpar.removeClass('d-none');
+        });
+
+        $limpar.on('click', restaurar);
+
+        // Destaque visual ao arrastar um arquivo sobre a área
+        $box.on('dragenter dragover', function() {
+            $box.addClass('is-dragover');
+        });
+        $box.on('dragleave drop', function() {
+            $box.removeClass('is-dragover');
+        });
+    })();
+
+    // Busca de CEP: preenche logradouro, bairro, cidade e UF
+    (function() {
+        const cepInput = document.getElementById('cep');
+        const feedback = document.getElementById('cep-feedback');
+        const campos = {
+            logradouro: document.getElementById('logradouro'),
+            bairro: document.getElementById('bairro'),
+            cidade: document.getElementById('cidade'),
+            estado: document.getElementById('estado')
+        };
+        const textoPadrao = feedback.textContent;
+        let consulta = 0;
+
+        const setMsg = (txt, cls) => {
+            feedback.textContent = txt;
+            feedback.className = 'form-text ' + cls;
+        };
+
+        cepInput.addEventListener('input', function() {
+            const v = this.value.replace(/\D/g, '').slice(0, 8);
+            this.value = v.length > 5 ? v.slice(0, 5) + '-' + v.slice(5) : v;
+
+            if (v.length === 8) {
+                buscar(v);
+            } else {
+                setMsg(textoPadrao, 'text-muted');
+            }
+        });
+
+        async function buscar(cep) {
+            const id = ++consulta;
+            setMsg('Buscando CEP...', 'text-muted');
+
+            try {
+                const res = await fetch(cepInput.dataset.cepUrl + '?cep=' + cep, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                const data = await res.json();
+                if (id !== consulta) return; // resposta antiga
+
+                if (!data.ok) {
+                    setMsg(data.message || 'Não foi possível consultar o CEP.', 'text-danger');
+                    return;
+                }
+
+                // Só sobrescreve quando a API trouxe valor (CEP geral vem sem logradouro/bairro)
+                if (data.logradouro) campos.logradouro.value = data.logradouro;
+                if (data.bairro) campos.bairro.value = data.bairro;
+                if (data.cidade) campos.cidade.value = data.cidade;
+                if (data.uf) campos.estado.value = data.uf;
+
+                setMsg('Endereço encontrado: ' + (data.cidade || '') + (data.uf ? ' - ' + data.uf : ''),
+                    'text-success');
+            } catch (e) {
+                if (id === consulta) setMsg('Erro de comunicação ao consultar o CEP.', 'text-danger');
+            }
         }
-    }
-})();
+    })();
 </script>
 <?php View::end(); ?>

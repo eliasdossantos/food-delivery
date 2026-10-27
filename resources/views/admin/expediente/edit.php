@@ -1,4 +1,6 @@
-<!-- resources/views/admin/expediente/edit.php -->
+<?php
+$rota  = 'admin.expediente';
+?>
 
 <?php View::start('titulo'); ?>
 
@@ -29,7 +31,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.expediente.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -39,7 +41,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.expediente.update', ['id' => $expediente->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $expediente->id]) ?>"
                     class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -146,14 +148,14 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.expediente.show', ['id' => $expediente->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $expediente->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar"
                                         aria-label="Visualizar expediente">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.expediente.index') ?>" class="btn btn-danger"
-                                        title="Cancelar" aria-label="Cancelar edição">
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
+                                        aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
                                     </a>

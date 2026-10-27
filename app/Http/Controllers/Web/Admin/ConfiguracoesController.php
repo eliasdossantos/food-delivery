@@ -29,6 +29,12 @@ class ConfiguracoesController extends BaseController
     private const UPLOAD_MAX_MB = 5;
     private const UPLOAD_FIELD  = 'logo';
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/configuracao';
+
+    // Caminho base das views
+    private string $rota = 'admin.configuracoes';
+
     private ConfiguracaoRepository $configuracaoModel;
 
     public function __construct()
@@ -45,7 +51,7 @@ class ConfiguracoesController extends BaseController
             'configuracoes'  => $this->configuracaoModel->all(),
         ];
 
-        $this->view('admin.configuracoes.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /** GET /configuracoes/{id} */
@@ -60,7 +66,7 @@ class ConfiguracoesController extends BaseController
             'configuracao'  => $configuracao,
         ];
 
-        $this->view('admin.configuracoes.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /** GET /configuracoes/create */
@@ -72,7 +78,7 @@ class ConfiguracoesController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.configuracoes.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /** POST /configuracoes */
@@ -107,11 +113,11 @@ class ConfiguracoesController extends BaseController
             if ($logo !== null) {
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $logo);
             }
-            $this->redirectWith('admin/configuracao', 'error', 'Não foi possível criar a configuração.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar a configuração.');
             return;
         }
 
-        $this->redirectWith('admin/configuracao', 'success', 'Configuração criada com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Configuração criada com sucesso!');
     }
 
     /** GET /configuracoes/{id}/edit */
@@ -127,7 +133,7 @@ class ConfiguracoesController extends BaseController
             'configuracao'  => $configuracao,
         ];
 
-        $this->view('admin.configuracoes.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /** PUT /configuracoes/{id} */
@@ -165,11 +171,11 @@ class ConfiguracoesController extends BaseController
 
         $atualizada = $this->configuracaoModel->update($id, $data);
         if (!$atualizada) {
-            $this->redirectWith('admin/configuracao', 'error', 'Não foi possível atualizar a configuração.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar a configuração.');
             return;
         }
 
-        $this->redirectWith('admin/configuracao', 'success', 'Configuração atualizada com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Configuração atualizada com sucesso!');
     }
 
     /** DELETE /configuracoes/{id} */
@@ -179,7 +185,7 @@ class ConfiguracoesController extends BaseController
         $this->abortUnless((bool) $configuracao, 404, 'Configuração não encontrada.');
 
         if (!$this->configuracaoModel->delete($id)) {
-            $this->redirectWith('admin/configuracao', 'error', 'Não foi possível remover a configuração.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover a configuração.');
             return;
         }
 
@@ -189,7 +195,7 @@ class ConfiguracoesController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $logo);
         }
 
-        $this->redirectWith('admin/configuracao', 'success', 'Configuração removida com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Configuração removida com sucesso.');
     }
 
     /** GET /admin/configuracao/cep?cep=58000000 */

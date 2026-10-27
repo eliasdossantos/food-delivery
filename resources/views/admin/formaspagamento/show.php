@@ -1,4 +1,6 @@
-<!-- Aqui enviamos para o template principal o título da página -->
+<?php
+$rota  = 'admin.pagamento';
+?>
 
 <?php View::start('titulo'); ?>
 
@@ -101,7 +103,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.pagamento.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -203,13 +205,13 @@
                     <div class="col-md-12">
                         <div class="d-flex flex-wrap align-items-center">
                             <?php if (!$protegida): ?>
-                                <a href="<?= route('admin.pagamento.edit', ['id' => $pagamentos->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $pagamentos->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar Forma de Pagamento">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
                             <?php endif; ?>
-                            <a href="<?= route('admin.pagamento.index') ?>" class="btn btn-danger" title="Voltar"
+                            <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                 aria-label="Voltar para perfis">
                                 <i class="mdi mdi-close"></i>
                                 Voltar

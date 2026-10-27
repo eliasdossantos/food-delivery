@@ -25,6 +25,12 @@ use Framework\Support\Session;
  */
 class ExpedienteController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/expediente';
+
+    // Caminho base das views
+    private string $rota = 'admin.expediente';
+
     private ExpedienteRepository $expedienteModel;
 
     public function __construct()
@@ -44,7 +50,7 @@ class ExpedienteController extends BaseController
             'expediente' => $this->expedienteModel->all(),
         ];
 
-        $this->view('admin.expediente.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -62,7 +68,7 @@ class ExpedienteController extends BaseController
             'expediente'  => $expediente,
         ];
 
-        $this->view('admin.expediente.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -76,7 +82,7 @@ class ExpedienteController extends BaseController
             'subtitulo'  => 'Cadastrar novo Expediente',
         ];
 
-        $this->view('admin.expediente.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -99,10 +105,10 @@ class ExpedienteController extends BaseController
         $id = $this->expedienteModel->create($data);
 
         if (!$id) {
-            $this->redirectWith('admin/expediente', 'error', 'Não foi possível criar o Expediente.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o Expediente.');
             return;
         }
-        $this->redirectWith('admin/expediente', 'success', 'Expediente criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Expediente criado com sucesso!');
     }
 
     /**
@@ -120,7 +126,7 @@ class ExpedienteController extends BaseController
             'expediente'  => $expediente,
         ];
 
-        $this->view('admin.expediente.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -155,11 +161,11 @@ class ExpedienteController extends BaseController
         $updateExpediente = $this->expedienteModel->update($id, $data);
 
         if (!$updateExpediente) {
-            $this->redirectWith('admin/expediente', 'error', 'Não foi possível atualizar Expediente.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar Expediente.');
             return;
         }
 
-        $this->redirectWith('admin/expediente', 'success', 'Expediente atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Expediente atualizado com sucesso!');
     }
 
     /**
@@ -173,6 +179,6 @@ class ExpedienteController extends BaseController
 
         $this->expedienteModel->delete($id);
 
-        $this->redirectWith('admin/expediente', 'success', 'Expediente removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Expediente removido com sucesso.');
     }
 }

@@ -1,6 +1,5 @@
-<!-- resources/views/admin/banners/edit.php -->
-
 <?php
+$rota  = 'admin.banner';
 $maxMb = (int) ($uploadMaxMb ?? 5);
 
 // Imagem: URL externa é usada direto; arquivo local passa pelo uploadUrl()
@@ -33,111 +32,111 @@ $paraInputData = static function (?string $valor): string {
 <?php View::start('styles'); ?>
 
 <style>
-.form-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .form-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.form-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.form-section-title::after {
-    content: '';
-    flex: 1;
-    height: 2px;
-    background: #878f96;
-    margin-left: 15px;
-}
+    .form-section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: #878f96;
+        margin-left: 15px;
+    }
 
-.form-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .form-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-/* ── Campo de upload da imagem ────────────────────────────────────── */
-.upload-box {
-    border: 2px dashed #ced4da;
-    border-radius: 12px;
-    background: #f8f9fa;
-    transition: border-color .2s, background .2s;
-}
+    /* ── Campo de upload da imagem ────────────────────────────────────── */
+    .upload-box {
+        border: 2px dashed #ced4da;
+        border-radius: 12px;
+        background: #f8f9fa;
+        transition: border-color .2s, background .2s;
+    }
 
-.upload-box.is-dragover,
-.upload-box:hover {
-    border-color: #4e73df;
-    background: #eef3ff;
-}
+    .upload-box.is-dragover,
+    .upload-box:hover {
+        border-color: #4e73df;
+        background: #eef3ff;
+    }
 
-.upload-box.is-invalid {
-    border-color: #dc3545;
-}
+    .upload-box.is-invalid {
+        border-color: #dc3545;
+    }
 
-.upload-drop {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 150px;
-    padding: 12px;
-    cursor: pointer;
-}
+    .upload-drop {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+        padding: 12px;
+        cursor: pointer;
+    }
 
-/* O input cobre toda a área: clicar e arrastar funcionam nativamente */
-.upload-input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
+    /* O input cobre toda a área: clicar e arrastar funcionam nativamente */
+    .upload-input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
 
-.upload-placeholder {
-    text-align: center;
-    color: #6c757d;
-    pointer-events: none;
-}
+    .upload-placeholder {
+        text-align: center;
+        color: #6c757d;
+        pointer-events: none;
+    }
 
-.upload-placeholder .mdi {
-    display: block;
-    font-size: 40px;
-    line-height: 1.2;
-    color: #4e73df;
-}
+    .upload-placeholder .mdi {
+        display: block;
+        font-size: 40px;
+        line-height: 1.2;
+        color: #4e73df;
+    }
 
-.upload-placeholder small {
-    display: block;
-}
+    .upload-placeholder small {
+        display: block;
+    }
 
-.upload-img {
-    max-width: 100%;
-    max-height: 180px;
-    object-fit: cover;
-    border-radius: 10px;
-    pointer-events: none;
-}
+    .upload-img {
+        max-width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 10px;
+        pointer-events: none;
+    }
 
-.upload-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px 10px;
-    font-size: 13px;
-    color: #6c757d;
-    min-height: 36px;
-}
+    .upload-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 12px 10px;
+        font-size: 13px;
+        color: #6c757d;
+        min-height: 36px;
+    }
 
-.upload-nome {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-right: 10px;
-}
+    .upload-nome {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 10px;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -163,7 +162,7 @@ $paraInputData = static function (?string $valor): string {
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.banner.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -174,7 +173,7 @@ $paraInputData = static function (?string $valor): string {
             <div class="card-body">
 
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.banner.update', ['id' => $banner->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $banner->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -417,12 +416,12 @@ $paraInputData = static function (?string $valor): string {
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.banner.show', ['id' => $banner->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $banner->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar" aria-label="Visualizar banner">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.banner.index') ?>" class="btn btn-danger" title="Cancelar"
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                                         aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
@@ -445,98 +444,98 @@ $paraInputData = static function (?string $valor): string {
 <?php View::start('scripts'); ?>
 
 <script nonce="<?= e(cspNonce()) ?>">
-// Campo de upload da imagem
-(function() {
-    var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
+    // Campo de upload da imagem
+    (function() {
+        var MAX_BYTES = <?= $maxMb ?> * 1024 * 1024;
 
-    var $box = $('#uploadBox');
-    var $input = $('#imagem');
-    var $img = $('#uploadImg');
-    var $placeholder = $('#uploadPlaceholder');
-    var $nome = $('#uploadNome');
-    var $limpar = $('#uploadLimpar');
-    var $erro = $('#uploadErro');
+        var $box = $('#uploadBox');
+        var $input = $('#imagem');
+        var $img = $('#uploadImg');
+        var $placeholder = $('#uploadPlaceholder');
+        var $nome = $('#uploadNome');
+        var $limpar = $('#uploadLimpar');
+        var $erro = $('#uploadErro');
 
-    var atual = $img.data('atual') || '';
-    var textoInicial = $nome.text().trim();
+        var atual = $img.data('atual') || '';
+        var textoInicial = $nome.text().trim();
 
-    function mostrarImagem(src) {
-        if (src) {
-            $img.attr('src', src).removeClass('d-none');
-            $placeholder.addClass('d-none');
-        } else {
-            $img.attr('src', '').addClass('d-none');
-            $placeholder.removeClass('d-none');
-        }
-    }
-
-    function restaurar() {
-        $input.val('');
-        mostrarImagem(atual);
-        $nome.text(textoInicial);
-        $limpar.addClass('d-none');
-    }
-
-    $input.on('change', function() {
-        var arquivo = this.files && this.files[0];
-        $erro.addClass('d-none').text('');
-
-        if (!arquivo) {
-            restaurar();
-            return;
+        function mostrarImagem(src) {
+            if (src) {
+                $img.attr('src', src).removeClass('d-none');
+                $placeholder.addClass('d-none');
+            } else {
+                $img.attr('src', '').addClass('d-none');
+                $placeholder.removeClass('d-none');
+            }
         }
 
-        if (arquivo.type.indexOf('image/') !== 0) {
-            $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
-            restaurar();
-            return;
+        function restaurar() {
+            $input.val('');
+            mostrarImagem(atual);
+            $nome.text(textoInicial);
+            $limpar.addClass('d-none');
         }
 
-        if (arquivo.size > MAX_BYTES) {
-            $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
-            restaurar();
-            return;
-        }
+        $input.on('change', function() {
+            var arquivo = this.files && this.files[0];
+            $erro.addClass('d-none').text('');
 
-        var leitor = new FileReader();
-        leitor.onload = function(e) {
-            mostrarImagem(e.target.result);
-        };
-        leitor.readAsDataURL(arquivo);
+            if (!arquivo) {
+                restaurar();
+                return;
+            }
 
-        $nome.text(arquivo.name);
-        $limpar.removeClass('d-none');
-    });
+            if (arquivo.type.indexOf('image/') !== 0) {
+                $erro.text('Selecione um arquivo de imagem.').removeClass('d-none');
+                restaurar();
+                return;
+            }
 
-    $limpar.on('click', restaurar);
+            if (arquivo.size > MAX_BYTES) {
+                $erro.text('A imagem excede o tamanho máximo de <?= $maxMb ?> MB.').removeClass('d-none');
+                restaurar();
+                return;
+            }
 
-    // Destaque visual ao arrastar um arquivo sobre a área
-    $box.on('dragenter dragover', function() {
-        $box.addClass('is-dragover');
-    });
-    $box.on('dragleave drop', function() {
-        $box.removeClass('is-dragover');
-    });
-})();
+            var leitor = new FileReader();
+            leitor.onload = function(e) {
+                mostrarImagem(e.target.result);
+            };
+            leitor.readAsDataURL(arquivo);
+
+            $nome.text(arquivo.name);
+            $limpar.removeClass('d-none');
+        });
+
+        $limpar.on('click', restaurar);
+
+        // Destaque visual ao arrastar um arquivo sobre a área
+        $box.on('dragenter dragover', function() {
+            $box.addClass('is-dragover');
+        });
+        $box.on('dragleave drop', function() {
+            $box.removeClass('is-dragover');
+        });
+    })();
 </script>
 
 <script nonce="<?= e(cspNonce()) ?>">
-// A data fim não pode ser anterior à data início
-(function() {
-    var inicio = document.getElementById('data_inicio');
-    var fim = document.getElementById('data_fim');
+    // A data fim não pode ser anterior à data início
+    (function() {
+        var inicio = document.getElementById('data_inicio');
+        var fim = document.getElementById('data_fim');
 
-    if (!inicio || !fim) {
-        return;
-    }
+        if (!inicio || !fim) {
+            return;
+        }
 
-    function sincronizar() {
-        fim.min = inicio.value || '';
-    }
+        function sincronizar() {
+            fim.min = inicio.value || '';
+        }
 
-    inicio.addEventListener('change', sincronizar);
-    sincronizar();
-})();
+        inicio.addEventListener('change', sincronizar);
+        sincronizar();
+    })();
 </script>
 
 <?php View::end(); ?>

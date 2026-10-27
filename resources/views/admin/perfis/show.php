@@ -1,5 +1,8 @@
-<!-- Aqui enviamos para o template principal o título da página -->
+<?php
+$rota  = 'admin.perfil';
+?>
 
+<!-- Aqui enviamos para o template principal o título da página -->
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Detalhes do Perfil') ?> | Admin
@@ -12,71 +15,71 @@
 <?php View::start('styles'); ?>
 
 <style>
-.show-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .show-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.show-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .show-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.show-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e9ecef;
-    margin-left: 15px;
-}
+    .show-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e9ecef;
+        margin-left: 15px;
+    }
 
-.show-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .show-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-.show-item {
-    margin-bottom: 18px;
-}
+    .show-item {
+        margin-bottom: 18px;
+    }
 
-.show-item-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #6c757d;
-}
+    .show-item-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c757d;
+    }
 
-.show-item-value {
-    min-height: 38px;
-    padding: 9px 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    color: #212529;
-    word-break: break-word;
-}
+    .show-item-value {
+        min-height: 38px;
+        padding: 9px 12px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        color: #212529;
+        word-break: break-word;
+    }
 
-.show-status {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .show-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.show-status.active {
-    background: #d4edda;
-    color: #155724;
-}
+    .show-status.active {
+        background: #d4edda;
+        color: #155724;
+    }
 
-.show-status.inactive {
-    background: #f8d7da;
-    color: #721c24;
-}
+    .show-status.inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -101,7 +104,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.perfil.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -138,13 +141,13 @@
                                 </span>
                                 <div class="show-item-value">
                                     <?php if ((int) ($perfis->ativo ?? 0) === 1): ?>
-                                    <span class="show-status active">
-                                        Ativo
-                                    </span>
+                                        <span class="show-status active">
+                                            Ativo
+                                        </span>
                                     <?php else: ?>
-                                    <span class="show-status inactive">
-                                        Inativo
-                                    </span>
+                                        <span class="show-status inactive">
+                                            Inativo
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -191,12 +194,12 @@
                 <div class="row mt-4">
                     <div class="col-md-12">
                         <div class="d-flex flex-wrap align-items-center">
-                            <a href="<?= route('admin.perfil.edit', ['id' => $perfis->id]) ?>"
-                                class="btn btn-success mr-2" title="Editar" aria-label="Editar perfil">
+                            <a href="<?= route($rota . '.edit', ['id' => $perfis->id]) ?>" class="btn btn-success mr-2"
+                                title="Editar" aria-label="Editar perfil">
                                 <i class="mdi mdi-pencil"></i>
                                 Editar
                             </a>
-                            <a href="<?= route('admin.perfil.index') ?>" class="btn btn-danger" title="Voltar"
+                            <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                 aria-label="Voltar para perfis">
                                 <i class="mdi mdi-close"></i>
                                 Voltar

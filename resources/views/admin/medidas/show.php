@@ -1,4 +1,6 @@
-<!-- resources/views/admin/medidas/show.php -->
+<?php
+$rota  = 'admin.medida';
+?>
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
@@ -120,7 +122,7 @@ $valorFormatado = isset($medidas->valor) && is_numeric($medidas->valor)
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.medida.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -247,12 +249,12 @@ $valorFormatado = isset($medidas->valor) && is_numeric($medidas->valor)
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="<?= route('admin.medida.edit', ['id' => $medidas->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $medidas->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar medida">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
-                                <a href="<?= route('admin.medida.index') ?>" class="btn btn-danger" title="Voltar"
+                                <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                     aria-label="Voltar para medidas">
                                     <i class="mdi mdi-close"></i>
                                     Voltar

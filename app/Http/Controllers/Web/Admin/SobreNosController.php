@@ -26,7 +26,11 @@ class SobreNosController extends BaseController
     private const UPLOAD_MAX_MB = 5;
     private const UPLOAD_FIELD  = 'imagem';
 
+    // Rota da listagem
     private const ROTA_LISTA = 'admin/sobrenos';
+
+    // Caminho base das views
+    private string $rota = 'admin.sobrenos';
 
     private SobreNosRepository $sobreNosModel;
 
@@ -44,7 +48,7 @@ class SobreNosController extends BaseController
             'sobrenos'  => $this->sobreNosModel->all(),
         ];
 
-        $this->view('admin.sobrenos.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /** GET /sobre-nos/{id} */
@@ -59,7 +63,7 @@ class SobreNosController extends BaseController
             'sobrenos'      => $sobrenos,
         ];
 
-        $this->view('admin.sobrenos.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /** GET /sobre-nos/create */
@@ -71,7 +75,7 @@ class SobreNosController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.sobrenos.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /** POST /sobre-nos */
@@ -135,7 +139,7 @@ class SobreNosController extends BaseController
             'sobrenos'        => $sobrenos,
         ];
 
-        $this->view('admin.sobrenos.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /** PUT /sobre-nos/{id} */

@@ -1,4 +1,7 @@
-<!-- resources/views/admin/formaspagamento/edit.php -->
+<?php
+$rota  = 'admin.pagamento';
+$rotaVoltar  = 'admin/pagamento';
+?>
 
 <!-- Aqui enviamos para o template principal o título da página -->
 
@@ -35,7 +38,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= url('admin/pagamento') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= url($rotaVoltar) ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -45,7 +48,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.pagamento.update', ['id' => $pagamentos->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $pagamentos->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -79,12 +82,12 @@
                         <i class="mdi mdi-content-save"></i>
                         Atualizar
                     </button>
-                    <a href="<?= route('admin.pagamento.show', ['id' => $pagamentos->id]) ?>"
-                        class="btn btn-primary mr-2" title="Visualizar" aria-label="Visualizar Forma de Pagamento">
+                    <a href="<?= route($rota . '.show', ['id' => $pagamentos->id]) ?>" class="btn btn-primary mr-2"
+                        title="Visualizar" aria-label="Visualizar Forma de Pagamento">
                         <i class="mdi mdi-eye"></i>
                         Visualizar
                     </a>
-                    <a href="<?= route('admin.pagamento.index') ?>" class="btn btn-danger" title="Cancelar"
+                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                         aria-label="Cancelar edição">
                         <i class="mdi mdi-close"></i>
                         Cancelar

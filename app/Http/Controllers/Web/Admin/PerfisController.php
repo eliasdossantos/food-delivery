@@ -26,6 +26,12 @@ use Framework\Support\Session;
  */
 class PerfisController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/perfil';
+
+    // Caminho base das views
+    private string $rota = 'admin.perfis';
+
     private PerfilRepository $perfilModel;
 
     public function __construct()
@@ -46,7 +52,7 @@ class PerfisController extends BaseController
             'perfis' => $this->perfilModel->all()
         ];
 
-        $this->view('admin.perfis.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -64,7 +70,7 @@ class PerfisController extends BaseController
             'perfis' => $perfis,
         ];
 
-        $this->view('admin.perfis.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -78,7 +84,7 @@ class PerfisController extends BaseController
             'subtitulo' => 'Criar novo Perfil',
         ];
 
-        $this->view('admin.perfis.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -101,11 +107,11 @@ class PerfisController extends BaseController
         $id = $this->perfilModel->create($data);
 
         if (!$id) {
-            $this->redirectWith('admin/perfil', 'error', 'Não foi possível criar o perfil.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o perfil.');
             return;
         }
 
-        $this->redirectWith('admin/perfil', 'success', 'Perfil criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Perfil criado com sucesso!');
     }
 
     /**
@@ -123,7 +129,7 @@ class PerfisController extends BaseController
             'perfis' => $perfis,
         ];
 
-        $this->view('admin.perfis.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -151,7 +157,7 @@ class PerfisController extends BaseController
 
         if (!$updatePerfil) {
             $this->redirectWith(
-                'admin/perfil',
+                self::ROTA_LISTA,
                 'error',
                 'Não foi possível atualizar o perfil.'
             );
@@ -159,7 +165,7 @@ class PerfisController extends BaseController
         }
 
         $this->redirectWith(
-            'admin/perfil',
+            self::ROTA_LISTA,
             'success',
             'Perfil atualizado com sucesso!'
         );
@@ -176,7 +182,7 @@ class PerfisController extends BaseController
 
         $this->perfilModel->delete($id);
 
-        $this->redirectWith('admin/perfil', 'success', 'Perfil removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Perfil removido com sucesso.');
     }
 
     /**

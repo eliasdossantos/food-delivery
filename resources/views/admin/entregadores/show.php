@@ -1,5 +1,6 @@
-<!-- Aqui enviamos para o template principal o título da página -->
-
+<?php
+$rota  = 'admin.entregador';
+?>
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Detalhes do Entregador') ?> | Admin
@@ -183,7 +184,7 @@ $turnos = [
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.entregador.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -570,12 +571,12 @@ $turnos = [
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="<?= route('admin.entregador.edit', ['id' => $entregador->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $entregador->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar entregador">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
-                                <a href="<?= route('admin.entregador.index') ?>" class="btn btn-danger" title="Voltar"
+                                <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                     aria-label="Voltar para entregadores">
                                     <i class="mdi mdi-close"></i>
                                     Voltar

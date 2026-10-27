@@ -27,6 +27,12 @@ use Framework\Support\Session;
  */
 class BairrosController extends BaseController
 {
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/bairro';
+
+    // Caminho base das views
+    private string $rota = 'admin.bairros';
+
     private BairroRepository $bairroModel;
 
     public function __construct()
@@ -46,7 +52,7 @@ class BairrosController extends BaseController
             'bairros'   => $this->bairroModel->all(),
         ];
 
-        $this->view('admin.bairros.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -64,7 +70,7 @@ class BairrosController extends BaseController
             'bairros'   => $bairros,
         ];
 
-        $this->view('admin.bairros.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -78,7 +84,7 @@ class BairrosController extends BaseController
             'subtitulo' => 'Cadastrar Bairro Atendido',
         ];
 
-        $this->view('admin.bairros.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -115,11 +121,11 @@ class BairrosController extends BaseController
         $id = $this->bairroModel->create($data);
 
         if (!$id) {
-            $this->redirectWith('admin/bairro', 'error', 'Não foi possível criar bairro atendido.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar bairro atendido.');
             return;
         }
 
-        $this->redirectWith('admin/bairro', 'success', 'Bairros criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Bairros criado com sucesso!');
     }
 
     /**
@@ -137,7 +143,7 @@ class BairrosController extends BaseController
             'bairros'   => $bairros,
         ];
 
-        $this->view('admin.bairros.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -186,11 +192,11 @@ class BairrosController extends BaseController
         $updateBairro = $this->bairroModel->update($id, $data);
 
         if (!$updateBairro) {
-            $this->redirectWith('admin/bairro', 'error', 'Não foi possível atualizar o Bairro.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar o Bairro.');
             return;
         }
 
-        $this->redirectWith('admin/bairro', 'success', 'Bairro atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Bairro atualizado com sucesso!');
     }
 
     /**
@@ -204,7 +210,7 @@ class BairrosController extends BaseController
 
         $this->bairroModel->delete($id);
 
-        $this->redirectWith('admin/bairro', 'success', 'Bairro removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Bairro removido com sucesso.');
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

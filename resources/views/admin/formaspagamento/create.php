@@ -1,3 +1,7 @@
+<?php
+$rota  = 'admin.pagamento';
+$rotaVoltar  = 'admin/pagamento';
+?>
 <!-- Aqui enviamos para o template principal o título da página -->
 <?php View::start('title'); ?>
 
@@ -31,7 +35,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= url('admin/pagamento') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= url($rotaVoltar) ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -40,7 +44,7 @@
             </div>
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.pagamento.store') ?>" class="forms-sample">
+                <form method="POST" action="<?= route($rota . '.store') ?>" class="forms-sample">
                     <?= csrf_field() ?>
                     <!-- Nome -->
                     <div class="form-group">
@@ -72,7 +76,7 @@
                         <i class="mdi mdi-content-save"></i>
                         Cadastrar
                     </button>
-                    <a href="<?= route('admin.pagamento.index') ?>" class="btn btn-danger" title="Cancelar"
+                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                         aria-label="Cancelar criação">
                         <i class="mdi mdi-close"></i>
                         Cancelar

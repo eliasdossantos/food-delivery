@@ -1,5 +1,9 @@
-<!-- Aqui enviamos para o template principal o título da página -->
+<?php
+$rota  = 'admin.perfil';
+$rotaVoltar  = 'admin/perfil';
+?>
 
+<!-- Aqui enviamos para o template principal o título da página -->
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Editar Perfis') ?> | Admin
@@ -31,7 +35,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= url('admin/perfil') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= url($rotaVoltar) ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -41,7 +45,7 @@
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.perfil.update', ['id' => $perfis->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $perfis->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -73,12 +77,12 @@
                         <i class="mdi mdi-content-save"></i>
                         Atualizar
                     </button>
-                    <a href="<?= route('admin.perfil.show', ['id' => $perfis->id]) ?>" class="btn btn-primary mr-2"
+                    <a href="<?= route($rota . '.show', ['id' => $perfis->id]) ?>" class="btn btn-primary mr-2"
                         title="Visualizar" aria-label="Visualizar perfil">
                         <i class="mdi mdi-eye"></i>
                         Visualizar
                     </a>
-                    <a href="<?= route('admin.perfil.index') ?>" class="btn btn-danger" title="Cancelar"
+                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                         aria-label="Cancelar edição">
                         <i class="mdi mdi-close"></i>
                         Cancelar

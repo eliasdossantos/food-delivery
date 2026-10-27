@@ -1,5 +1,7 @@
-<!-- Aqui enviamos para o template principal o título da página -->
-
+<?php
+$rota  = 'admin.bairro';
+$rotaVoltar = 'admin/bairro';
+?>
 <?php View::start('titulo'); ?>
 
 <?= e($titulo ?? 'Novo Bairros') ?> | Admin
@@ -34,7 +36,7 @@
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= url('admin/bairro') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= url($rotaVoltar) ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -43,7 +45,7 @@
             </div>
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.bairro.store') ?>" class="forms-sample">
+                <form method="POST" action="<?= route($rota . '.store') ?>" class="forms-sample">
                     <?= csrf_field() ?>
 
                     <div class="row">
@@ -51,7 +53,7 @@
                             <div class="form-group">
                                 <label for="cep">CEP (preenche cidade e bairro)</label>
                                 <input type="text" class="form-control" id="cep" maxlength="9" placeholder="00000-000"
-                                    autocomplete="off" data-cep-url="<?= e(route('admin.bairro.cep')) ?>">
+                                    autocomplete="off" data-cep-url="<?= e(route($rota . '.cep')) ?>">
                                 <small id="cep-feedback" class="form-text text-muted"></small>
                             </div>
                         </div>
@@ -140,7 +142,7 @@
                                         <i class="mdi mdi-content-save"></i>
                                         Cadastrar
                                     </button>
-                                    <a href="<?= route('admin.bairro.index') ?>" class="btn btn-danger" title="Cancelar"
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                                         aria-label="Cancelar criação">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar
@@ -162,56 +164,56 @@
 
 <?php View::start('scripts'); ?>
 <script>
-(function() {
-    const cepInput = document.getElementById('cep');
-    const feedback = document.getElementById('cep-feedback');
-    const cidade = document.getElementById('cidade');
-    const nome = document.getElementById('nome');
-    const slug = document.getElementById('slug');
-    const valor = document.getElementById('valor_entrega');
+    (function() {
+        const cepInput = document.getElementById('cep');
+        const feedback = document.getElementById('cep-feedback');
+        const cidade = document.getElementById('cidade');
+        const nome = document.getElementById('nome');
+        const slug = document.getElementById('slug');
+        const valor = document.getElementById('valor_entrega');
 
-    const setMsg = (txt, cls) => {
-        feedback.textContent = txt;
-        feedback.className = 'form-text ' + cls;
-    };
+        const setMsg = (txt, cls) => {
+            feedback.textContent = txt;
+            feedback.className = 'form-text ' + cls;
+        };
 
-    cepInput.addEventListener('input', function() {
-        let v = this.value.replace(/\D/g, '').slice(0, 8);
-        this.value = v.length > 5 ? v.slice(0, 5) + '-' + v.slice(5) : v;
-        if (v.length === 8) buscar(v);
-    });
+        cepInput.addEventListener('input', function() {
+            let v = this.value.replace(/\D/g, '').slice(0, 8);
+            this.value = v.length > 5 ? v.slice(0, 5) + '-' + v.slice(5) : v;
+            if (v.length === 8) buscar(v);
+        });
 
-    async function buscar(cep) {
-        setMsg('Buscando CEP...', 'text-muted');
-        try {
-            const res = await fetch(cepInput.dataset.cepUrl + '?cep=' + cep, {
-                headers: {
-                    'Accept': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            });
-            const data = await res.json();
+        async function buscar(cep) {
+            setMsg('Buscando CEP...', 'text-muted');
+            try {
+                const res = await fetch(cepInput.dataset.cepUrl + '?cep=' + cep, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+                const data = await res.json();
 
-            if (!data.ok) {
-                setMsg(data.message || 'Não foi possível consultar o CEP.', 'text-danger');
-                return;
+                if (!data.ok) {
+                    setMsg(data.message || 'Não foi possível consultar o CEP.', 'text-danger');
+                    return;
+                }
+
+                cidade.value = data.cidade;
+                nome.value = data.bairro;
+                slug.value = data.slug;
+
+                if (data.cadastrado) {
+                    valor.value = String(data.cadastrado.valor_entrega).replace('.', ',');
+                    setMsg('Atenção: este bairro já está cadastrado.', 'text-warning');
+                } else {
+                    setMsg('Bairro encontrado: ' + data.bairro + ' - ' + data.uf, 'text-success');
+                }
+            } catch (e) {
+                setMsg('Erro de comunicação ao consultar o CEP.', 'text-danger');
             }
-
-            cidade.value = data.cidade;
-            nome.value = data.bairro;
-            slug.value = data.slug;
-
-            if (data.cadastrado) {
-                valor.value = String(data.cadastrado.valor_entrega).replace('.', ',');
-                setMsg('Atenção: este bairro já está cadastrado.', 'text-warning');
-            } else {
-                setMsg('Bairro encontrado: ' + data.bairro + ' - ' + data.uf, 'text-success');
-            }
-        } catch (e) {
-            setMsg('Erro de comunicação ao consultar o CEP.', 'text-danger');
         }
-    }
-})();
+    })();
 </script>
 <?php View::end(); ?>

@@ -1,4 +1,6 @@
 <?php
+$rota  = 'admin.usuario';
+
 // Quem vê os botões de ação (visualizar, editar, excluir, cadastrar)
 $listaPodeGerir = \Framework\Auth\Auth::isAny('Super Administrador', 'Administrador');
 $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
@@ -30,7 +32,7 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
                 <p class="card-title"><?= e($tituloTabela ?? 'Lista de Usuários') ?></p>
 
                 <?php if ($listaPodeGerir): ?>
-                    <a href="<?= route('admin.usuario.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
+                    <a href="<?= route($rota . '.create') ?>" class="btn btn-primary btn-sm float-right mb-2"
                         title="Cadastrar Usuário" aria-label="Cadastrar Usuário">
                         <i class="mdi mdi-plus"></i>
                         Cadastrar Usuário
@@ -39,8 +41,8 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
 
                 <div class="ui-widget mb-3">
                     <input id="query" class="form-control bg-light" placeholder="Digite o nome do usuário"
-                        data-busca-url="<?= e(route('admin.usuario.procurar')) ?>"
-                        data-busca-destino="<?= e(route('admin.usuario.index')) ?>">
+                        data-busca-url="<?= e(route($rota . '.procurar')) ?>"
+                        data-busca-destino="<?= e(route($rota . '.index')) ?>">
                 </div>
 
                 <div class="table-responsive">
@@ -66,7 +68,7 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
                                         <td class="d-none"><?= e($usuario->id ?? ''); ?></td>
                                         <td>
                                             <?php if ($listaPodeGerir): ?>
-                                                <a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>">
+                                                <a href="<?= route($rota . '.show', ['id' => $usuario->id]) ?>">
                                                     <?= e($usuario->nome ?? '') ?>
                                                 </a>
                                             <?php else: ?>
@@ -89,14 +91,14 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
 
                                         <?php if ($listaPodeGerir): ?>
                                             <td>
-                                                <a href="<?= route('admin.usuario.show', ['id' => $usuario->id]) ?>"
+                                                <a href="<?= route($rota . '.show', ['id' => $usuario->id]) ?>"
                                                     class="btn btn-primary btn-sm" title="Visualizar"
                                                     aria-label="Visualizar Usuário">
                                                     <i class="mdi mdi-eye"></i>
                                                 </a>
 
                                                 <?php if ($listaSouSuper || !$listaLinhaSuper): ?>
-                                                    <a href="<?= route('admin.usuario.edit', ['id' => $usuario->id]) ?>"
+                                                    <a href="<?= route($rota . '.edit', ['id' => $usuario->id]) ?>"
                                                         class="btn btn-warning btn-sm" title="Editar" aria-label="Editar Usuário">
                                                         <i class="mdi mdi-pencil"></i>
                                                     </a>
@@ -165,7 +167,7 @@ $listaSouSuper  = \Framework\Auth\Auth::is('Super Administrador');
                         <button type="button" class="btn btn-outline-secondary px-4" data-dismiss="modal">
                             Cancelar
                         </button>
-                        <form method="POST" action="<?= route('admin.usuario.destroy', ['id' => $usuario->id]) ?>">
+                        <form method="POST" action="<?= route($rota . '.destroy', ['id' => $usuario->id]) ?>">
                             <?= csrf_field() ?>
                             <?= method_field('DELETE') ?>
                             <button type="submit" class="btn btn-danger px-4">

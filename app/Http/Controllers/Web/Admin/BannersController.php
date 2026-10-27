@@ -27,6 +27,12 @@ class BannersController extends BaseController
     private const UPLOAD_MAX_MB = 5;
     private const UPLOAD_FIELD  = 'imagem';
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/banner';
+
+    // Caminho base das views
+    private string $rota = 'admin.banners';
+
     private BannerRepository $bannerModel;
 
     public function __construct()
@@ -43,7 +49,7 @@ class BannersController extends BaseController
             'banners'   => $this->bannerModel->todos(),
         ];
 
-        $this->view('admin.banners.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /** GET /banners/{id} */
@@ -58,7 +64,7 @@ class BannersController extends BaseController
             'banner'    => $banner,
         ];
 
-        $this->view('admin.banners.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /** GET /banners/create */
@@ -70,7 +76,7 @@ class BannersController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.banners.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /** POST /banners */
@@ -114,11 +120,11 @@ class BannersController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/banner', 'error', 'Não foi possível criar o banner.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o banner.');
             return;
         }
 
-        $this->redirectWith('admin/banner', 'success', 'Banner criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Banner criado com sucesso!');
     }
 
     /** GET /banners/{id}/edit */
@@ -134,7 +140,7 @@ class BannersController extends BaseController
             'banner'      => $banner,
         ];
 
-        $this->view('admin.banners.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /** PUT /banners/{id} */
@@ -179,11 +185,11 @@ class BannersController extends BaseController
         }
 
         if (!$this->bannerModel->update($id, $data)) {
-            $this->redirectWith('admin/banner', 'error', 'Não foi possível atualizar o banner.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar o banner.');
             return;
         }
 
-        $this->redirectWith('admin/banner', 'success', 'Banner atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Banner atualizado com sucesso!');
     }
 
     /** DELETE /banners/{id} */
@@ -193,7 +199,7 @@ class BannersController extends BaseController
         $this->abortUnless((bool) $banner, 404, 'Banner não encontrado.');
 
         if (!$this->bannerModel->delete($id)) {
-            $this->redirectWith('admin/banner', 'error', 'Não foi possível remover o banner.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover o banner.');
             return;
         }
 
@@ -204,7 +210,7 @@ class BannersController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/banner', 'success', 'Banner removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Banner removido com sucesso.');
     }
 
     // ── Auxiliares ────────────────────────────────────────────────────────────

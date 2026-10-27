@@ -1,4 +1,7 @@
-<?php $maxMb = (int) ($uploadMaxMb ?? 5); ?>
+<?php
+$rota  = 'admin.medida';
+$maxMb = (int) ($uploadMaxMb ?? 5);
+?>
 <!-- resources/views/admin/medidas/edit.php -->
 
 <!-- Aqui enviamos para o template principal o título da página -->
@@ -136,7 +139,7 @@ $imagemAtual = !empty($medidas->imagem_url) ? uploadUrl('medidas', $medidas->ima
                         </p>
                     </div>
                     <div class="mt-3 mt-md-0">
-                        <a href="<?= route('admin.medida.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="mdi mdi-arrow-left"></i>
                             Voltar
                         </a>
@@ -146,7 +149,7 @@ $imagemAtual = !empty($medidas->imagem_url) ? uploadUrl('medidas', $medidas->ima
 
             <div class="card-body">
                 <!-- Formulário -->
-                <form method="POST" action="<?= route('admin.medida.update', ['id' => $medidas->id]) ?>"
+                <form method="POST" action="<?= route($rota . '.update', ['id' => $medidas->id]) ?>"
                     enctype="multipart/form-data" class="forms-sample">
                     <?= csrf_field() ?>
                     <?= method_field('PUT') ?>
@@ -270,12 +273,12 @@ $imagemAtual = !empty($medidas->imagem_url) ? uploadUrl('medidas', $medidas->ima
                                         <i class="mdi mdi-content-save"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= route('admin.medida.show', ['id' => $medidas->id]) ?>"
+                                    <a href="<?= route($rota . '.show', ['id' => $medidas->id]) ?>"
                                         class="btn btn-primary mr-2" title="Visualizar" aria-label="Visualizar medida">
                                         <i class="mdi mdi-eye"></i>
                                         Visualizar
                                     </a>
-                                    <a href="<?= route('admin.medida.index') ?>" class="btn btn-danger" title="Cancelar"
+                                    <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Cancelar"
                                         aria-label="Cancelar edição">
                                         <i class="mdi mdi-close"></i>
                                         Cancelar

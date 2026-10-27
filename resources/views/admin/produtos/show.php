@@ -1,4 +1,7 @@
-<!-- Aqui enviamos para o template principal o título da página -->
+<?php
+$rota  = 'admin.produto';
+$maxMb = (int) ($uploadMaxMb ?? 5);
+?>
 
 <?php View::start('titulo'); ?>
 
@@ -12,143 +15,143 @@
 <?php View::start('styles'); ?>
 
 <style>
-.show-section {
-    margin-top: 25px;
-    margin-bottom: 20px;
-}
+    .show-section {
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
 
-.show-section-title {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
+    .show-section-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-.show-section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: #e9ecef;
-    margin-left: 15px;
-}
+    .show-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: #e9ecef;
+        margin-left: 15px;
+    }
 
-.show-section-title h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    white-space: nowrap;
-}
+    .show-section-title h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
 
-.show-item {
-    margin-bottom: 18px;
-}
+    .show-item {
+        margin-bottom: 18px;
+    }
 
-.show-item-label {
-    display: block;
-    margin-bottom: 5px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #6c757d;
-}
+    .show-item-label {
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #6c757d;
+    }
 
-.show-item-value {
-    min-height: 38px;
-    padding: 9px 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    color: #212529;
-    word-break: break-word;
-    white-space: pre-line;
-}
+    .show-item-value {
+        min-height: 38px;
+        padding: 9px 12px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        color: #212529;
+        word-break: break-word;
+        white-space: pre-line;
+    }
 
-.show-status {
-    display: inline-block;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
+    .show-status {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
 
-.show-status.active {
-    background: #d4edda;
-    color: #155724;
-}
+    .show-status.active {
+        background: #d4edda;
+        color: #155724;
+    }
 
-.show-status.inactive {
-    background: #f8d7da;
-    color: #721c24;
-}
+    .show-status.inactive {
+        background: #f8d7da;
+        color: #721c24;
+    }
 
-.show-status.featured {
-    background: #fff3cd;
-    color: #856404;
-}
+    .show-status.featured {
+        background: #fff3cd;
+        color: #856404;
+    }
 
-.show-imagem {
-    max-width: 220px;
-    max-height: 220px;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-    padding: 4px;
-    background: #fff;
-}
+    .show-imagem {
+        max-width: 220px;
+        max-height: 220px;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 4px;
+        background: #fff;
+    }
 
-.show-extras {
-    max-height: 160px;
-    overflow-y: auto;
-    padding: 12px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-}
+    .show-extras {
+        max-height: 160px;
+        overflow-y: auto;
+        padding: 12px;
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+    }
 
-.show-extra-chip {
-    display: inline-block;
-    margin: 0 6px 6px 0;
-    padding: 4px 12px;
-    background: #e8f0fe;
-    color: #1a4fa0;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-}
+    .show-extra-chip {
+        display: inline-block;
+        margin: 0 6px 6px 0;
+        padding: 4px 12px;
+        background: #e8f0fe;
+        color: #1a4fa0;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
 
-.show-tabela {
-    margin: 0;
-    background: #f8f9fa;
-}
+    .show-tabela {
+        margin: 0;
+        background: #f8f9fa;
+    }
 
-.show-tabela th {
-    font-size: 13px;
-    color: #6c757d;
-}
+    .show-tabela th {
+        font-size: 13px;
+        color: #6c757d;
+    }
 
-/* ── Medidas e preços com rolagem ─────────────────────────────────── */
-.show-tabela-box {
-    max-height: 280px;
-    overflow-y: auto;
-    border: 1px solid #e9ecef;
-    border-radius: 4px;
-}
+    /* ── Medidas e preços com rolagem ─────────────────────────────────── */
+    .show-tabela-box {
+        max-height: 280px;
+        overflow-y: auto;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+    }
 
-.show-tabela-box .show-tabela {
-    border: 0;
-}
+    .show-tabela-box .show-tabela {
+        border: 0;
+    }
 
-.show-tabela-box .show-tabela thead th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #f1f3f5;
-    box-shadow: 0 1px 0 #dee2e6;
-}
+    .show-tabela-box .show-tabela thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #f1f3f5;
+        box-shadow: 0 1px 0 #dee2e6;
+    }
 
-.show-contador {
-    margin-top: 6px;
-    font-size: 13px;
-    color: #6c757d;
-    text-align: right;
-}
+    .show-contador {
+        margin-top: 6px;
+        font-size: 13px;
+        color: #6c757d;
+        text-align: right;
+    }
 </style>
 
 <?php View::end(); ?>
@@ -185,7 +188,7 @@ if ($imagemAtual !== '') {
                         </p>
                     </div>
                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
-                        <a href="<?= route('admin.produto.index') ?>" class="btn btn-secondary btn-sm text-white">
+                        <a href="<?= route($rota . '.index') ?>" class="btn btn-secondary btn-sm text-white">
                             <i class="fas fa-arrow-left"></i>
                             Voltar
                         </a>
@@ -246,14 +249,14 @@ if ($imagemAtual !== '') {
                     </div>
 
                     <?php if (empty($extras)): ?>
-                    <div class="show-item-value">Nenhuma extra vinculada</div>
+                        <div class="show-item-value">Nenhuma extra vinculada</div>
                     <?php else: ?>
-                    <div class="show-extras">
-                        <?php foreach ($extras as $extra): ?>
-                        <span class="show-extra-chip"><?= e($extra->nome) ?> - $R:
-                            <?= e(moedaBR($extra->preco)) ?></span>
-                        <?php endforeach; ?>
-                    </div>
+                        <div class="show-extras">
+                            <?php foreach ($extras as $extra): ?>
+                                <span class="show-extra-chip"><?= e($extra->nome) ?> - $R:
+                                    <?= e(moedaBR($extra->preco)) ?></span>
+                            <?php endforeach; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
@@ -264,33 +267,33 @@ if ($imagemAtual !== '') {
                     </div>
 
                     <?php if (empty($especificacoes)): ?>
-                    <div class="show-item-value">Nenhuma medida cadastrada</div>
+                        <div class="show-item-value">Nenhuma medida cadastrada</div>
                     <?php else: ?>
-                    <div class="show-tabela-box">
-                        <table class="table table-bordered show-tabela">
-                            <thead>
-                                <tr>
-                                    <th>Medida</th>
-                                    <th class="text-center">Preço</th>
-                                    <th class="text-center">Customizável</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($especificacoes as $esp): ?>
-                                <tr>
-                                    <td><?= e($esp->medida_nome) ?></td>
-                                    <td class="text-center"><?= e(moedaBR($esp->preco)) ?></td>
-                                    <td class="text-center">
-                                        <?= !empty($esp->customizavel)
+                        <div class="show-tabela-box">
+                            <table class="table table-bordered show-tabela">
+                                <thead>
+                                    <tr>
+                                        <th>Medida</th>
+                                        <th class="text-center">Preço</th>
+                                        <th class="text-center">Customizável</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($especificacoes as $esp): ?>
+                                        <tr>
+                                            <td><?= e($esp->medida_nome) ?></td>
+                                            <td class="text-center"><?= e(moedaBR($esp->preco)) ?></td>
+                                            <td class="text-center">
+                                                <?= !empty($esp->customizavel)
                                                     ? '<span class="show-status active">Sim</span>'
                                                     : '<span class="show-status inactive">Não</span>' ?>
-                                    </td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="show-contador"><?= count($especificacoes) ?> medida(s)</div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="show-contador"><?= count($especificacoes) ?> medida(s)</div>
                     <?php endif; ?>
                 </div>
 
@@ -326,10 +329,10 @@ if ($imagemAtual !== '') {
                             <div class="show-item">
                                 <span class="show-item-label">Imagem</span>
                                 <?php if ($imagemSrc !== ''): ?>
-                                <img src="<?= e($imagemSrc) ?>" alt="<?= e($produtos->nome ?? '') ?>"
-                                    class="show-imagem">
+                                    <img src="<?= e($imagemSrc) ?>" alt="<?= e($produtos->nome ?? '') ?>"
+                                        class="show-imagem">
                                 <?php else: ?>
-                                <div class="show-item-value">Sem imagem</div>
+                                    <div class="show-item-value">Sem imagem</div>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -402,9 +405,9 @@ if ($imagemAtual !== '') {
                                 <span class="show-item-label">Status</span>
                                 <div class="show-item-value">
                                     <?php if ((int) ($produtos->ativo ?? 0) === 1): ?>
-                                    <span class="show-status active">Ativo</span>
+                                        <span class="show-status active">Ativo</span>
                                     <?php else: ?>
-                                    <span class="show-status inactive">Inativo</span>
+                                        <span class="show-status inactive">Inativo</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -416,9 +419,9 @@ if ($imagemAtual !== '') {
                                 <span class="show-item-label">Destaque</span>
                                 <div class="show-item-value">
                                     <?php if ((int) ($produtos->destaque ?? 0) === 1): ?>
-                                    <span class="show-status featured">Em destaque</span>
+                                        <span class="show-status featured">Em destaque</span>
                                     <?php else: ?>
-                                    Normal
+                                        Normal
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -459,12 +462,12 @@ if ($imagemAtual !== '') {
                     <div class="row mt-4">
                         <div class="col-md-12">
                             <div class="d-flex flex-wrap align-items-center">
-                                <a href="<?= route('admin.produto.edit', ['id' => $produtos->id]) ?>"
+                                <a href="<?= route($rota . '.edit', ['id' => $produtos->id]) ?>"
                                     class="btn btn-success mr-2" title="Editar" aria-label="Editar produto">
                                     <i class="mdi mdi-pencil"></i>
                                     Editar
                                 </a>
-                                <a href="<?= route('admin.produto.index') ?>" class="btn btn-danger" title="Voltar"
+                                <a href="<?= route($rota . '.index') ?>" class="btn btn-danger" title="Voltar"
                                     aria-label="Voltar para produtos">
                                     <i class="mdi mdi-close"></i>
                                     Voltar

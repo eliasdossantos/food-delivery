@@ -32,6 +32,12 @@ class ExtrasController extends BaseController
     /** Tamanho máximo da imagem, em MB */
     private const UPLOAD_MAX_MB = 5;
 
+    // Rota da listagem
+    private const ROTA_LISTA = 'admin/extra';
+
+    // Caminho base das views
+    private string $rota = 'admin.extras';
+
     private ExtraRepository $extrasModel;
 
     public function __construct()
@@ -52,7 +58,7 @@ class ExtrasController extends BaseController
             'extras' => $this->extrasModel->all(),
         ];
 
-        $this->view('admin.extras.index', $data, 'main');
+        $this->view($this->rota . '.index', $data, 'main');
     }
 
     /**
@@ -70,7 +76,7 @@ class ExtrasController extends BaseController
             'extras' => $extras,
         ];
 
-        $this->view('admin.extras.show', $data, 'main');
+        $this->view($this->rota . '.show', $data, 'main');
     }
 
     /**
@@ -85,7 +91,7 @@ class ExtrasController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.extras.create', $data, 'main');
+        $this->view($this->rota . '.create', $data, 'main');
     }
 
     /**
@@ -140,11 +146,11 @@ class ExtrasController extends BaseController
                 $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
             }
 
-            $this->redirectWith('admin/extra', 'error', 'Não foi possível criar o extra.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível criar o extra.');
             return;
         }
 
-        $this->redirectWith('admin/extra', 'success', 'Extra criado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Extra criado com sucesso!');
     }
 
     /**
@@ -163,7 +169,7 @@ class ExtrasController extends BaseController
             'uploadMaxMb' => self::UPLOAD_MAX_MB,
         ];
 
-        $this->view('admin.extras.edit', $data, 'main');
+        $this->view($this->rota . '.edit', $data, 'main');
     }
 
     /**
@@ -227,11 +233,11 @@ class ExtrasController extends BaseController
         $atualizada = $this->extrasModel->update($id, $data);
 
         if (!$atualizada) {
-            $this->redirectWith('admin/extra', 'error', 'Não foi possível atualizar o extra.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível atualizar o extra.');
             return;
         }
 
-        $this->redirectWith('admin/extra', 'success', 'Extra atualizado com sucesso!');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Extra atualizado com sucesso!');
     }
 
     /**
@@ -244,7 +250,7 @@ class ExtrasController extends BaseController
         $this->abortUnless((bool) $extras, 404, 'Extra não encontrado.');
 
         if (!$this->extrasModel->delete($id)) {
-            $this->redirectWith('admin/extra', 'error', 'Não foi possível remover o extra.');
+            $this->redirectWith(self::ROTA_LISTA, 'error', 'Não foi possível remover o extra.');
             return;
         }
 
@@ -255,7 +261,7 @@ class ExtrasController extends BaseController
             $this->deleteUploadedFile(self::UPLOAD_ENTITY, $nomeArquivo);
         }
 
-        $this->redirectWith('admin/extra', 'success', 'Extra removido com sucesso.');
+        $this->redirectWith(self::ROTA_LISTA, 'success', 'Extra removido com sucesso.');
     }
 
     /**
